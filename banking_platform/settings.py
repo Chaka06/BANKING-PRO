@@ -14,6 +14,11 @@ SECRET_KEY = _secret_key
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# Vercel — ajoute automatiquement le domaine de déploiement preview
+_vercel_url = os.getenv('VERCEL_URL')
+if _vercel_url and _vercel_url not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_vercel_url)
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -112,6 +117,8 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 
 # ── Sécurité production ────────────────────────────────────────────────────
 if not DEBUG:
+    # Vercel termine le SSL en amont — Django lit le header X-Forwarded-Proto
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
@@ -123,6 +130,24 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
 
 # ── Logging ────────────────────────────────────────────────────────────────
+_log_handlers = ['console']
+_handlers_config: dict = {
+    'console': {
+        'class': 'logging.StreamHandler',
+        'formatter': 'verbose',
+    },
+}
+
+if DEBUG:
+    _log_handlers.append('file')
+    _handlers_config['file'] = {
+        'class': 'logging.handlers.RotatingFileHandler',
+        'filename': BASE_DIR / 'logs' / 'banking.log',
+        'maxBytes': 10 * 1024 * 1024,
+        'backupCount': 5,
+        'formatter': 'verbose',
+    }
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -132,27 +157,15 @@ LOGGING = {
             'style': '{',
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'banking.log',
-            'maxBytes': 10 * 1024 * 1024,  # 10 MB
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-    },
+    'handlers': _handlers_config,
     'loggers': {
         'banking': {
-            'handlers': ['console', 'file'],
+            'handlers': _log_handlers,
             'level': 'INFO',
             'propagate': False,
         },
         'django.security': {
-            'handlers': ['console', 'file'],
+            'handlers': _log_handlers,
             'level': 'WARNING',
         },
     },
