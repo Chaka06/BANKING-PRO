@@ -1,0 +1,169 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Virement — {{ bank.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-4 lg:space-y-6">
+
+    <a href="{% url 'dashboard' bank_slug=bank.slug %}" class="lg:hidden inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors">
+        <i class="bx bx-arrow-back" style="font-size:18px;"></i> Retour
+    </a>
+
+    <div>
+        <h1 class="text-xl lg:text-2xl font-bold text-gray-900">Effectuer un virement</h1>
+        <p class="text-gray-400 text-sm mt-0.5">
+            Solde disponible :
+            <strong class="text-gray-800">{{ account.balance|floatformat:2 }} {{ account.currency }}</strong>
+        </p>
+    </div>
+
+    <!-- Info 48h -->
+    <div class="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
+        <svg class="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div>
+            <p class="font-semibold mb-0.5">Délai de traitement : 48h ouvrées</p>
+            <p class="text-xs text-amber-600">Le montant est immédiatement réservé sur votre compte à l'initiation. En cas de rejet, il est intégralement recrédité.</p>
+        </div>
+    </div>
+
+    {% if not beneficiaries %}
+    <!-- Aucun bénéficiaire -->
+    <div class="card p-10 text-center">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:color-mix(in srgb, var(--p) 10%, transparent);">
+            <svg class="w-8 h-8" style="color:var(--p);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 mb-1">Aucun bénéficiaire enregistré</h3>
+        <p class="text-sm text-gray-400 mb-6">Vous devez ajouter un bénéficiaire avant d'effectuer un virement.</p>
+        <a href="{% url 'beneficiaries' bank_slug=bank.slug %}" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Ajouter un bénéficiaire
+        </a>
+    </div>
+
+    {% else %}
+    <div class="card p-8">
+        <form method="post" id="transfer-form" class="space-y-6" novalidate>
+            {% csrf_token %}
+
+            <!-- Bénéficiaire -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Bénéficiaire *</label>
+                <select name="beneficiary_id" id="beneficiary-select"
+                        class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50 focus:bg-white"
+                        required onchange="updateBeneficiaryPreview(this)">
+                    <option value="">Sélectionner un bénéficiaire…</option>
+                    {% for b in beneficiaries %}
+                        <option value="{{ b.pk }}"
+                                data-iban="{{ b.account_number }}"
+                                data-bank="{{ b.bank_name }}"
+                                data-email="{{ b.email|default:'' }}"
+                                {% if request.GET.beneficiary == b.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ b.get_full_name }} — {{ b.bank_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <!-- Aperçu bénéficiaire -->
+                <div id="beneficiary-preview" class="hidden mt-3 p-4 bg-gray-50 rounded-xl border border-gray-200 text-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style="background:var(--p);" id="preview-initials"></div>
+                        <div>
+                            <p class="font-semibold text-gray-900" id="preview-name"></p>
+                            <p class="font-mono text-xs text-gray-400 mt-0.5" id="preview-iban"></p>
+                            <p class="text-xs text-gray-400" id="preview-bank"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Montant -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Montant *</label>
+                <div class="relative">
+                    <input type="number" name="amount"
+                           step="0.01" min="0.01" max="{{ account.balance }}"
+                           placeholder="0.00"
+                           class="w-full px-4 py-3 pr-20 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50 focus:bg-white font-mono text-lg"
+                           id="amount-input" oninput="updateAmountPreview(this.value)"
+                           required>
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">{{ account.currency }}</span>
+                </div>
+                <div class="flex items-center justify-between mt-1.5">
+                    <p class="text-xs text-gray-400">Solde restant après virement : <span id="remaining-balance" class="font-semibold text-gray-600">{{ account.balance|floatformat:2 }} {{ account.currency }}</span></p>
+                </div>
+            </div>
+
+            <!-- Motif -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Motif du virement</label>
+                <input type="text" name="description"
+                       placeholder="Ex : Remboursement, loyer, facture…"
+                       class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50 focus:bg-white"
+                       maxlength="200">
+            </div>
+
+            <!-- Récapitulatif -->
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2 text-xs text-gray-500">
+                <div class="flex items-start gap-2">
+                    <span class="text-gray-300 mt-0.5">•</span>
+                    <span>Le montant est immédiatement <strong class="text-gray-700">réservé</strong> sur votre compte à l'initiation.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-gray-300 mt-0.5">•</span>
+                    <span>Le virement sera <strong class="text-gray-700">validé ou rejeté</strong> par notre équipe sous 48h ouvrées.</span>
+                </div>
+                <div class="flex items-start gap-2">
+                    <span class="text-gray-300 mt-0.5">•</span>
+                    <span>En cas de rejet, le montant sera <strong class="text-gray-700">intégralement recrédité</strong> sur votre compte.</span>
+                </div>
+            </div>
+
+            <button type="submit" id="transfer-btn"
+                    class="w-full btn-primary py-4 rounded-xl font-semibold text-base flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                Initier le virement
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    const balance = parseFloat('{{ account.balance }}');
+    const currency = '{{ account.currency }}';
+
+    function updateAmountPreview(val) {
+        const amount = parseFloat(val) || 0;
+        const remaining = balance - amount;
+        const el = document.getElementById('remaining-balance');
+        if (el) {
+            el.textContent = remaining.toFixed(2) + ' ' + currency;
+            el.className = remaining < 0 ? 'font-semibold text-red-600' : 'font-semibold text-gray-600';
+        }
+    }
+
+    function updateBeneficiaryPreview(select) {
+        const opt = select.options[select.selectedIndex];
+        const preview = document.getElementById('beneficiary-preview');
+        if (!opt.value) { preview.classList.add('hidden'); return; }
+        const fullName = opt.text.split(' — ')[0];
+        const initials = fullName.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+        document.getElementById('preview-initials').textContent = initials;
+        document.getElementById('preview-name').textContent = fullName;
+        document.getElementById('preview-iban').textContent = opt.dataset.iban || '—';
+        document.getElementById('preview-bank').textContent = opt.dataset.bank || '';
+        preview.classList.remove('hidden');
+    }
+
+    // Pre-select if URL param present
+    window.addEventListener('DOMContentLoaded', function() {
+        const sel = document.getElementById('beneficiary-select');
+        if (sel) updateBeneficiaryPreview(sel);
+    });
+
+    document.getElementById('transfer-form')?.addEventListener('submit', function() {
+        const btn = document.getElementById('transfer-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="3" stroke="rgba(255,255,255,.3)"/><path d="M12 2a10 10 0 0110 10" stroke-width="3" fill="none"/></svg> Envoi en cours…';
+    });
+</script>
+{% endblock %}

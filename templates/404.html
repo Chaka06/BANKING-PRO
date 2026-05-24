@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page introuvable — 404</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f8f9fa;
+            color: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container {
+            text-align: center;
+            max-width: 480px;
+        }
+        .code {
+            font-size: clamp(6rem, 20vw, 10rem);
+            font-weight: 800;
+            line-height: 1;
+            color: #1a3a5c;
+            letter-spacing: -4px;
+            opacity: .12;
+            user-select: none;
+        }
+        .icon {
+            font-size: 4rem;
+            margin: -1rem 0 1.5rem;
+        }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: .75rem;
+            color: #1a3a5c;
+        }
+        p {
+            color: #6b7280;
+            font-size: .95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            background: #1a3a5c;
+            color: #fff;
+            text-decoration: none;
+            padding: .75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: .9rem;
+            transition: opacity .15s;
+        }
+        .btn:hover { opacity: .85; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="code">404</div>
+        <div class="icon">🔍</div>
+        <h1>Page introuvable</h1>
+        <p>
+            La page que vous cherchez n'existe pas ou a été déplacée.<br>
+            Vérifiez l'adresse ou revenez à la page précédente.
+        </p>
+        <a href="javascript:history.back()" class="btn">Retour</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,311 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Tableau de bord — {{ bank.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-4 lg:space-y-6">
+
+    <!-- ── En-tête ──────────────────────────────────────────────────────── -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Bonjour, {{ account.first_name }}</h1>
+            <p class="text-gray-400 text-xs lg:text-sm mt-0.5">{{ account.get_account_type_display }} · {{ account.manager_name }}</p>
+        </div>
+        {% if account.is_blocked %}
+            <span class="badge badge-blocked text-xs"><i class="bx bx-lock-alt" style="font-size:11px;"></i>Bloqué</span>
+        {% else %}
+            <span class="badge badge-active text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block"></span>Actif</span>
+        {% endif %}
+    </div>
+
+    <!-- ── Multi-comptes ─────────────────────────────────────────────────── -->
+    {% if all_accounts|length > 1 %}
+    <div class="grid grid-cols-2 gap-3">
+        {% for acc in all_accounts %}
+        <div class="card p-3.5 lg:p-5 {% if acc.account_id == account.account_id %}ring-2{% endif %}"
+             style="{% if acc.account_id == account.account_id %}box-shadow:0 0 0 2px var(--p),0 4px 20px rgba(0,0,0,.07);{% endif %}">
+            <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:color-mix(in srgb,var(--p) 10%,#f8faff);">
+                    <i class="bx {% if acc.account_type == 'epargne' %}bx-wallet{% else %}bx-credit-card{% endif %}" style="font-size:16px;color:var(--p);"></i>
+                </div>
+                <div class="min-w-0">
+                    <p class="font-semibold text-gray-900 text-xs leading-tight truncate">{{ acc.get_account_type_display }}</p>
+                    <p class="font-mono text-xs text-gray-400 truncate" style="font-size:10px;">{{ acc.rib_numero_compte }}</p>
+                </div>
+            </div>
+            <p class="text-lg lg:text-2xl font-bold text-gray-900 leading-none tracking-tight">
+                {{ acc.balance|floatformat:2 }}
+                <span class="text-xs text-gray-400 font-normal">{{ acc.currency }}</span>
+            </p>
+            {% if acc.account_id != account.account_id %}
+            <form method="post" action="{% url 'switch_account' bank_slug=bank.slug %}" class="mt-2.5">
+                {% csrf_token %}
+                <input type="hidden" name="account_id" value="{{ acc.account_id }}">
+                <button type="submit" class="text-xs font-semibold flex items-center gap-0.5 hover:opacity-75 transition-opacity" style="color:var(--p);">
+                    Activer <i class="bx bx-right-arrow-alt" style="font-size:14px;"></i>
+                </button>
+            </form>
+            {% else %}
+            <p class="text-xs text-gray-400 mt-2.5 flex items-center gap-1 font-medium">
+                <i class="bx bx-check-circle" style="color:var(--p);font-size:13px;"></i>Actif
+            </p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ── Carte bancaire + solde ─────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-5">
+
+        <!-- Carte bancaire — plus petite sur mobile -->
+        <div class="lg:col-span-3 bank-card" style="height:158px;min-height:158px;" class="lg:h-[200px]">
+            <div class="bank-card" style="height:158px;">
+                <div class="absolute -top-12 -right-12 w-52 h-52 rounded-full" style="background:rgba(255,255,255,.06);"></div>
+                <div class="absolute -bottom-20 -left-10 w-64 h-64 rounded-full" style="background:rgba(255,255,255,.04);"></div>
+
+                <div class="absolute top-4 left-4 lg:top-6 lg:left-6">
+                    <div class="w-9 h-6 lg:w-11 lg:h-8 rounded-md" style="background:linear-gradient(135deg,#f5d87a 0%,#c9a227 100%);box-shadow:inset 0 1px 2px rgba(255,255,255,.4);">
+                        <div class="w-full h-full rounded-md" style="border:1px solid rgba(180,140,20,.35);display:grid;grid-template-columns:repeat(3,1fr);">
+                            <div style="border-right:1px solid rgba(180,140,20,.3);"></div>
+                            <div style="border-right:1px solid rgba(180,140,20,.3);"></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute top-4 right-4 lg:top-6 lg:right-6">
+                    {% if bank.logo %}
+                        <img src="{{ bank.logo.url }}" alt="{{ bank.name }}" class="h-6 lg:h-8 object-contain" style="filter:brightness(0) invert(1);opacity:.85;">
+                    {% else %}
+                        <span class="font-bold text-xs lg:text-sm tracking-wide" style="color:var(--ct);opacity:.85;">{{ bank.name }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="absolute" style="top:50%;left:50%;transform:translate(-50%,-50%);">
+                    <span class="text-xs uppercase tracking-widest font-semibold" style="color:rgba(255,255,255,.35);letter-spacing:.15em;font-size:9px;">{{ account.get_account_type_display }}</span>
+                </div>
+
+                <div class="absolute" style="bottom:32px;left:16px;right:16px;">
+                    <p class="text-xs uppercase tracking-widest mb-1" style="color:var(--ct);opacity:.4;letter-spacing:.08em;font-size:8px;">IBAN</p>
+                    <p class="font-mono font-bold" style="color:var(--ct);font-size:11px;letter-spacing:.06em;">
+                        {{ account.rib|slice:":4" }}&nbsp;{{ account.rib|slice:"4:8" }}&nbsp;{{ account.rib|slice:"8:12" }}&nbsp;{{ account.rib|slice:"12:16" }}&nbsp;····
+                    </p>
+                </div>
+
+                <div class="absolute bottom-2.5 left-4 right-4 flex items-end justify-between">
+                    <p class="font-semibold uppercase tracking-wider" style="color:var(--ct);opacity:.8;font-size:11px;">{{ account.get_full_name }}</p>
+                    <p class="font-bold" style="color:var(--ct);opacity:.6;font-size:11px;">{{ account.currency }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Solde + actions -->
+        <div class="lg:col-span-2">
+            <div class="card p-4 lg:p-6 flex flex-col h-full">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2" style="letter-spacing:.08em;">Solde disponible</p>
+                <p class="font-bold text-gray-900 leading-none tracking-tight" style="font-size:clamp(1.8rem,6vw,2.5rem);">
+                    {{ account.balance|floatformat:2 }}
+                </p>
+                <p class="text-base text-gray-400 font-normal mt-1">{{ account.currency }}</p>
+                {% if pending_count > 0 %}
+                <p class="text-xs text-amber-600 mt-2 font-semibold flex items-center gap-1">
+                    <i class="bx bx-time-five" style="font-size:14px;"></i>
+                    {{ pending_count }} en attente
+                </p>
+                {% endif %}
+                <div class="flex gap-2.5 mt-4 lg:mt-6 lg:flex-col">
+                    <a href="{% url 'download_rib' bank_slug=bank.slug %}"
+                       class="btn-ghost flex-1 lg:flex-none flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold">
+                        <i class="bx bx-download" style="font-size:15px;"></i>
+                        <span class="hidden sm:inline">Télécharger </span>RIB
+                    </a>
+                    {% if not account.is_blocked %}
+                    <a href="{% url 'transfer' bank_slug=bank.slug %}"
+                       class="btn-primary flex-1 lg:flex-none flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold">
+                        <i class="bx bx-transfer-alt" style="font-size:15px;"></i>
+                        Virement
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Stats mois ─────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-3 gap-2.5 lg:gap-4">
+
+        <div class="card stat-card stat-card-green p-3 lg:p-5">
+            <div class="w-7 h-7 lg:w-9 lg:h-9 rounded-xl bg-green-50 flex items-center justify-center mb-2 lg:mb-3">
+                <i class="bx bx-trending-up text-green-500" style="font-size:16px;"></i>
+            </div>
+            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">Crédits</p>
+            <p class="font-bold text-green-600 tracking-tight leading-tight" style="font-size:clamp(.85rem,3vw,1.25rem);">+{{ month_credits|floatformat:0 }}</p>
+            <p class="text-gray-400 font-medium" style="font-size:10px;">{{ account.currency }}</p>
+        </div>
+
+        <div class="card stat-card stat-card-red p-3 lg:p-5">
+            <div class="w-7 h-7 lg:w-9 lg:h-9 rounded-xl bg-red-50 flex items-center justify-center mb-2 lg:mb-3">
+                <i class="bx bx-trending-down text-red-500" style="font-size:16px;"></i>
+            </div>
+            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">Débits</p>
+            <p class="font-bold text-red-600 tracking-tight leading-tight" style="font-size:clamp(.85rem,3vw,1.25rem);">−{{ month_debits|floatformat:0 }}</p>
+            <p class="text-gray-400 font-medium" style="font-size:10px;">{{ account.currency }}</p>
+        </div>
+
+        <div class="card stat-card stat-card-amber p-3 lg:p-5">
+            <div class="w-7 h-7 lg:w-9 lg:h-9 rounded-xl bg-amber-50 flex items-center justify-center mb-2 lg:mb-3">
+                <i class="bx bx-time-five text-amber-500" style="font-size:16px;"></i>
+            </div>
+            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">En attente</p>
+            <p class="font-bold text-amber-600 tracking-tight leading-tight" style="font-size:clamp(.85rem,3vw,1.25rem);">{{ pending_count }}</p>
+            <p class="text-gray-400 font-medium" style="font-size:10px;">opération{{ pending_count|pluralize }}</p>
+        </div>
+    </div>
+
+    <!-- ── Transactions récentes + Infos ─────────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
+
+        <div class="lg:col-span-2 card overflow-hidden">
+            <div class="flex items-center justify-between px-4 lg:px-6 py-4 border-b border-gray-50">
+                <h3 class="font-semibold text-gray-900 text-sm tracking-tight">Transactions récentes</h3>
+                <a href="{% url 'transactions' bank_slug=bank.slug %}" class="text-xs font-semibold flex items-center gap-0.5 hover:opacity-80" style="color:var(--p);">
+                    Tout voir <i class="bx bx-chevron-right" style="font-size:15px;"></i>
+                </a>
+            </div>
+            {% if recent_transactions %}
+            <div class="divide-y divide-gray-50">
+                {% for txn in recent_transactions %}
+                <div class="flex items-center gap-3 px-4 lg:px-5 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 {% if txn.is_debit %}bg-red-50{% else %}bg-green-50{% endif %}">
+                        <i class="bx {% if txn.is_debit %}bx-up-arrow-circle text-red-400{% else %}bx-down-arrow-circle text-green-400{% endif %}" style="font-size:18px;"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 truncate leading-tight">{{ txn.description|default:txn.get_transaction_type_display }}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ txn.created_at|date:"d/m/Y" }}</p>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <p class="text-sm font-bold {% if txn.is_debit %}text-red-600{% else %}text-green-600{% endif %} tracking-tight">
+                            {% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }}
+                        </p>
+                        <span class="badge {% if txn.status == 'validated' %}badge-validated{% elif txn.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}" style="font-size:9px;padding:1px 6px;">
+                            {% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-gray-300">
+                <i class="bx bx-receipt" style="font-size:44px;"></i>
+                <p class="text-sm mt-2 text-gray-400 font-medium">Aucune transaction</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Colonne droite — masquée sur mobile sauf infos essentielles -->
+        <div class="space-y-4">
+
+            <div class="card p-4 lg:p-6">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" style="letter-spacing:.1em;">Coordonnées bancaires</h3>
+                <div class="space-y-0">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-xs text-gray-400">Titulaire</span>
+                        <span class="text-xs font-semibold text-gray-800">{{ account.get_full_name }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-xs text-gray-400">Code banque</span>
+                        <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_code_banque }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-xs text-gray-400">Code guichet</span>
+                        <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_code_guichet }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-xs text-gray-400">N° de compte</span>
+                        <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_numero_compte }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-xs text-gray-400">Clé RIB</span>
+                        <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_cle }}</span>
+                    </div>
+                    <div class="py-2 border-b border-gray-50">
+                        <span class="text-xs text-gray-400 block mb-1">IBAN</span>
+                        <span class="font-mono text-xs font-bold text-gray-700 leading-relaxed">{{ account.iban_formatted }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-xs text-gray-400">BIC / SWIFT</span>
+                        <span class="font-mono text-xs font-bold text-gray-800">{{ bank.swift }}</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-2">
+                        <span class="text-xs text-gray-400">Devise</span>
+                        <span class="text-xs font-bold text-gray-800">{{ account.currency }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4 lg:p-6">
+                <div class="flex items-center gap-2.5 mb-3">
+                    <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background:color-mix(in srgb,var(--p) 10%,#f8faff);">
+                        <i class="bx bx-file" style="font-size:17px;color:var(--p);"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-sm leading-tight">Relevé PDF</h3>
+                        <p class="text-xs text-gray-400">Téléchargez vos opérations</p>
+                    </div>
+                </div>
+                <form method="get" action="{% url 'download_statement' bank_slug=bank.slug %}" class="space-y-2.5">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-gray-500 font-semibold mb-1">Du</label>
+                            <input type="date" name="date_from" class="w-full px-2.5 py-2 border border-gray-200 rounded-xl text-xs bg-gray-50" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-500 font-semibold mb-1">Au</label>
+                            <input type="date" name="date_to" class="w-full px-2.5 py-2 border border-gray-200 rounded-xl text-xs bg-gray-50" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                        <i class="bx bx-download" style="font-size:14px;"></i>Télécharger
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Notifications non lues ────────────────────────────────────────── -->
+    {% if unread_notifications %}
+    <div class="card p-4 lg:p-6">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-semibold text-gray-900 text-sm flex items-center gap-2">
+                Alertes
+                <span class="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold leading-none">{{ unread_notifications|length }}</span>
+            </h3>
+            <a href="{% url 'notifications' bank_slug=bank.slug %}" class="text-xs font-semibold flex items-center gap-0.5 hover:opacity-80" style="color:var(--p);">
+                Voir tout <i class="bx bx-chevron-right" style="font-size:15px;"></i>
+            </a>
+        </div>
+        <div class="space-y-2">
+            {% for notif in unread_notifications %}
+            <div class="flex items-start gap-3 p-3 rounded-xl border
+                {% if notif.notification_type == 'danger' %}bg-red-50 border-red-100
+                {% elif notif.notification_type == 'warning' %}bg-amber-50 border-amber-100
+                {% elif notif.notification_type == 'success' %}bg-green-50 border-green-100
+                {% else %}bg-blue-50 border-blue-100{% endif %}">
+                <i class="bx mt-0.5 flex-shrink-0
+                    {% if notif.notification_type == 'danger' %}bx-error-circle text-red-500
+                    {% elif notif.notification_type == 'warning' %}bx-error text-amber-500
+                    {% elif notif.notification_type == 'success' %}bx-check-circle text-green-500
+                    {% else %}bx-info-circle text-blue-500{% endif %}" style="font-size:16px;"></i>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 leading-tight">{{ notif.title }}</p>
+                    <p class="text-xs text-gray-600 mt-0.5 line-clamp-2 leading-relaxed">{{ notif.message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

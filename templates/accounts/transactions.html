@@ -1,0 +1,438 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Historique — {{ bank.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-4 lg:space-y-6">
+
+    <!-- Bouton retour (mobile) -->
+    <a href="{% url 'dashboard' bank_slug=bank.slug %}" class="lg:hidden inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors">
+        <i class="bx bx-arrow-back" style="font-size:18px;"></i> Retour
+    </a>
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <h1 class="text-xl lg:text-2xl font-bold text-gray-900">Historique</h1>
+            <p class="text-gray-400 text-xs lg:text-sm mt-0.5">{{ account.get_account_type_display }} · {{ account.account_id }}</p>
+        </div>
+        <button onclick="document.getElementById('statement-modal').classList.remove('hidden')"
+                class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 whitespace-nowrap">
+            <i class="bx bx-download" style="font-size:16px;"></i>
+            Télécharger un relevé
+        </button>
+    </div>
+
+    <!-- Filtres -->
+    <form method="get" class="card p-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div class="lg:col-span-2">
+                <input type="text" name="q" value="{{ query }}"
+                       placeholder="Référence, libellé, bénéficiaire…"
+                       class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50 focus:bg-white">
+            </div>
+            <div>
+                <select name="type" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50">
+                    <option value="">Tous les types</option>
+                    {% for val, label in type_choices %}
+                        <option value="{{ val }}" {% if txn_type == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <select name="status" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50">
+                    <option value="">Tous les statuts</option>
+                    {% for val, label in status_choices %}
+                        <option value="{{ val }}" {% if txn_status == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold">Filtrer</button>
+                {% if query or txn_type or txn_status or date_from or date_to %}
+                    <a href="{% url 'transactions' bank_slug=bank.slug %}"
+                       class="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50 flex items-center" title="Effacer">
+                        <i class="bx bx-x" style="font-size:18px;"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-3">
+            <div class="flex items-center gap-2">
+                <label class="text-xs text-gray-400 whitespace-nowrap font-medium">Du</label>
+                <input type="date" name="date_from" value="{{ date_from }}"
+                       class="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none bg-gray-50">
+            </div>
+            <div class="flex items-center gap-2">
+                <label class="text-xs text-gray-400 whitespace-nowrap font-medium">Au</label>
+                <input type="date" name="date_to" value="{{ date_to }}"
+                       class="flex-1 px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none bg-gray-50">
+            </div>
+        </div>
+        {% if query or txn_type or txn_status or date_from or date_to %}
+        <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
+            <span class="text-xs text-gray-400 self-center">Filtres :</span>
+            {% if query %}<span class="badge bg-blue-50 text-blue-700">{{ query }}</span>{% endif %}
+            {% if txn_type %}<span class="badge bg-purple-50 text-purple-700">{{ txn_type }}</span>{% endif %}
+            {% if txn_status %}<span class="badge bg-indigo-50 text-indigo-700">{{ txn_status }}</span>{% endif %}
+            {% if date_from %}<span class="badge bg-gray-100 text-gray-600">Depuis {{ date_from }}</span>{% endif %}
+            {% if date_to %}<span class="badge bg-gray-100 text-gray-600">Jusqu'au {{ date_to }}</span>{% endif %}
+        </div>
+        {% endif %}
+    </form>
+
+    <!-- Transactions -->
+    <div class="card overflow-hidden">
+        {% if transactions %}
+
+        <!-- Vue mobile : liste de cartes -->
+        <div class="md:hidden divide-y divide-gray-50">
+            {% for txn in transactions %}
+            <div class="flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors cursor-pointer active:bg-gray-100"
+                 onclick="openTxnDetail(this)"
+                 data-ref="{{ txn.reference }}"
+                 data-date="{{ txn.created_at|date:'d/m/Y à H:i' }}"
+                 data-validated="{{ txn.validated_at|date:'d/m/Y à H:i'|default:'—' }}"
+                 data-type="{{ txn.get_transaction_type_display }}"
+                 data-amount="{% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }} {{ txn.currency }}"
+                 data-debit="{% if txn.is_debit %}1{% else %}0{% endif %}"
+                 data-status="{{ txn.status }}"
+                 data-status-label="{% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}"
+                 data-description="{{ txn.description|default:'—' }}"
+                 data-beneficiary="{{ txn.get_beneficiary_display_name }}"
+                 data-iban="{{ txn.beneficiary_iban|default:'' }}{% if txn.beneficiary %}{{ txn.beneficiary.account_number }}{% endif %}"
+                 data-bank-name="{{ txn.beneficiary_bank|default:'' }}{% if txn.beneficiary %}{{ txn.beneficiary.bank_name }}{% endif %}"
+                 data-rejection="{{ txn.rejection_reason|default:'' }}"
+                 data-rejection-fee="{% if txn.rejection_fee %}{{ txn.rejection_fee|floatformat:2 }} {{ txn.currency }}{% endif %}"
+                 data-slip-url="{% url 'download_slip' bank_slug=bank.slug reference=txn.reference %}">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 {% if txn.is_debit %}bg-red-50{% else %}bg-green-50{% endif %}">
+                    <i class="bx {% if txn.is_debit %}bx-up-arrow-circle text-red-400{% else %}bx-down-arrow-circle text-green-400{% endif %}" style="font-size:20px;"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ txn.description|default:txn.get_transaction_type_display }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">{{ txn.created_at|date:"d/m/Y" }}{% if txn.get_beneficiary_display_name != '—' %} · {{ txn.get_beneficiary_display_name }}{% endif %}</p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                    <p class="text-sm font-bold {% if txn.is_debit %}text-red-600{% else %}text-green-600{% endif %} tracking-tight">
+                        {% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }}
+                    </p>
+                    <span class="badge {% if txn.status == 'validated' %}badge-validated{% elif txn.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}" style="font-size:9px;padding:1px 6px;">
+                        {% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Vue desktop : tableau -->
+        <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-100">
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Référence</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Description</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Type</th>
+                        <th class="px-5 py-3.5 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Montant</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Statut</th>
+                        <th class="px-5 py-3.5 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider">PDF</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for txn in transactions %}
+                    <tr class="hover:bg-gray-50/70 transition-colors cursor-pointer"
+                        onclick="openTxnDetail(this)"
+                        data-ref="{{ txn.reference }}"
+                        data-date="{{ txn.created_at|date:'d/m/Y à H:i' }}"
+                        data-validated="{{ txn.validated_at|date:'d/m/Y à H:i'|default:'—' }}"
+                        data-type="{{ txn.get_transaction_type_display }}"
+                        data-amount="{% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }} {{ txn.currency }}"
+                        data-debit="{% if txn.is_debit %}1{% else %}0{% endif %}"
+                        data-status="{{ txn.status }}"
+                        data-status-label="{% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours de validation{% else %}Rejeté{% endif %}"
+                        data-description="{{ txn.description|default:'—' }}"
+                        data-beneficiary="{{ txn.get_beneficiary_display_name }}"
+                        data-iban="{{ txn.beneficiary_iban|default:'' }}{% if txn.beneficiary %}{{ txn.beneficiary.account_number }}{% endif %}"
+                        data-bank-name="{{ txn.beneficiary_bank|default:'' }}{% if txn.beneficiary %}{{ txn.beneficiary.bank_name }}{% endif %}"
+                        data-rejection="{{ txn.rejection_reason|default:'' }}"
+                        data-rejection-fee="{% if txn.rejection_fee %}{{ txn.rejection_fee|floatformat:2 }} {{ txn.currency }}{% endif %}"
+                        data-slip-url="{% url 'download_slip' bank_slug=bank.slug reference=txn.reference %}">
+
+                        <td class="px-5 py-4 whitespace-nowrap" onclick="void(0)">
+                            <p class="text-xs font-medium text-gray-700">{{ txn.created_at|date:"d/m/Y" }}</p>
+                            <p class="text-xs text-gray-400">{{ txn.created_at|date:"H:i" }}</p>
+                        </td>
+                        <td class="px-5 py-4 whitespace-nowrap">
+                            <span class="font-mono text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-lg">{{ txn.reference }}</span>
+                        </td>
+                        <td class="px-5 py-4 max-w-xs">
+                            <p class="text-sm text-gray-800 truncate">{{ txn.description|default:txn.get_transaction_type_display }}</p>
+                            {% if txn.get_beneficiary_display_name != '—' %}
+                                <p class="text-xs text-gray-400 mt-0.5">→ {{ txn.get_beneficiary_display_name }}</p>
+                            {% endif %}
+                        </td>
+                        <td class="px-5 py-4 whitespace-nowrap hidden md:table-cell">
+                            <span class="badge text-xs
+                                {% if txn.transaction_type == 'transfer_out' %}bg-orange-50 text-orange-700
+                                {% elif txn.transaction_type == 'transfer_in' %}bg-blue-50 text-blue-700
+                                {% elif txn.transaction_type == 'deposit' %}bg-green-50 text-green-700
+                                {% elif txn.transaction_type == 'withdrawal' %}bg-red-50 text-red-700
+                                {% else %}bg-gray-100 text-gray-600{% endif %}"
+                                style="border-radius:8px;">
+                                {{ txn.get_transaction_type_display }}
+                            </span>
+                        </td>
+                        <td class="px-5 py-4 text-right whitespace-nowrap">
+                            <p class="font-bold {% if txn.is_debit %}text-red-600{% else %}text-green-600{% endif %}">
+                                {% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }}
+                            </p>
+                            <p class="text-xs text-gray-400">{{ txn.currency }}</p>
+                        </td>
+                        <td class="px-5 py-4 whitespace-nowrap">
+                            <span class="badge {% if txn.status == 'validated' %}badge-validated{% elif txn.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}">
+                                <i class="bx {% if txn.status == 'validated' %}bx-check-circle{% elif txn.status == 'pending' %}bx-time-five{% else %}bx-x-circle{% endif %}" style="font-size:12px;"></i>
+                                {% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-5 py-4 text-center" onclick="event.stopPropagation()">
+                            <a href="{% url 'download_slip' bank_slug=bank.slug reference=txn.reference %}"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+                               title="Télécharger le bordereau">
+                                <i class="bx bx-download" style="font-size:16px;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if transactions.paginator.num_pages > 1 %}
+        <div class="px-4 lg:px-5 py-4 border-t border-gray-100 flex items-center justify-between gap-3">
+            <p class="text-xs text-gray-400 hidden sm:block">
+                Page {{ transactions.number }}/{{ transactions.paginator.num_pages }} · {{ transactions.paginator.count }} résultat{{ transactions.paginator.count|pluralize }}
+            </p>
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+                {% if transactions.has_previous %}
+                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if txn_type %}type={{ txn_type }}&{% endif %}{% if txn_status %}status={{ txn_status }}&{% endif %}{% if date_from %}date_from={{ date_from }}&{% endif %}{% if date_to %}date_to={{ date_to }}&{% endif %}page={{ transactions.previous_page_number }}"
+                       class="page-btn page-btn-ghost">
+                        <i class="bx bx-arrow-back" style="font-size:15px;"></i> Précédent
+                    </a>
+                {% else %}
+                    <span class="page-btn page-btn-ghost opacity-40 cursor-not-allowed">
+                        <i class="bx bx-arrow-back" style="font-size:15px;"></i> Précédent
+                    </span>
+                {% endif %}
+                <span class="text-xs font-semibold text-gray-500">{{ transactions.number }} / {{ transactions.paginator.num_pages }}</span>
+                {% if transactions.has_next %}
+                    <a href="?{% if query %}q={{ query }}&{% endif %}{% if txn_type %}type={{ txn_type }}&{% endif %}{% if txn_status %}status={{ txn_status }}&{% endif %}{% if date_from %}date_from={{ date_from }}&{% endif %}{% if date_to %}date_to={{ date_to }}&{% endif %}page={{ transactions.next_page_number }}"
+                       class="page-btn page-btn-active">
+                        Suivant <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
+                    </a>
+                {% else %}
+                    <span class="page-btn page-btn-ghost opacity-40 cursor-not-allowed">
+                        Suivant <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center py-16 text-gray-400">
+            <i class="bx bx-receipt" style="font-size:56px;opacity:.2;"></i>
+            <p class="text-sm font-medium mt-2">Aucune transaction trouvée</p>
+            {% if query or txn_type or txn_status or date_from or date_to %}
+                <a href="{% url 'transactions' bank_slug=bank.slug %}" class="mt-3 inline-block text-xs font-semibold hover:underline" style="color:var(--p);">Effacer les filtres</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modale détail transaction -->
+<div id="txn-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,.55);backdrop-filter:blur(4px);" onclick="closeTxnModal(event)">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden" onclick="event.stopPropagation()">
+        <!-- En-tête -->
+        <div class="px-6 py-5 flex items-start justify-between border-b border-gray-100">
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Détail de l'opération</p>
+                <p class="font-mono font-bold text-gray-900" id="md-ref"></p>
+            </div>
+            <button onclick="document.getElementById('txn-modal').classList.add('hidden')"
+                    class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">
+                <i class="bx bx-x" style="font-size:22px;"></i>
+            </button>
+        </div>
+
+        <!-- Corps -->
+        <div class="px-6 py-5 space-y-4">
+            <!-- Montant + statut -->
+            <div class="flex items-center justify-between">
+                <p class="text-3xl font-bold" id="md-amount"></p>
+                <span class="badge" id="md-status-badge"></span>
+            </div>
+
+            <!-- Grille infos -->
+            <div class="bg-gray-50 rounded-xl divide-y divide-gray-100">
+                <div class="flex justify-between px-4 py-3">
+                    <span class="text-xs text-gray-400 font-medium">Type</span>
+                    <span class="text-xs font-semibold text-gray-800" id="md-type"></span>
+                </div>
+                <div class="flex justify-between px-4 py-3">
+                    <span class="text-xs text-gray-400 font-medium">Date d'initiation</span>
+                    <span class="text-xs font-semibold text-gray-800" id="md-date"></span>
+                </div>
+                <div class="flex justify-between px-4 py-3" id="md-validated-row">
+                    <span class="text-xs text-gray-400 font-medium" id="md-validated-label">Date de validation</span>
+                    <span class="text-xs font-semibold text-gray-800" id="md-validated"></span>
+                </div>
+                <div class="flex justify-between px-4 py-3" id="md-desc-row">
+                    <span class="text-xs text-gray-400 font-medium">Libellé</span>
+                    <span class="text-xs font-semibold text-gray-800 text-right max-w-48 truncate" id="md-description"></span>
+                </div>
+            </div>
+
+            <!-- Bénéficiaire (si présent) -->
+            <div id="md-bene-block" class="hidden bg-gray-50 rounded-xl divide-y divide-gray-100">
+                <div class="flex justify-between px-4 py-3">
+                    <span class="text-xs text-gray-400 font-medium">Bénéficiaire</span>
+                    <span class="text-xs font-semibold text-gray-800" id="md-bene"></span>
+                </div>
+                <div id="md-iban-row" class="flex justify-between px-4 py-3">
+                    <span class="text-xs text-gray-400 font-medium">IBAN</span>
+                    <span class="font-mono text-xs text-gray-700" id="md-iban"></span>
+                </div>
+                <div id="md-bank-row" class="flex justify-between px-4 py-3">
+                    <span class="text-xs text-gray-400 font-medium">Banque</span>
+                    <span class="text-xs font-semibold text-gray-800" id="md-bank"></span>
+                </div>
+            </div>
+
+            <!-- Motif de rejet (si rejeté) -->
+            <div id="md-rejection-block" class="hidden bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                <p class="text-xs font-semibold text-red-700 mb-1 flex items-center gap-1">
+                    <i class="bx bx-x-circle" style="font-size:14px;"></i>Motif du rejet
+                </p>
+                <p class="text-sm text-red-600" id="md-rejection"></p>
+                <p class="text-xs text-red-400 mt-1 hidden" id="md-fee-line"></p>
+            </div>
+        </div>
+
+        <!-- Pied -->
+        <div class="px-6 pb-5 flex gap-3">
+            <a href="#" id="md-slip-btn"
+               class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
+                <i class="bx bx-download" style="font-size:16px;"></i>Télécharger le bordereau
+            </a>
+            <button onclick="document.getElementById('txn-modal').classList.add('hidden')"
+                    class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
+                Fermer
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modale relevé -->
+<div id="statement-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,.55);backdrop-filter:blur(4px);" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900">Télécharger un relevé</h3>
+                <p class="text-sm text-gray-400 mt-0.5">Sélectionnez la période</p>
+            </div>
+            <button onclick="document.getElementById('statement-modal').classList.add('hidden')" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl">
+                <i class="bx bx-x" style="font-size:22px;"></i>
+            </button>
+        </div>
+        <form method="get" action="{% url 'download_statement' bank_slug=bank.slug %}" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Du</label>
+                <input type="date" name="date_from" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Au</label>
+                <input type="date" name="date_to" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none" required>
+            </div>
+            <div class="flex gap-3">
+                <button type="button" onclick="document.getElementById('statement-modal').classList.add('hidden')"
+                        class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
+                <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold">Télécharger</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function openTxnDetail(row) {
+    const d = row.dataset;
+    document.getElementById('md-ref').textContent = d.ref;
+    const amountEl = document.getElementById('md-amount');
+    amountEl.textContent = d.amount;
+    amountEl.className = 'text-3xl font-bold ' + (d.debit === '1' ? 'text-red-600' : 'text-green-600');
+    document.getElementById('md-type').textContent = d.type;
+    document.getElementById('md-date').textContent = d.date;
+    document.getElementById('md-validated').textContent = d.validated;
+    const validatedLabel = document.getElementById('md-validated-label');
+    validatedLabel.textContent = d.status === 'rejected' ? 'Date de rejet' : 'Date de validation';
+    const validatedRow = document.getElementById('md-validated-row');
+    validatedRow.style.display = d.validated !== '—' ? 'flex' : 'none';
+    document.getElementById('md-description').textContent = d.description;
+    const descRow = document.getElementById('md-desc-row');
+    descRow.style.display = d.description !== '—' ? 'flex' : 'none';
+
+    // Statut badge
+    const badge = document.getElementById('md-status-badge');
+    const statusMap = {
+        'validated': ['badge-validated', 'bx-check-circle', 'Validé'],
+        'pending':   ['badge-pending',   'bx-time-five',    'En cours de validation'],
+        'rejected':  ['badge-rejected',  'bx-x-circle',     'Rejeté'],
+    };
+    const [cls, icon, label] = statusMap[d.status] || ['', 'bx-info-circle', d.statusLabel];
+    badge.className = 'badge ' + cls;
+    badge.innerHTML = `<i class="bx ${icon}" style="font-size:12px;"></i> ${label}`;
+
+    // Bénéficiaire
+    const beneBlock = document.getElementById('md-bene-block');
+    if (d.beneficiary && d.beneficiary !== '—') {
+        beneBlock.classList.remove('hidden');
+        document.getElementById('md-bene').textContent = d.beneficiary;
+        const ibanRow = document.getElementById('md-iban-row');
+        const bankRow = document.getElementById('md-bank-row');
+        document.getElementById('md-iban').textContent = d.iban || '—';
+        ibanRow.style.display = d.iban ? 'flex' : 'none';
+        document.getElementById('md-bank').textContent = d.bankName || '—';
+        bankRow.style.display = d.bankName ? 'flex' : 'none';
+    } else {
+        beneBlock.classList.add('hidden');
+    }
+
+    // Rejet
+    const rejBlock = document.getElementById('md-rejection-block');
+    if (d.rejection) {
+        rejBlock.classList.remove('hidden');
+        document.getElementById('md-rejection').textContent = d.rejection;
+        const feeLine = document.getElementById('md-fee-line');
+        if (d.rejectionFee) {
+            feeLine.textContent = 'Frais de redirection : ' + d.rejectionFee;
+            feeLine.classList.remove('hidden');
+        } else {
+            feeLine.classList.add('hidden');
+        }
+    } else {
+        rejBlock.classList.add('hidden');
+    }
+
+    document.getElementById('md-slip-btn').href = d.slipUrl;
+    document.getElementById('txn-modal').classList.remove('hidden');
+}
+
+function closeTxnModal(e) {
+    if (e.target === document.getElementById('txn-modal')) {
+        document.getElementById('txn-modal').classList.add('hidden');
+    }
+}
+</script>
+{% endblock %}

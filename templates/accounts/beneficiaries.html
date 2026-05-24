@@ -1,0 +1,173 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Bénéficiaires — {{ bank.name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-4 lg:space-y-6">
+
+    <a href="{% url 'dashboard' bank_slug=bank.slug %}" class="lg:hidden inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors">
+        <i class="bx bx-arrow-back" style="font-size:18px;"></i> Retour
+    </a>
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-xl lg:text-2xl font-bold text-gray-900">Mes bénéficiaires</h1>
+            <p class="text-gray-400 text-sm mt-0.5">Gérez vos comptes de destination</p>
+        </div>
+        <button onclick="openAddModal()"
+                class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Ajouter
+        </button>
+    </div>
+
+    {% if beneficiaries %}
+    <div class="space-y-3">
+        {% for b in beneficiaries %}
+        <div class="card p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
+            <!-- Avatar initiales -->
+            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-base flex-shrink-0" style="background:var(--p);">
+                {{ b.first_name|first|upper }}{{ b.last_name|first|upper }}
+            </div>
+
+            <!-- Infos -->
+            <div class="flex-1 min-w-0">
+                <p class="font-semibold text-gray-900">{{ b.get_full_name }}</p>
+                <p class="font-mono text-xs text-gray-400 truncate mt-0.5">{{ b.account_number }}</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <span class="text-xs text-gray-500 font-medium">{{ b.bank_name }}</span>
+                    {% if b.bank_swift %}
+                        <span class="text-gray-300">·</span>
+                        <span class="font-mono text-xs text-gray-400">{{ b.bank_swift }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Email -->
+            {% if b.email %}
+            <div class="hidden sm:block text-xs text-gray-400 truncate max-w-32">{{ b.email }}</div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="{% url 'transfer' bank_slug=bank.slug %}?beneficiary={{ b.pk }}"
+                   class="btn-primary px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                    Virer
+                </a>
+                <form method="post" action="{% url 'delete_beneficiary' bank_slug=bank.slug pk=b.pk %}"
+                      onsubmit="return confirm('Supprimer {{ b.get_full_name }} de vos bénéficiaires ?')">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Supprimer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="card p-12 text-center text-gray-400">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-gray-100">
+            <svg class="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <p class="text-sm font-medium text-gray-600">Aucun bénéficiaire enregistré</p>
+        <p class="text-xs mt-1">Ajoutez un bénéficiaire pour commencer à effectuer des virements</p>
+        <button onclick="openAddModal()" class="btn-primary mt-5 px-5 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Ajouter mon premier bénéficiaire
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modale ajout bénéficiaire -->
+<div id="add-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,.55);backdrop-filter:blur(4px);">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="text-lg font-bold text-gray-900">Ajouter un bénéficiaire</h3>
+                <p class="text-sm text-gray-400 mt-0.5">Renseignez les coordonnées bancaires</p>
+            </div>
+            <button onclick="closeAddModal()" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <form method="post" class="space-y-4" novalidate>
+            {% csrf_token %}
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1.5">Prénom *</label>
+                    <input type="text" name="first_name"
+                           class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 bg-gray-50 focus:bg-white"
+                           required>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nom *</label>
+                    <input type="text" name="last_name"
+                           class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 bg-gray-50 focus:bg-white"
+                           required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">IBAN / Numéro de compte *</label>
+                <input type="text" name="account_number"
+                       placeholder="FR76 3000 1007 9412 3456 7890 185"
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono focus:outline-none focus:border-gray-400 bg-gray-50 focus:bg-white"
+                       required>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Banque du bénéficiaire *</label>
+                <input type="text" name="bank_name"
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 bg-gray-50 focus:bg-white"
+                       required>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">BIC / SWIFT</label>
+                <input type="text" name="bank_swift"
+                       placeholder="BNPAFRPPXXX"
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono uppercase focus:outline-none focus:border-gray-400 bg-gray-50 focus:bg-white">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 mb-1.5">Email du bénéficiaire</label>
+                <input type="email" name="email"
+                       placeholder="prenom@exemple.com"
+                       class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-gray-400 bg-gray-50 focus:bg-white">
+                <p class="text-xs text-gray-400 mt-1">Utilisé pour envoyer les confirmations de virement</p>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="closeAddModal()"
+                        class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    Annuler
+                </button>
+                <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openAddModal() {
+        document.getElementById('add-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeAddModal() {
+        document.getElementById('add-modal').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    document.getElementById('add-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeAddModal();
+    });
+</script>
+{% endblock %}

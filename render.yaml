@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: bcg-banking-platform
+    runtime: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py migrate --noinput
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn banking_platform.wsgi:application --workers 2 --timeout 120 --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "ubsite-fin.com,www.ubsite-fin.com"
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: POSTMARK_API_KEY
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        sync: false
+      - key: SITE_URL
+        sync: false
+      - key: FIELD_ENCRYPTION_KEY
+        sync: false

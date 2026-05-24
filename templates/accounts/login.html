@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion — {{ bank.name }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --p:  {{ bank.color_primary }};
+            --s:  {{ bank.color_secondary }};
+            --pt: {{ bank.color_text_on_primary }};
+            --bg: {{ bank.color_background }};
+        }
+        * { box-sizing: border-box; }
+        body { background: var(--bg); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+        .btn-primary { background: var(--p); color: var(--pt); border: none; cursor: pointer; transition: opacity .15s, transform .1s; }
+        .btn-primary:hover { opacity: .88; }
+        .btn-primary:active { transform: scale(.98); }
+        .btn-primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+        .focus-ring:focus { outline: 2px solid var(--p); outline-offset: 0; border-color: transparent; }
+
+        .panel-left {
+            background: var(--p);
+        }
+
+        .feature-item {
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: background .2s;
+        }
+        .feature-item:hover { background: rgba(255,255,255,.15); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-up { animation: fadeUp .45s ease both; }
+        .delay-1 { animation-delay: .08s; }
+        .delay-2 { animation-delay: .16s; }
+        .delay-3 { animation-delay: .24s; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { animation: spin .7s linear infinite; }
+
+        input[type="password"], input[type="text"][data-pwd] {
+            letter-spacing: .03em;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex">
+
+    <!-- Panneau gauche -->
+    <div class="hidden lg:flex lg:w-[45%] panel-left flex-col justify-between p-12 relative overflow-hidden">
+        <!-- Cercles décoratifs -->
+        <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full" style="background:rgba(255,255,255,.06);"></div>
+        <div class="absolute bottom-0 -left-16 w-96 h-96 rounded-full" style="background:rgba(255,255,255,.05);"></div>
+        <div class="absolute top-1/2 right-8 w-48 h-48 rounded-full" style="background:rgba(255,255,255,.04);"></div>
+
+        <div class="relative z-10">
+            {% if bank.logo %}
+                <img src="{{ bank.logo.url }}" alt="{{ bank.name }}" class="h-12 object-contain mb-8" style="filter:brightness(0) invert(1);">
+            {% else %}
+                <div class="text-white font-bold text-2xl mb-8">{{ bank.name }}</div>
+            {% endif %}
+            <h1 class="text-4xl font-bold leading-tight mb-3" style="color:var(--pt);">
+                Votre banque,<br>à portée de main.
+            </h1>
+            <p class="text-base opacity-65" style="color:var(--pt);">
+                {% if bank.tagline %}{{ bank.tagline }}{% else %}Gérez votre compte en toute sécurité, où que vous soyez.{% endif %}
+            </p>
+        </div>
+
+        <div class="relative z-10 space-y-3">
+            <div class="feature-item">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15);">
+                    <svg class="w-4.5 h-4.5" style="width:18px;height:18px;" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+                <div>
+                    <p class="text-white font-semibold text-sm">Connexion sécurisée</p>
+                    <p class="text-xs opacity-55" style="color:var(--pt);">Chiffrement TLS · Session protégée</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15);">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <div>
+                    <p class="text-white font-semibold text-sm">Établissement agréé</p>
+                    <p class="text-xs opacity-55" style="color:var(--pt);">Supervisé et certifié</p>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15);">
+                    <svg style="width:18px;height:18px;" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <p class="text-white font-semibold text-sm">Virements rapides</p>
+                    <p class="text-xs opacity-55" style="color:var(--pt);">Traitement sous 48h ouvrées</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="relative z-10 text-xs opacity-30" style="color:var(--pt);">© {{ bank.name }} · Tous droits réservés</p>
+    </div>
+
+    <!-- Panneau droit (formulaire) -->
+    <div class="flex-1 flex items-center justify-center p-6 lg:p-12">
+        <div class="w-full max-w-md">
+
+            <!-- Logo mobile -->
+            <div class="lg:hidden text-center mb-8 animate-up">
+                {% if bank.logo %}
+                    <img src="{{ bank.logo.url }}" alt="{{ bank.name }}" class="h-11 object-contain mx-auto mb-3">
+                {% endif %}
+                <h1 class="text-xl font-bold" style="color:var(--p);">{{ bank.name }}</h1>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden animate-up delay-1">
+                <!-- En-tête de la carte -->
+                <div class="px-8 pt-8 pb-6 border-b border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-900">Bienvenue</h2>
+                    <p class="text-gray-400 text-sm mt-1">Connectez-vous à votre espace bancaire</p>
+                </div>
+
+                <div class="px-8 py-7">
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="mb-5 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium border
+                            {% if message.tags == 'error' %}bg-red-50 text-red-700 border-red-100
+                            {% elif message.tags == 'warning' %}bg-amber-50 text-amber-700 border-amber-100
+                            {% else %}bg-blue-50 text-blue-700 border-blue-100{% endif %}">
+                            <i class="bx flex-shrink-0 text-lg
+                                {% if message.tags == 'error' %}bx-x-circle
+                                {% elif message.tags == 'warning' %}bx-error
+                                {% else %}bx-info-circle{% endif %}"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="login-form" class="space-y-5" novalidate>
+                        {% csrf_token %}
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Identifiant</label>
+                            <input
+                                type="text"
+                                name="account_id"
+                                id="account_id"
+                                placeholder="Ex : FR1234567"
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus-ring transition-colors bg-gray-50 focus:bg-white font-mono tracking-wide"
+                                required
+                                autocomplete="username"
+                                autocapitalize="characters"
+                                spellcheck="false"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mot de passe</label>
+                            <div class="relative">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password-field"
+                                    placeholder="••••••••••"
+                                    class="w-full px-4 py-3 pr-12 border border-gray-200 rounded-xl text-sm focus-ring transition-colors bg-gray-50 focus:bg-white"
+                                    required
+                                    autocomplete="current-password"
+                                >
+                                <button
+                                    type="button"
+                                    id="toggle-pwd"
+                                    onclick="togglePassword()"
+                                    class="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
+                                    aria-label="Afficher/masquer le mot de passe"
+                                >
+                                    <svg id="eye-open" class="w-4.5 h-4.5" style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    <svg id="eye-closed" class="hidden" style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            id="submit-btn"
+                            class="w-full btn-primary py-3.5 rounded-xl font-semibold text-base flex items-center justify-center gap-2"
+                        >
+                            <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            <span id="btn-label">Se connecter</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Pied de carte -->
+                <div class="px-8 pb-6 pt-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
+                    <p class="text-xs text-gray-400 text-center leading-relaxed">
+                        Vos identifiants vous ont été communiqués par votre gestionnaire.<br>
+                        Pour toute assistance, contactez <strong class="text-gray-600">{{ bank.name }}</strong>
+                        {% if bank.phone %} au <strong class="text-gray-600">{{ bank.phone }}</strong>{% endif %}
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const field = document.getElementById('password-field');
+            const eyeOpen = document.getElementById('eye-open');
+            const eyeClosed = document.getElementById('eye-closed');
+            const isPassword = field.type === 'password';
+            field.type = isPassword ? 'text' : 'password';
+            eyeOpen.classList.toggle('hidden', isPassword);
+            eyeClosed.classList.toggle('hidden', !isPassword);
+        }
+
+        document.getElementById('login-form').addEventListener('submit', function() {
+            const btn = document.getElementById('submit-btn');
+            const label = document.getElementById('btn-label');
+            const icon = document.getElementById('btn-icon');
+            btn.disabled = true;
+            label.textContent = 'Connexion…';
+            icon.innerHTML = '<circle cx="12" cy="12" r="10" stroke-width="3" stroke="rgba(255,255,255,.3)" fill="none"/><path d="M12 2a10 10 0 0110 10" stroke-width="3" fill="none" class="spinner"/>';
+            icon.classList.add('spinner');
+        });
+
+        // Auto-uppercase identifiant
+        document.getElementById('account_id').addEventListener('input', function() {
+            const pos = this.selectionStart;
+            this.value = this.value.toUpperCase();
+            this.setSelectionRange(pos, pos);
+        });
+    </script>
+</body>
+</html>
