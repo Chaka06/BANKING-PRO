@@ -102,7 +102,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # ── Storage (Supabase REST API — pas de S3) ───────────────────────────────
-_supabase_ref = 'xdlaoyyokxsetknjvaru'
+_supabase_url = os.getenv('SUPABASE_URL', 'https://kcydvfkarrqnkvthympe.supabase.co')
 _supabase_service_key = os.getenv('SUPABASE_SERVICE_KEY', '')
 _bucket = os.getenv('STORAGE_BUCKET_NAME', 'media')
 
@@ -115,7 +115,7 @@ if _supabase_service_key:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
-    MEDIA_URL = f"https://{_supabase_ref}.supabase.co/storage/v1/object/public/{_bucket}/"
+    MEDIA_URL = f"{_supabase_url}/storage/v1/object/public/{_bucket}/"
 else:
     STORAGES = {
         "default": {
