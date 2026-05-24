@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
+    'storages',
     'banks',
     'accounts',
     'transactions',
@@ -96,25 +97,44 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ── Storage fichiers media — Supabase Storage (S3) en production ──────────
+# ── Storage (Django 6 — dict STORAGES) ────────────────────────────────────
 _supabase_ref = 'xdlaoyyokxsetknjvaru'
 _storage_key = os.getenv('STORAGE_ACCESS_KEY', '')
-if not DEBUG and _storage_key:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    AWS_ACCESS_KEY_ID = _storage_key
-    AWS_SECRET_ACCESS_KEY = os.getenv('STORAGE_SECRET_KEY', '')
-    AWS_STORAGE_BUCKET_NAME = os.getenv('STORAGE_BUCKET_NAME', 'media')
-    AWS_S3_ENDPOINT_URL = f'https://{_supabase_ref}.supabase.co/storage/v1/s3'
-    AWS_S3_REGION_NAME = 'eu-west-1'
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_QUERYSTRING_AUTH = False
-    MEDIA_URL = f'https://{_supabase_ref}.supabase.co/storage/v1/object/public/{os.getenv("STORAGE_BUCKET_NAME", "media")}/'
+_bucket = os.getenv('STORAGE_BUCKET_NAME', 'media')
+
+if _storage_key:
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "OPTIONS": {
+                "access_key": _storage_key,
+                "secret_key": os.getenv('STORAGE_SECRET_KEY', ''),
+                "bucket_name": _bucket,
+                "endpoint_url": f"https://{_supabase_ref}.supabase.co/storage/v1/s3",
+                "region_name": "eu-west-1",
+                "default_acl": "public-read",
+                "file_overwrite": False,
+                "querystring_auth": False,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+    MEDIA_URL = f"https://{_supabase_ref}.supabase.co/storage/v1/object/public/{_bucket}/"
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
