@@ -73,7 +73,8 @@ DATABASES = {
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
         'OPTIONS': {'sslmode': 'require'},
-        'CONN_MAX_AGE': 60,
+        'CONN_MAX_AGE': 0,                    # Serverless : pas de connexions persistantes
+        'DISABLE_SERVER_SIDE_CURSORS': True,  # Requis pour le pooler Supabase (mode transaction)
     }
 }
 
