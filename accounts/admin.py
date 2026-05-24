@@ -78,7 +78,8 @@ class BankAccountAdmin(BankScopedAdmin):
             'fields': ('first_name', 'last_name', 'email', 'phone', 'country', 'address', 'birth_date'),
         }),
         ('Compte', {
-            'fields': ('currency', 'balance', 'status'),
+            'fields': ('balance', 'status'),
+            'description': 'La devise est automatiquement déterminée par le pays sélectionné.',
         }),
         ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee'),

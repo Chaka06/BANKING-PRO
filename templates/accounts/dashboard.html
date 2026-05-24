@@ -76,7 +76,7 @@
 
                 <div class="absolute top-4 right-4 lg:top-6 lg:right-6">
                     {% if bank.logo %}
-                        <img src="{{ bank.logo.url }}" alt="{{ bank.name }}" class="h-6 lg:h-8 object-contain" style="filter:brightness(0) invert(1);opacity:.85;">
+                        <img src="{{ bank.logo.url }}" alt="{{ bank.name }}" class="h-7 lg:h-9 object-contain" style="background:rgba(255,255,255,.15);border-radius:6px;padding:4px 8px;backdrop-filter:blur(4px);">
                     {% else %}
                         <span class="font-bold text-xs lg:text-sm tracking-wide" style="color:var(--ct);opacity:.85;">{{ bank.name }}</span>
                     {% endif %}
