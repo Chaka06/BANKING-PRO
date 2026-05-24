@@ -5,7 +5,7 @@ __pycache__/
 .env
 *.sqlite3
 media/
-staticfiles/
+# staticfiles/ inclus dans le repo pour Vercel
 .DS_Store
 *.log
 .idea/
