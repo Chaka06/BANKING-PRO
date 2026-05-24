@@ -19,6 +19,9 @@ _vercel_url = os.getenv('VERCEL_URL')
 if _vercel_url and _vercel_url not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_vercel_url)
 
+# Accepte tous les sous-domaines *.vercel.app pour les previews
+ALLOWED_HOSTS += [h for h in ['.vercel.app'] if h not in ALLOWED_HOSTS]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
