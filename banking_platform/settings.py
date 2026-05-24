@@ -109,7 +109,7 @@ _bucket = os.getenv('STORAGE_BUCKET_NAME', 'media')
 if _storage_key:
     STORAGES = {
         "default": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+            "BACKEND": "banking_platform.storage.SupabaseS3Storage",
             "OPTIONS": {
                 "access_key": _storage_key,
                 "secret_key": os.getenv('STORAGE_SECRET_KEY', ''),
