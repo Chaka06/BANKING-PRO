@@ -122,6 +122,16 @@ class BankAccountAdmin(BankScopedAdmin):
                 'credentials_display', 'login_url_display',
                 'created_at', 'updated_at']
 
+    def get_form(self, request, obj=None, **kwargs):
+        from django import forms
+        from .constants import COUNTRY_LIST
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['country'] = forms.ChoiceField(
+            choices=[(c, c) for c in COUNTRY_LIST],
+            label='Pays',
+        )
+        return form
+
     # ── Display helpers ───────────────────────────────────────────────────
 
     def get_full_name(self, obj):
