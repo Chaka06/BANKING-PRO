@@ -101,25 +101,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ── Storage (Django 6 — dict STORAGES) ────────────────────────────────────
+# ── Storage (Supabase REST API — pas de S3) ───────────────────────────────
 _supabase_ref = 'xdlaoyyokxsetknjvaru'
-_storage_key = os.getenv('STORAGE_ACCESS_KEY', '')
+_supabase_service_key = os.getenv('SUPABASE_SERVICE_KEY', '')
 _bucket = os.getenv('STORAGE_BUCKET_NAME', 'media')
 
-if _storage_key:
+if _supabase_service_key:
     STORAGES = {
         "default": {
-            "BACKEND": "banking_platform.storage.SupabaseS3Storage",
-            "OPTIONS": {
-                "access_key": _storage_key,
-                "secret_key": os.getenv('STORAGE_SECRET_KEY', ''),
-                "bucket_name": _bucket,
-                "endpoint_url": f"https://{_supabase_ref}.supabase.co/storage/v1/s3",
-                "region_name": "eu-west-1",
-                "default_acl": "public-read",
-                "file_overwrite": False,
-                "querystring_auth": False,
-            },
+            "BACKEND": "banking_platform.storage.SupabaseStorage",
         },
         "staticfiles": {
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
