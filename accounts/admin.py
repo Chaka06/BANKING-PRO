@@ -139,7 +139,17 @@ class BankAccountAdmin(BankScopedAdmin):
         from django import forms
         from decimal import Decimal
         from .constants import COUNTRY_LIST
+
+        # balance_epargne n'est pas un champ du modèle — on l'exclut de modelform_factory
+        # puis on l'injecte manuellement dans base_fields
+        if obj is None and 'fields' not in kwargs:
+            model_fields = []
+            for _, opts in self._ADD_FIELDSETS:
+                model_fields.extend(f for f in opts.get('fields', []) if f != 'balance_epargne')
+            kwargs['fields'] = model_fields
+
         form = super().get_form(request, obj, **kwargs)
+
         form.base_fields['country'] = forms.ChoiceField(
             choices=[(c, c) for c in COUNTRY_LIST],
             label='Pays',
