@@ -19,6 +19,8 @@ from reportlab.platypus import (
     TableStyle, KeepTogether,
 )
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+from reportlab.lib.utils import ImageReader
+import requests as _requests
 
 logger = logging.getLogger('banking.utils')
 
@@ -568,6 +570,27 @@ def _draw_stamp(canvas, bank, cx, cy, radius=15*mm):
     canvas.restoreState()
 
 
+def _get_logo_reader(bank):
+    """Retourne un ImageReader ReportLab pour le logo, via URL Supabase ou chemin local."""
+    if not bank.logo:
+        return None
+    try:
+        raw = bank.logo.url
+        if raw.startswith('http'):
+            resp = _requests.get(raw, timeout=5)
+            if resp.status_code == 200:
+                return ImageReader(io.BytesIO(resp.content))
+    except Exception:
+        pass
+    try:
+        path = bank.logo.path
+        if os.path.exists(path):
+            return path
+    except Exception:
+        pass
+    return None
+
+
 def _page_bg(canvas, doc, bank, doc_type):
     """Header (logo, bank name, rule, doc type, date) + footer (HR, info, stamp) on every page."""
     PAGE_W, PAGE_H = A4
@@ -582,16 +605,15 @@ def _page_bg(canvas, doc, bank, doc_type):
     canvas.setFillColorRGB(*light)
     canvas.rect(0, PAGE_H - 43*mm, PAGE_W, 43*mm, stroke=0, fill=1)
 
-    # Logo — top left
+    # Logo — top left (URL Supabase ou fichier local)
     logo_drawn = False
-    if bank.logo:
+    logo_img = _get_logo_reader(bank)
+    if logo_img:
         try:
-            logo_path = bank.logo.path
-            if os.path.exists(logo_path):
-                canvas.drawImage(logo_path, ML, PAGE_H - 6*mm - 16*mm,
-                                 width=48*mm, height=16*mm,
-                                 preserveAspectRatio=True, anchor='nw', mask='auto')
-                logo_drawn = True
+            canvas.drawImage(logo_img, ML, PAGE_H - 6*mm - 16*mm,
+                             width=48*mm, height=16*mm,
+                             preserveAspectRatio=True, anchor='nw', mask='auto')
+            logo_drawn = True
         except Exception:
             pass
 
