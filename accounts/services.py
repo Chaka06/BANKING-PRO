@@ -110,22 +110,33 @@ class AccountService:
 
         plain_pwd = None
         try:
-            # Utilisateur existant → compte supplémentaire (même base d'identifiant)
+            # Utilisateur existant
             user = BankUser.objects.get(email=data['email'])
-            is_primary = False
-            primary = user.bank_accounts.filter(bank=bank, is_primary=True).first()
-            if primary:
-                base = primary.account_id[:-2]
-                # Réutilise code banque, code guichet et clé RIB du compte primaire
-                # Seul le numéro de compte (11 chiffres) est régénéré
-                rib = generate_rib_for_secondary(primary.rib)
-            else:
+            existing_in_bank = user.bank_accounts.filter(bank=bank).count()
+            is_primary = existing_in_bank == 0  # premier compte dans cette banque
+
+            if is_primary:
+                # Premier compte dans cette banque → génère de nouvelles credentials
                 base = generate_base_id(country)
+                account_id = f"{base}01"
                 rib = generate_rib(country, bank.bank_code)
-            suffix = user.bank_accounts.filter(bank=bank).count() + 1
-            account_id = f"{base}{str(suffix).zfill(2)}"
-            if BankAccount.objects.filter(account_id=account_id).exists():
-                raise RuntimeError(f"L'identifiant {account_id} est déjà utilisé.")
+                plain_pwd = generate_password()
+                user.set_password(plain_pwd)
+                user.save(update_fields=['password'])
+            else:
+                # Compte supplémentaire (épargne) — même utilisateur, même banque
+                primary = user.bank_accounts.filter(bank=bank, is_primary=True).first()
+                if primary:
+                    base = primary.account_id[:-2]
+                    rib = generate_rib_for_secondary(primary.rib)
+                else:
+                    base = generate_base_id(country)
+                    rib = generate_rib(country, bank.bank_code)
+                suffix = existing_in_bank + 1
+                account_id = f"{base}{str(suffix).zfill(2)}"
+                if BankAccount.objects.filter(account_id=account_id).exists():
+                    raise RuntimeError(f"L'identifiant {account_id} est déjà utilisé.")
+
         except BankUser.DoesNotExist:
             # Nouvel utilisateur → tout généré de zéro
             base = generate_base_id(country)

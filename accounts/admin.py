@@ -64,11 +64,15 @@ class BankAccountAdmin(BankScopedAdmin):
         'currency', 'balance_display', 'status_badge',
         'manager_name', 'created_at',
     ]
-    list_filter = ['bank', 'status', 'country', 'currency', 'account_type']
+    list_filter = ['bank', 'status', 'country', 'currency']
     list_select_related = ['bank', 'user']
     search_fields = ['first_name', 'last_name', 'account_id', 'rib', 'email', 'phone']
     ordering = ['-created_at']
     date_hierarchy = 'created_at'
+
+    def get_queryset(self, request):
+        # Un seul portefeuille par client dans la liste → affiche uniquement le compte courant (primaire)
+        return super().get_queryset(request).filter(is_primary=True)
 
     _ADD_FIELDSETS = (
         ('Banque & Gestionnaire', {
@@ -100,10 +104,14 @@ class BankAccountAdmin(BankScopedAdmin):
         ('Informations personnelles', {
             'fields': ('first_name', 'last_name', 'email', 'phone', 'country', 'address', 'birth_date'),
         }),
-        ('Compte', {
+        ('Compte Courant', {
             'fields': ('currency', 'balance', 'status'),
         }),
-        ('Blocage du compte', {
+        ('Compte Épargne', {
+            'fields': ('epargne_display',),
+            'description': 'Compte épargne associé à ce portefeuille client.',
+        }),
+        ('Blocage du compte courant', {
             'fields': ('block_reason', 'unblock_fee'),
             'description': '⚠️ Remplir uniquement si le statut est "Compte bloqué". Le motif est obligatoire.',
         }),
@@ -121,7 +129,7 @@ class BankAccountAdmin(BankScopedAdmin):
             return []
         return ['account_id', 'rib', 'plain_password',
                 'credentials_display', 'login_url_display',
-                'created_at', 'updated_at']
+                'created_at', 'updated_at', 'epargne_display']
 
     def get_form(self, request, obj=None, **kwargs):
         from django import forms
@@ -210,6 +218,46 @@ class BankAccountAdmin(BankScopedAdmin):
             url, url
         )
     login_url_display.short_description = 'Lien de connexion'
+
+    def epargne_display(self, obj):
+        if not obj.pk:
+            return '—'
+        epargne = obj.user.bank_accounts.filter(bank=obj.bank, is_primary=False).first()
+        if not epargne:
+            return mark_safe('<em style="color:#9ca3af;font-size:12px;">Aucun compte épargne associé.</em>')
+        edit_url = f'/admin/accounts/bankaccount/{epargne.pk}/change/'
+        balance_color = '#16a34a' if epargne.balance >= 0 else '#dc2626'
+        status_badge = (
+            '<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;'
+            'font-size:11px;font-weight:600;">● Actif</span>'
+            if epargne.status == 'active' else
+            '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:10px;'
+            'font-size:11px;font-weight:600;">🔒 Bloqué</span>'
+        )
+        return format_html(
+            '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">'
+            '<table style="border-collapse:collapse;">'
+            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">Identifiant</td>'
+            '<td style="font-family:monospace;font-size:12px;font-weight:600;color:#111827;">{}</td></tr>'
+            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">IBAN</td>'
+            '<td style="font-family:monospace;font-size:11px;color:#374151;">{}</td></tr>'
+            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">Solde</td>'
+            '<td style="font-family:monospace;font-weight:700;font-size:14px;color:{};">{} {}</td></tr>'
+            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">Statut</td>'
+            '<td>{}</td></tr>'
+            '</table>'
+            '<div style="margin-top:12px;">'
+            '<a href="{}" style="color:#2563eb;font-size:12px;font-weight:600;text-decoration:none;'
+            'background:#eff6ff;padding:7px 14px;border-radius:4px;border:1px solid #bfdbfe;">'
+            '✏ Modifier le compte épargne</a>'
+            '</div></div>',
+            epargne.account_id,
+            epargne.rib,
+            balance_color, f'{epargne.balance:,.2f}', epargne.currency,
+            mark_safe(status_badge),
+            edit_url,
+        )
+    epargne_display.short_description = 'Compte Épargne'
 
     # ── Save model ────────────────────────────────────────────────────────
 
