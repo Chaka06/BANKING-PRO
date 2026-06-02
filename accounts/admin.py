@@ -130,12 +130,7 @@ class BankAccountAdmin(BankScopedAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         from django import forms
-        from decimal import Decimal
         from .constants import COUNTRY_LIST
-
-        # Django (_changeform_view) passe toujours fields=flatten_fieldsets(fieldsets)
-        # ce qui inclut balance_epargne. On le retire avant modelform_factory
-        # (pas un champ modèle) puis on l'injecte dans base_fields après.
         form = super().get_form(request, obj, **kwargs)
         form.base_fields['country'] = forms.ChoiceField(
             choices=[(c, c) for c in COUNTRY_LIST],

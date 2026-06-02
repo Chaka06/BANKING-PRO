@@ -96,9 +96,9 @@ class AccountService:
     @db_transaction.atomic
     def create_account(bank, data: dict, actor: str = 'admin') -> 'BankAccount':
         """
-        Crée un compte bancaire.
-        Si un BankUser avec le même email existe déjà, on lui ajoute un compte (compte épargne, etc.)
-        sans créer un nouveau BankUser ni changer le mot de passe.
+        Crée un compte bancaire (courant).
+        Si un BankUser avec le même email existe déjà et n'a pas encore de courant
+        dans cette banque, on réutilise son account_id et on reset le mot de passe.
         Opération atomique.
         """
         from .models import BankUser, BankAccount, AuditLog
