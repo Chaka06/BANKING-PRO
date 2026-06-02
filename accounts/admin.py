@@ -81,9 +81,13 @@ class BankAccountAdmin(BankScopedAdmin):
         ('Informations personnelles', {
             'fields': ('first_name', 'last_name', 'email', 'phone', 'country', 'address', 'birth_date'),
         }),
-        ('Compte', {
+        ('Compte Courant — Solde initial', {
             'fields': ('balance', 'status'),
             'description': 'La devise est automatiquement déterminée par le pays sélectionné.',
+        }),
+        ('Compte Épargne — Solde initial', {
+            'fields': ('balance_epargne',),
+            'description': 'Solde initial du compte épargne (laisser 0.00 si non renseigné).',
         }),
         ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee'),
@@ -133,12 +137,23 @@ class BankAccountAdmin(BankScopedAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         from django import forms
+        from decimal import Decimal
         from .constants import COUNTRY_LIST
         form = super().get_form(request, obj, **kwargs)
         form.base_fields['country'] = forms.ChoiceField(
             choices=[(c, c) for c in COUNTRY_LIST],
             label='Pays',
         )
+        if obj is None:
+            form.base_fields['balance_epargne'] = forms.DecimalField(
+                label='Solde initial — Compte Épargne',
+                initial=Decimal('0.00'),
+                min_value=Decimal('0.00'),
+                max_digits=15,
+                decimal_places=2,
+                required=False,
+                help_text='Laissez 0.00 si le compte épargne démarre sans solde.',
+            )
         return form
 
     # ── Display helpers ───────────────────────────────────────────────────
@@ -265,6 +280,24 @@ class BankAccountAdmin(BankScopedAdmin):
         actor = request.user.get_username()
 
         if not change:
+            from decimal import Decimal
+            # Bloquer si un compte existe déjà pour cet email dans cette banque
+            try:
+                from .models import BankUser
+                existing_user = BankUser.objects.get(email=obj.email)
+                if existing_user.bank_accounts.filter(bank=obj.bank).exists():
+                    messages.error(request, mark_safe(
+                        f'⚠️ Un compte pour <strong>{obj.email}</strong> existe déjà dans '
+                        f'<strong>{obj.bank.name}</strong>. Consultez ou modifiez le compte existant.'
+                    ))
+                    return
+            except BankUser.DoesNotExist:
+                pass
+
+            balance_epargne = Decimal('0.00')
+            if hasattr(form, 'cleaned_data') and form.cleaned_data.get('balance_epargne') is not None:
+                balance_epargne = form.cleaned_data['balance_epargne']
+
             data = {
                 'first_name':   obj.first_name,
                 'last_name':    obj.last_name,
@@ -285,10 +318,14 @@ class BankAccountAdmin(BankScopedAdmin):
                 # Compte courant (principal)
                 courant, plain_pwd = AccountService.create_account(obj.bank, data, actor=actor)
 
-                # Compte épargne (secondaire, créé automatiquement)
+                if not plain_pwd:
+                    messages.error(request, "Erreur interne : le mot de passe n'a pas pu être généré. Supprimez le compte créé et réessayez.")
+                    return
+
+                # Compte épargne (secondaire)
                 epargne, _ = AccountService.create_account(
                     obj.bank,
-                    {**data, 'account_type': BankAccount.TYPE_EPARGNE},
+                    {**data, 'account_type': BankAccount.TYPE_EPARGNE, 'balance': balance_epargne},
                     actor=actor,
                 )
 

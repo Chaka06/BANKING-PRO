@@ -48,12 +48,12 @@ def _email_header(bank) -> str:
         except Exception:
             pass
 
-    logo_cell = f'<td style="vertical-align:middle;">{logo_html}</td>' if logo_html else ''
-
-    name_part = f'<span style="color:{bank.color_primary};font-size:17px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">{bank.name}</span>'
-    tagline_part = f'<br><span style="color:#888888;font-size:11px;font-family:Arial,Helvetica,sans-serif;">{bank.tagline}</span>' if bank.tagline else ''
-    padding_left = '12px' if logo_html else '0'
-    name_cell = f'<td style="vertical-align:middle;padding-left:{padding_left};">{name_part}{tagline_part}</td>'
+    if logo_html:
+        content_cells = f'<td style="vertical-align:middle;">{logo_html}</td>'
+    else:
+        name_part = f'<span style="color:{bank.color_primary};font-size:17px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">{bank.name}</span>'
+        tagline_part = f'<br><span style="color:#888888;font-size:11px;font-family:Arial,Helvetica,sans-serif;">{bank.tagline}</span>' if bank.tagline else ''
+        content_cells = f'<td style="vertical-align:middle;">{name_part}{tagline_part}</td>'
 
     return f"""
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:3px solid {bank.color_primary};">
@@ -61,8 +61,7 @@ def _email_header(bank) -> str:
         <td style="background:#ffffff;padding:18px 24px;">
           <table cellpadding="0" cellspacing="0" border="0">
             <tr>
-              {logo_cell}
-              {name_cell}
+              {content_cells}
             </tr>
           </table>
         </td>
