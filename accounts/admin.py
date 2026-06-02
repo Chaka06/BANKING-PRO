@@ -140,13 +140,17 @@ class BankAccountAdmin(BankScopedAdmin):
         from decimal import Decimal
         from .constants import COUNTRY_LIST
 
-        # balance_epargne n'est pas un champ du modèle — on l'exclut de modelform_factory
-        # puis on l'injecte manuellement dans base_fields
-        if obj is None and 'fields' not in kwargs:
-            model_fields = []
-            for _, opts in self._ADD_FIELDSETS:
-                model_fields.extend(f for f in opts.get('fields', []) if f != 'balance_epargne')
-            kwargs['fields'] = model_fields
+        # Django (_changeform_view) passe toujours fields=flatten_fieldsets(fieldsets)
+        # ce qui inclut balance_epargne. On le retire avant modelform_factory
+        # (pas un champ modèle) puis on l'injecte dans base_fields après.
+        if obj is None:
+            if 'fields' in kwargs:
+                kwargs['fields'] = [f for f in kwargs['fields'] if f != 'balance_epargne']
+            else:
+                fields = []
+                for _, opts in self._ADD_FIELDSETS:
+                    fields.extend(f for f in opts.get('fields', []) if f != 'balance_epargne')
+                kwargs['fields'] = fields
 
         form = super().get_form(request, obj, **kwargs)
 
