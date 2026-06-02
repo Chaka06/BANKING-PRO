@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion — {{ bank.name }}</title>
+
+    {% if bank.favicon %}<link rel="icon" href="{{ bank.favicon.url }}">
+    <link rel="apple-touch-icon" href="{{ bank.favicon.url }}">{% endif %}
+
+    {% if bank.meta_description %}<meta name="description" content="{{ bank.meta_description }}">{% endif %}
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Connexion — {{ bank.name }}">
+    {% if bank.meta_description %}<meta property="og:description" content="{{ bank.meta_description }}">{% endif %}
+    {% if bank.og_image %}<meta property="og:image" content="{{ bank.og_image.url }}">{% endif %}
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Connexion — {{ bank.name }}">
+    {% if bank.meta_description %}<meta name="twitter:description" content="{{ bank.meta_description }}">{% endif %}
+    {% if bank.og_image %}<meta name="twitter:image" content="{{ bank.og_image.url }}">{% endif %}
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">

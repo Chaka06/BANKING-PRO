@@ -30,6 +30,15 @@ class BankAdmin(admin.ModelAdmin):
                 'color_preview_full',
             )
         }),
+        ('SEO & Partage de lien', {
+            'fields': ('favicon', 'meta_description', 'og_image'),
+            'description': (
+                'Favicon : icône affichée dans l\'onglet du navigateur (.ico, .png ou .svg).<br>'
+                'Description SEO : texte affiché dans les résultats de recherche (160 car. max).<br>'
+                'Image de partage : image affichée lors du partage du lien de connexion sur WhatsApp, '
+                'iMessage, réseaux sociaux, etc. Format recommandé : 1200×630 px.'
+            ),
+        }),
         ('URL de connexion', {
             'fields': ('login_url_preview',)
         }),

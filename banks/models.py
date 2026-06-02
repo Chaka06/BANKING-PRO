@@ -24,6 +24,11 @@ class Bank(models.Model):
     color_card = models.CharField(max_length=7, default='#1a3a5c', verbose_name="Couleur carte bancaire")
     color_card_text = models.CharField(max_length=7, default='#ffffff', verbose_name="Texte sur carte bancaire")
 
+    # SEO & partage de lien
+    favicon = models.FileField(upload_to='banks/favicons/', blank=True, null=True, verbose_name="Favicon (icône onglet)")
+    meta_description = models.CharField(max_length=160, blank=True, verbose_name="Description SEO (160 car. max)")
+    og_image = models.ImageField(upload_to='banks/og/', blank=True, null=True, verbose_name="Image de partage (Open Graph)")
+
     is_active = models.BooleanField(default=True, verbose_name="Banque active")
     created_at = models.DateTimeField(auto_now_add=True)
 
