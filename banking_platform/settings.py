@@ -131,7 +131,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.BankUser'
 
 # ── Email ──────────────────────────────────────────────────────────────────
-POSTMARK_API_KEY = os.getenv('POSTMARK_API_KEY', '')
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bank.com')
 SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
 

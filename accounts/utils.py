@@ -8,7 +8,8 @@ import math
 import logging
 from datetime import datetime
 from django.conf import settings
-from postmarker.core import PostmarkClient
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
@@ -22,10 +23,17 @@ from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 logger = logging.getLogger('banking.utils')
 
 
-# ── Postmark ───────────────────────────────────────────────────────────────
+# ── SendGrid ──────────────────────────────────────────────────────────────
 
-def _postmark():
-    return PostmarkClient(server_token=settings.POSTMARK_API_KEY)
+def _send_email(from_name: str, to_email: str, subject: str, html_body: str):
+    sg = SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
+    message = Mail(
+        from_email=(settings.DEFAULT_FROM_EMAIL, from_name),
+        to_emails=to_email,
+        subject=subject,
+        html_content=html_body,
+    )
+    sg.send(message)
 
 
 # ── Helpers style PayPal ──────────────────────────────────────────────────
@@ -178,11 +186,11 @@ def send_account_creation_email(bank_account):
     )}
     """
 
-    _postmark().emails.send(
-        From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-        To=bank_account.email,
-        Subject=f"{bank.name} — Ouverture de votre compte bancaire",
-        HtmlBody=_email_wrap(bank, body),
+    _send_email(
+        from_name=bank.name,
+        to_email=bank_account.email,
+        subject=f"{bank.name} — Ouverture de votre compte bancaire",
+        html_body=_email_wrap(bank, body),
     )
 
 
@@ -215,11 +223,11 @@ def send_transfer_initiated_email_to_beneficiary(transaction):
     )}
     """
 
-    _postmark().emails.send(
-        From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-        To=beneficiary_email,
-        Subject=f"Virement entrant en attente — Réf. {transaction.reference}",
-        HtmlBody=_email_wrap(bank, body),
+    _send_email(
+        from_name=bank.name,
+        to_email=beneficiary_email,
+        subject=f"Virement entrant en attente — Réf. {transaction.reference}",
+        html_body=_email_wrap(bank, body),
     )
 
 
@@ -247,11 +255,11 @@ def send_transfer_validated_email(transaction):
     ])}
     """
 
-    _postmark().emails.send(
-        From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-        To=transaction.account.email,
-        Subject=f"Virement validé — Réf. {transaction.reference}",
-        HtmlBody=_email_wrap(bank, body_sender),
+    _send_email(
+        from_name=bank.name,
+        to_email=transaction.account.email,
+        subject=f"Virement validé — Réf. {transaction.reference}",
+        html_body=_email_wrap(bank, body_sender),
     )
 
     beneficiary_email = transaction.get_beneficiary_display_email()
@@ -272,11 +280,11 @@ def send_transfer_validated_email(transaction):
         ])}
         """
 
-        _postmark().emails.send(
-            From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-            To=beneficiary_email,
-            Subject=f"Virement reçu — Réf. {transaction.reference}",
-            HtmlBody=_email_wrap(bank, body_bene),
+        _send_email(
+            from_name=bank.name,
+            to_email=beneficiary_email,
+            subject=f"Virement reçu — Réf. {transaction.reference}",
+            html_body=_email_wrap(bank, body_bene),
         )
 
 
@@ -307,11 +315,11 @@ def send_transfer_rejected_email(transaction):
     )}
     """
 
-    _postmark().emails.send(
-        From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-        To=transaction.account.email,
-        Subject=f"Virement rejeté — Réf. {transaction.reference}",
-        HtmlBody=_email_wrap(bank, body_sender),
+    _send_email(
+        from_name=bank.name,
+        to_email=transaction.account.email,
+        subject=f"Virement rejeté — Réf. {transaction.reference}",
+        html_body=_email_wrap(bank, body_sender),
     )
 
     beneficiary_email = transaction.get_beneficiary_display_email()
@@ -329,11 +337,11 @@ def send_transfer_rejected_email(transaction):
         <p style="font-size:13px;color:#888888;line-height:1.7;margin:0;">Pour toute question, contactez directement l'émetteur du virement.</p>
         """
 
-        _postmark().emails.send(
-            From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-            To=beneficiary_email,
-            Subject=f"Virement annulé — Réf. {transaction.reference}",
-            HtmlBody=_email_wrap(bank, body_bene),
+        _send_email(
+            from_name=bank.name,
+            to_email=beneficiary_email,
+            subject=f"Virement annulé — Réf. {transaction.reference}",
+            html_body=_email_wrap(bank, body_bene),
         )
 
 
@@ -361,11 +369,11 @@ def send_account_blocked_email(bank_account):
     )}
     """
 
-    _postmark().emails.send(
-        From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-        To=bank_account.email,
-        Subject=f"{bank.name} — Votre compte a été bloqué",
-        HtmlBody=_email_wrap(bank, body),
+    _send_email(
+        from_name=bank.name,
+        to_email=bank_account.email,
+        subject=f"{bank.name} — Votre compte a été bloqué",
+        html_body=_email_wrap(bank, body),
     )
 
 
@@ -390,11 +398,11 @@ def send_account_unblocked_email(bank_account):
     )}
     """
 
-    _postmark().emails.send(
-        From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-        To=bank_account.email,
-        Subject=f"{bank.name} — Votre compte est débloqué",
-        HtmlBody=_email_wrap(bank, body),
+    _send_email(
+        from_name=bank.name,
+        to_email=bank_account.email,
+        subject=f"{bank.name} — Votre compte est débloqué",
+        html_body=_email_wrap(bank, body),
     )
 
 
@@ -420,11 +428,11 @@ def send_password_changed_email(bank_account):
     )}
     """
 
-    _postmark().emails.send(
-        From=f"{bank.name} <{settings.DEFAULT_FROM_EMAIL}>",
-        To=bank_account.email,
-        Subject=f"{bank.name} — Modification de votre mot de passe",
-        HtmlBody=_email_wrap(bank, body),
+    _send_email(
+        from_name=bank.name,
+        to_email=bank_account.email,
+        subject=f"{bank.name} — Modification de votre mot de passe",
+        html_body=_email_wrap(bank, body),
     )
 
 

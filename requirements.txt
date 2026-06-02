@@ -6,7 +6,7 @@ Django==6.0.5
 gunicorn==23.0.0
 idna==3.16
 pillow==12.2.0
-postmarker==1.0
+sendgrid
 psycopg2-binary==2.9.12
 python-dotenv==1.2.2
 qrcode==8.2
