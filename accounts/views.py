@@ -202,7 +202,7 @@ def dashboard(request, bank_slug, bank=None, account=None, all_accounts=None):
 
     pending_count = account.transactions.filter(status=Transaction.STATUS_PENDING).count()
 
-    show_blocked_modal = account.is_blocked and not request.session.get('block_modal_dismissed', False)
+    show_blocked_modal = account.is_blocked
 
     ctx = base_context(request, bank, account, all_accounts)
     ctx.update({
