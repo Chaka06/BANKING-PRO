@@ -71,8 +71,9 @@ class BankAccountAdmin(BankScopedAdmin):
     date_hierarchy = 'created_at'
 
     def get_queryset(self, request):
-        # Un seul portefeuille par client dans la liste → affiche uniquement le compte courant (primaire)
-        return super().get_queryset(request).filter(is_primary=True)
+        # Un seul portefeuille par client → affiche uniquement les comptes courants
+        # Filtre par account_type (plus fiable que is_primary qui peut être mal initialisé)
+        return super().get_queryset(request).filter(account_type=BankAccount.TYPE_COURANT)
 
     _ADD_FIELDSETS = (
         ('Banque & Gestionnaire', {
@@ -288,6 +289,16 @@ class BankAccountAdmin(BankScopedAdmin):
         )
     epargne_display.short_description = 'Compte Épargne'
 
+    # ── Response overrides ────────────────────────────────────────────────
+
+    def response_add(self, request, obj, post_url_continue=None):
+        # Si save_model a posé un flag d'erreur, on revient au formulaire
+        # sans ajouter le message "ajouté avec succès" de Django
+        if getattr(request, '_save_error', False):
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(request.path)
+        return super().response_add(request, obj, post_url_continue)
+
     # ── Save model ────────────────────────────────────────────────────────
 
     def save_model(self, request, obj, form, change):
@@ -304,6 +315,7 @@ class BankAccountAdmin(BankScopedAdmin):
                         f'⚠️ Un compte pour <strong>{obj.email}</strong> existe déjà dans '
                         f'<strong>{obj.bank.name}</strong>. Consultez ou modifiez le compte existant.'
                     ))
+                    request._save_error = True
                     return
             except BankUser.DoesNotExist:
                 pass
