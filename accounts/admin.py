@@ -310,9 +310,9 @@ class BankAccountAdmin(BankScopedAdmin):
             try:
                 from .models import BankUser
                 existing_user = BankUser.objects.get(email=obj.email)
-                if existing_user.bank_accounts.filter(bank=obj.bank).exists():
+                if existing_user.bank_accounts.filter(bank=obj.bank, account_type=BankAccount.TYPE_COURANT).exists():
                     messages.error(request, mark_safe(
-                        f'⚠️ Un compte pour <strong>{obj.email}</strong> existe déjà dans '
+                        f'⚠️ Un compte courant pour <strong>{obj.email}</strong> existe déjà dans '
                         f'<strong>{obj.bank.name}</strong>. Consultez ou modifiez le compte existant.'
                     ))
                     request._save_error = True

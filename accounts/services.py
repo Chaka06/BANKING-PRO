@@ -112,11 +112,13 @@ class AccountService:
         try:
             # Utilisateur existant
             user = BankUser.objects.get(email=data['email'])
-            existing_in_bank = user.bank_accounts.filter(bank=bank).count()
-            is_primary = existing_in_bank == 0  # premier compte dans cette banque
+            # On vérifie uniquement le compte courant pour déterminer is_primary
+            # (un épargne orphelin ne doit pas bloquer la création d'un nouveau courant)
+            existing_courant = user.bank_accounts.filter(bank=bank, account_type=BankAccount.TYPE_COURANT).count()
+            is_primary = existing_courant == 0
 
             if is_primary:
-                # Premier compte dans cette banque → génère de nouvelles credentials
+                # Premier compte courant dans cette banque → génère de nouvelles credentials
                 base = generate_base_id(country)
                 account_id = f"{base}01"
                 rib = generate_rib(country, bank.bank_code)
@@ -124,14 +126,15 @@ class AccountService:
                 user.set_password(plain_pwd)
                 user.save(update_fields=['password'])
             else:
-                # Compte supplémentaire (épargne) — même utilisateur, même banque
-                primary = user.bank_accounts.filter(bank=bank, is_primary=True).first()
+                # Compte épargne — s'appuie sur le courant existant
+                primary = user.bank_accounts.filter(bank=bank, account_type=BankAccount.TYPE_COURANT).first()
                 if primary:
                     base = primary.account_id[:-2]
                     rib = generate_rib_for_secondary(primary.rib)
                 else:
                     base = generate_base_id(country)
                     rib = generate_rib(country, bank.bank_code)
+                existing_in_bank = user.bank_accounts.filter(bank=bank).count()
                 suffix = existing_in_bank + 1
                 account_id = f"{base}{str(suffix).zfill(2)}"
                 if BankAccount.objects.filter(account_id=account_id).exists():
