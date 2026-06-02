@@ -82,13 +82,9 @@ class BankAccountAdmin(BankScopedAdmin):
         ('Informations personnelles', {
             'fields': ('first_name', 'last_name', 'email', 'phone', 'country', 'address', 'birth_date'),
         }),
-        ('Compte Courant — Solde initial', {
+        ('Compte', {
             'fields': ('balance', 'status'),
             'description': 'La devise est automatiquement déterminée par le pays sélectionné.',
-        }),
-        ('Compte Épargne — Solde initial', {
-            'fields': ('balance_epargne',),
-            'description': 'Solde initial du compte épargne (laisser 0.00 si non renseigné).',
         }),
         ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee'),
@@ -109,14 +105,10 @@ class BankAccountAdmin(BankScopedAdmin):
         ('Informations personnelles', {
             'fields': ('first_name', 'last_name', 'email', 'phone', 'country', 'address', 'birth_date'),
         }),
-        ('Compte Courant', {
+        ('Compte', {
             'fields': ('currency', 'balance', 'status'),
         }),
-        ('Compte Épargne', {
-            'fields': ('epargne_display',),
-            'description': 'Compte épargne associé à ce portefeuille client.',
-        }),
-        ('Blocage du compte courant', {
+        ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee'),
             'description': '⚠️ Remplir uniquement si le statut est "Compte bloqué". Le motif est obligatoire.',
         }),
@@ -134,7 +126,7 @@ class BankAccountAdmin(BankScopedAdmin):
             return []
         return ['account_id', 'rib', 'plain_password',
                 'credentials_display', 'login_url_display',
-                'created_at', 'updated_at', 'epargne_display']
+                'created_at', 'updated_at']
 
     def get_form(self, request, obj=None, **kwargs):
         from django import forms
@@ -144,31 +136,11 @@ class BankAccountAdmin(BankScopedAdmin):
         # Django (_changeform_view) passe toujours fields=flatten_fieldsets(fieldsets)
         # ce qui inclut balance_epargne. On le retire avant modelform_factory
         # (pas un champ modèle) puis on l'injecte dans base_fields après.
-        if obj is None:
-            if 'fields' in kwargs:
-                kwargs['fields'] = [f for f in kwargs['fields'] if f != 'balance_epargne']
-            else:
-                fields = []
-                for _, opts in self._ADD_FIELDSETS:
-                    fields.extend(f for f in opts.get('fields', []) if f != 'balance_epargne')
-                kwargs['fields'] = fields
-
         form = super().get_form(request, obj, **kwargs)
-
         form.base_fields['country'] = forms.ChoiceField(
             choices=[(c, c) for c in COUNTRY_LIST],
             label='Pays',
         )
-        if obj is None:
-            form.base_fields['balance_epargne'] = forms.DecimalField(
-                label='Solde initial — Compte Épargne',
-                initial=Decimal('0.00'),
-                min_value=Decimal('0.00'),
-                max_digits=15,
-                decimal_places=2,
-                required=False,
-                help_text='Laissez 0.00 si le compte épargne démarre sans solde.',
-            )
         return form
 
     # ── Display helpers ───────────────────────────────────────────────────
@@ -249,46 +221,6 @@ class BankAccountAdmin(BankScopedAdmin):
         )
     login_url_display.short_description = 'Lien de connexion'
 
-    def epargne_display(self, obj):
-        if not obj.pk:
-            return '—'
-        epargne = obj.user.bank_accounts.filter(bank=obj.bank, is_primary=False).first()
-        if not epargne:
-            return mark_safe('<em style="color:#9ca3af;font-size:12px;">Aucun compte épargne associé.</em>')
-        edit_url = f'/admin/accounts/bankaccount/{epargne.pk}/change/'
-        balance_color = '#16a34a' if epargne.balance >= 0 else '#dc2626'
-        status_badge = (
-            '<span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:10px;'
-            'font-size:11px;font-weight:600;">● Actif</span>'
-            if epargne.status == 'active' else
-            '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:10px;'
-            'font-size:11px;font-weight:600;">🔒 Bloqué</span>'
-        )
-        return format_html(
-            '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;">'
-            '<table style="border-collapse:collapse;">'
-            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">Identifiant</td>'
-            '<td style="font-family:monospace;font-size:12px;font-weight:600;color:#111827;">{}</td></tr>'
-            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">IBAN</td>'
-            '<td style="font-family:monospace;font-size:11px;color:#374151;">{}</td></tr>'
-            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">Solde</td>'
-            '<td style="font-family:monospace;font-weight:700;font-size:14px;color:{};">{} {}</td></tr>'
-            '<tr><td style="color:#6b7280;font-size:12px;padding:4px 16px 4px 0;">Statut</td>'
-            '<td>{}</td></tr>'
-            '</table>'
-            '<div style="margin-top:12px;">'
-            '<a href="{}" style="color:#2563eb;font-size:12px;font-weight:600;text-decoration:none;'
-            'background:#eff6ff;padding:7px 14px;border-radius:4px;border:1px solid #bfdbfe;">'
-            '✏ Modifier le compte épargne</a>'
-            '</div></div>',
-            epargne.account_id,
-            epargne.rib,
-            balance_color, f'{epargne.balance:,.2f}', epargne.currency,
-            mark_safe(status_badge),
-            edit_url,
-        )
-    epargne_display.short_description = 'Compte Épargne'
-
     # ── Response overrides ────────────────────────────────────────────────
 
     def response_add(self, request, obj, post_url_continue=None):
@@ -305,24 +237,19 @@ class BankAccountAdmin(BankScopedAdmin):
         actor = request.user.get_username()
 
         if not change:
-            from decimal import Decimal
-            # Bloquer si un compte existe déjà pour cet email dans cette banque
+            # Bloquer si un compte courant existe déjà pour cet email dans cette banque
             try:
                 from .models import BankUser
                 existing_user = BankUser.objects.get(email=obj.email)
                 if existing_user.bank_accounts.filter(bank=obj.bank, account_type=BankAccount.TYPE_COURANT).exists():
                     messages.error(request, mark_safe(
-                        f'⚠️ Un compte courant pour <strong>{obj.email}</strong> existe déjà dans '
+                        f'⚠️ Un compte pour <strong>{obj.email}</strong> existe déjà dans '
                         f'<strong>{obj.bank.name}</strong>. Consultez ou modifiez le compte existant.'
                     ))
                     request._save_error = True
                     return
             except BankUser.DoesNotExist:
                 pass
-
-            balance_epargne = Decimal('0.00')
-            if hasattr(form, 'cleaned_data') and form.cleaned_data.get('balance_epargne') is not None:
-                balance_epargne = form.cleaned_data['balance_epargne']
 
             data = {
                 'first_name':   obj.first_name,
@@ -341,48 +268,36 @@ class BankAccountAdmin(BankScopedAdmin):
                 'account_type': BankAccount.TYPE_COURANT,
             }
             try:
-                # Compte courant (principal)
-                courant, plain_pwd = AccountService.create_account(obj.bank, data, actor=actor)
+                account, plain_pwd = AccountService.create_account(obj.bank, data, actor=actor)
 
                 if not plain_pwd:
-                    messages.error(request, "Erreur interne : le mot de passe n'a pas pu être généré. Supprimez le compte créé et réessayez.")
+                    messages.error(request, "Erreur interne : le mot de passe n'a pas pu être généré.")
+                    request._save_error = True
                     return
 
-                # Compte épargne (secondaire)
-                epargne, _ = AccountService.create_account(
-                    obj.bank,
-                    {**data, 'account_type': BankAccount.TYPE_EPARGNE, 'balance': balance_epargne},
-                    actor=actor,
-                )
+                obj.pk           = account.pk
+                obj.account_id   = account.account_id
+                obj.rib          = account.rib
+                obj.plain_password = account.plain_password
+                obj.user         = account.user
 
-                # Pointer obj vers le courant pour la redirection Django admin
-                obj.pk           = courant.pk
-                obj.account_id   = courant.account_id
-                obj.rib          = courant.rib
-                obj.plain_password = courant.plain_password
-                obj.user         = courant.user
-
-                # Message de succès avec toutes les infos d'accès
-                login_url = courant.get_login_url()
+                login_url = account.get_login_url()
                 messages.success(request, mark_safe(
                     f'<div style="line-height:1.8;">'
-                    f'<strong style="font-size:14px;">Comptes créés — {courant.get_full_name()}</strong><br>'
+                    f'<strong style="font-size:14px;">Compte créé — {account.get_full_name()}</strong><br>'
                     f'<table style="margin-top:6px;border-collapse:collapse;">'
                     f'<tr><td style="padding:2px 16px 2px 0;"><strong>Identifiant :</strong></td>'
                     f'<td><code style="background:#e2e8f0;padding:2px 8px;border-radius:4px;">'
-                    f'{courant.account_id}</code></td></tr>'
+                    f'{account.user.account_id}</code></td></tr>'
                     f'<tr><td style="padding:2px 16px 2px 0;"><strong>Mot de passe :</strong></td>'
                     f'<td><code style="background:#e2e8f0;padding:2px 8px;border-radius:4px;">'
                     f'{plain_pwd}</code></td></tr>'
                     f'<tr><td style="padding:2px 16px 2px 0;"><strong>Connexion :</strong></td>'
                     f'<td><a href="{login_url}" target="_blank" style="color:#2563eb;">'
                     f'{login_url}</a></td></tr>'
-                    f'<tr><td style="padding:2px 16px 2px 0;"><strong>RIB Courant :</strong></td>'
+                    f'<tr><td style="padding:2px 16px 2px 0;"><strong>RIB :</strong></td>'
                     f'<td><code style="background:#e2e8f0;padding:2px 8px;border-radius:4px;">'
-                    f'{courant.rib}</code></td></tr>'
-                    f'<tr><td style="padding:2px 16px 2px 0;"><strong>RIB Épargne :</strong></td>'
-                    f'<td><code style="background:#e2e8f0;padding:2px 8px;border-radius:4px;">'
-                    f'{epargne.rib}</code></td></tr>'
+                    f'{account.rib}</code></td></tr>'
                     f'</table>'
                     f'<p style="margin:6px 0 0;font-size:11px;color:#9ca3af;">'
                     f'⚠️ Communiquer ces informations de manière sécurisée au titulaire.</p>'
@@ -391,8 +306,8 @@ class BankAccountAdmin(BankScopedAdmin):
 
                 try:
                     from .utils import send_account_creation_email
-                    send_account_creation_email(courant)
-                    messages.success(request, f"Email envoyé à {courant.email}")
+                    send_account_creation_email(account)
+                    messages.success(request, f"Email envoyé à {account.email}")
                 except Exception as e:
                     messages.warning(request, f"Compte créé mais email non envoyé : {e}")
 

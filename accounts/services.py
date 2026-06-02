@@ -118,9 +118,15 @@ class AccountService:
             is_primary = existing_courant == 0
 
             if is_primary:
-                # Premier compte courant dans cette banque → génère de nouvelles credentials
-                base = generate_base_id(country)
-                account_id = f"{base}01"
+                # Premier compte courant dans cette banque.
+                # On réutilise le BankUser.account_id existant pour que
+                # l'authentification corresponde toujours à l'identifiant affiché.
+                account_id = user.account_id
+                if BankAccount.objects.filter(account_id=account_id).exists():
+                    raise ValidationError(
+                        f"L'identifiant {account_id} est déjà utilisé par un autre compte actif. "
+                        "Supprimez d'abord l'ancien compte avant d'en créer un nouveau."
+                    )
                 rib = generate_rib(country, bank.bank_code)
                 plain_pwd = generate_password()
                 user.set_password(plain_pwd)
