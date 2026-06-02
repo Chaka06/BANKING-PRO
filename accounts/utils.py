@@ -42,20 +42,29 @@ def _email_header(bank) -> str:
     logo_html = ''
     if bank.logo:
         try:
-            logo_url = f"{settings.SITE_URL}{bank.logo.url}"
-            logo_html = f'<img src="{logo_url}" alt="{bank.name}" style="max-height:44px;display:block;margin:0 auto;">'
+            raw = bank.logo.url
+            logo_url = raw if raw.startswith('http') else f"{settings.SITE_URL}{raw}"
+            logo_html = f'<img src="{logo_url}" alt="{bank.name}" style="max-height:52px;max-width:150px;display:block;">'
         except Exception:
             pass
 
-    name_html = '' if logo_html else f'<span style="color:{bank.color_text_on_primary};font-size:20px;font-weight:700;font-family:Arial,Helvetica,sans-serif;letter-spacing:0.5px;">{bank.name}</span>'
-    tagline_html = f'<p style="margin:6px 0 0;color:{bank.color_text_on_primary};opacity:.75;font-size:12px;font-family:Arial,Helvetica,sans-serif;">{bank.tagline}</p>' if bank.tagline else ''
+    logo_cell = f'<td style="vertical-align:middle;">{logo_html}</td>' if logo_html else ''
+
+    name_part = f'<span style="color:{bank.color_primary};font-size:17px;font-weight:700;font-family:Arial,Helvetica,sans-serif;">{bank.name}</span>'
+    tagline_part = f'<br><span style="color:#888888;font-size:11px;font-family:Arial,Helvetica,sans-serif;">{bank.tagline}</span>' if bank.tagline else ''
+    padding_left = '12px' if logo_html else '0'
+    name_cell = f'<td style="vertical-align:middle;padding-left:{padding_left};">{name_part}{tagline_part}</td>'
 
     return f"""
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:3px solid {bank.color_primary};">
       <tr>
-        <td style="background:{bank.color_primary};padding:28px 48px;text-align:center;">
-          {logo_html}{name_html}
-          {tagline_html}
+        <td style="background:#ffffff;padding:18px 24px;">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              {logo_cell}
+              {name_cell}
+            </tr>
+          </table>
         </td>
       </tr>
     </table>"""
@@ -73,7 +82,7 @@ def _email_footer(bank) -> str:
     return f"""
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:32px;border-top:1px solid #dddddd;">
       <tr>
-        <td style="padding:24px 48px;text-align:center;">
+        <td style="padding:20px 24px;text-align:center;">
           <p style="margin:0 0 6px;font-size:11px;font-family:Arial,Helvetica,sans-serif;color:#aaaaaa;line-height:1.7;">
             {' &nbsp;·&nbsp; '.join(parts)}
           </p>
@@ -99,7 +108,7 @@ def _email_wrap(bank, body: str) -> str:
         <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background:#ffffff;border:1px solid #dddddd;">
           <tr><td>{_email_header(bank)}</td></tr>
           <tr>
-            <td style="padding:40px 48px;font-family:Arial,Helvetica,sans-serif;color:#333333;">
+            <td style="padding:32px 24px;font-family:Arial,Helvetica,sans-serif;color:#333333;">
               {body}
               {_email_footer(bank)}
             </td>
