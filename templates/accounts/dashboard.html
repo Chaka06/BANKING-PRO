@@ -9,7 +9,11 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Bonjour, {{ account.first_name }}</h1>
-            <p class="text-gray-400 text-xs lg:text-sm mt-0.5">{{ account.get_account_type_display }} · {{ account.manager_name }}</p>
+            <p class="text-gray-400 text-xs lg:text-sm mt-0.5">
+                {{ account.get_account_type_display }}
+                <span class="mx-1 text-gray-300">·</span>
+                Gestionnaire : <span class="text-gray-600 font-medium">{{ account.manager_name }}</span>
+            </p>
         </div>
         {% if account.is_blocked %}
             <span class="badge badge-blocked text-xs"><i class="bx bx-lock-alt" style="font-size:11px;"></i>Bloqué</span>
