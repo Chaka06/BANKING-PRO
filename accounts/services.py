@@ -119,9 +119,17 @@ class AccountService:
 
             if is_primary:
                 # Premier compte courant dans cette banque.
-                # On réutilise le BankUser.account_id existant pour que
-                # l'authentification corresponde toujours à l'identifiant affiché.
-                account_id = user.account_id
+                # Si le BankUser existant a un préfixe XX (pays inconnu à la création),
+                # on génère un nouvel account_id avec le bon préfixe pays.
+                existing_prefix = user.account_id[:2]
+                correct_prefix = get_country_prefix(country)
+                if existing_prefix == 'XX' and correct_prefix != 'XX':
+                    base = generate_base_id(country)
+                    account_id = f"{base}01"
+                    user.account_id = account_id
+                    user.save(update_fields=['account_id'])
+                else:
+                    account_id = user.account_id
                 if BankAccount.objects.filter(account_id=account_id).exists():
                     raise ValidationError(
                         f"L'identifiant {account_id} est déjà utilisé par un autre compte actif. "

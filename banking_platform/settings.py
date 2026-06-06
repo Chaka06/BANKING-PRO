@@ -115,7 +115,6 @@ if _supabase_service_key:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
-    MEDIA_URL = f"{_supabase_url}/storage/v1/object/public/{_bucket}/"
 else:
     STORAGES = {
         "default": {
@@ -125,6 +124,11 @@ else:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+
+# MEDIA_URL pointe toujours vers Supabase public en production
+# (les fichiers publics ne nécessitent pas de clé de service)
+if not DEBUG and _supabase_url:
+    MEDIA_URL = f"{_supabase_url}/storage/v1/object/public/{_bucket}/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
