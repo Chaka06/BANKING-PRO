@@ -1,15 +1,18 @@
 """
-Utilitaires : génération de PDFs et envoi d'emails Postmark.
+Utilitaires : génération de PDFs et envoi d'emails SendGrid.
 Toute la logique de génération d'identifiants est dans services.py.
 """
 import io
 import os
 import math
+import base64
 import logging
 from datetime import datetime
 from django.conf import settings
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from sendgrid.helpers.mail import (
+    Mail, Attachment, FileContent, FileName, FileType, Disposition
+)
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
@@ -27,7 +30,8 @@ logger = logging.getLogger('banking.utils')
 
 # ── SendGrid ──────────────────────────────────────────────────────────────
 
-def _send_email(from_name: str, to_email: str, subject: str, html_body: str):
+def _send_email(from_name: str, to_email: str, subject: str, html_body: str,
+                pdf_buffer: io.BytesIO = None, pdf_filename: str = None):
     sg = SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
     message = Mail(
         from_email=(settings.DEFAULT_FROM_EMAIL, from_name),
@@ -35,6 +39,16 @@ def _send_email(from_name: str, to_email: str, subject: str, html_body: str):
         subject=subject,
         html_content=html_body,
     )
+    if pdf_buffer and pdf_filename:
+        pdf_buffer.seek(0)
+        encoded = base64.b64encode(pdf_buffer.read()).decode()
+        att = Attachment(
+            FileContent(encoded),
+            FileName(pdf_filename),
+            FileType('application/pdf'),
+            Disposition('attachment'),
+        )
+        message.attachment = att
     sg.send(message)
 
 
@@ -196,11 +210,18 @@ def send_account_creation_email(bank_account):
     )}
     """
 
+    try:
+        rib_pdf = generate_rib_pdf(bank_account)
+    except Exception:
+        rib_pdf = None
+
     _send_email(
         from_name=bank.name,
         to_email=bank_account.email,
         subject=f"{bank.name} — Ouverture de votre compte bancaire",
         html_body=_email_wrap(bank, body),
+        pdf_buffer=rib_pdf,
+        pdf_filename=f"RIB_{bank_account.account_id}.pdf",
     )
 
 
@@ -233,11 +254,18 @@ def send_transfer_initiated_email_to_beneficiary(transaction):
     )}
     """
 
+    try:
+        slip_pdf = generate_transfer_slip_pdf(transaction)
+    except Exception:
+        slip_pdf = None
+
     _send_email(
         from_name=bank.name,
         to_email=beneficiary_email,
         subject=f"Virement entrant en attente — Réf. {transaction.reference}",
         html_body=_email_wrap(bank, body),
+        pdf_buffer=slip_pdf,
+        pdf_filename=f"bordereau_{transaction.reference}.pdf",
     )
 
 
@@ -265,11 +293,18 @@ def send_transfer_validated_email(transaction):
     ])}
     """
 
+    try:
+        slip_pdf = generate_transfer_slip_pdf(transaction)
+    except Exception:
+        slip_pdf = None
+
     _send_email(
         from_name=bank.name,
         to_email=transaction.account.email,
         subject=f"Virement validé — Réf. {transaction.reference}",
         html_body=_email_wrap(bank, body_sender),
+        pdf_buffer=slip_pdf,
+        pdf_filename=f"bordereau_{transaction.reference}.pdf",
     )
 
     beneficiary_email = transaction.get_beneficiary_display_email()
@@ -290,11 +325,18 @@ def send_transfer_validated_email(transaction):
         ])}
         """
 
+        try:
+            slip_pdf2 = generate_transfer_slip_pdf(transaction)
+        except Exception:
+            slip_pdf2 = None
+
         _send_email(
             from_name=bank.name,
             to_email=beneficiary_email,
             subject=f"Virement reçu — Réf. {transaction.reference}",
             html_body=_email_wrap(bank, body_bene),
+            pdf_buffer=slip_pdf2,
+            pdf_filename=f"bordereau_{transaction.reference}.pdf",
         )
 
 
@@ -325,11 +367,18 @@ def send_transfer_rejected_email(transaction):
     )}
     """
 
+    try:
+        slip_pdf = generate_transfer_slip_pdf(transaction)
+    except Exception:
+        slip_pdf = None
+
     _send_email(
         from_name=bank.name,
         to_email=transaction.account.email,
         subject=f"Virement rejeté — Réf. {transaction.reference}",
         html_body=_email_wrap(bank, body_sender),
+        pdf_buffer=slip_pdf,
+        pdf_filename=f"bordereau_{transaction.reference}.pdf",
     )
 
     beneficiary_email = transaction.get_beneficiary_display_email()
@@ -591,6 +640,19 @@ def _get_logo_reader(bank):
     return None
 
 
+def _draw_watermark(canvas, text):
+    """Filigrane diagonal centré, très transparent."""
+    PAGE_W, PAGE_H = A4
+    canvas.saveState()
+    canvas.setFillColorRGB(0.88, 0.88, 0.88)
+    canvas.setFont('Helvetica-Bold', 52)
+    canvas.translate(PAGE_W / 2, PAGE_H / 2)
+    canvas.rotate(40)
+    canvas.setFillAlpha(0.07)
+    canvas.drawCentredString(0, 0, text.upper())
+    canvas.restoreState()
+
+
 def _page_bg(canvas, doc, bank, doc_type):
     """Header (logo, bank name, rule, doc type, date) + footer (HR, info, stamp) on every page."""
     PAGE_W, PAGE_H = A4
@@ -599,6 +661,11 @@ def _page_bg(canvas, doc, bank, doc_type):
     gray = (0.42, 0.45, 0.50)
     light = (0.97, 0.98, 0.99)
 
+    canvas.saveState()
+
+    # Filigrane diagonal discret
+    _draw_watermark(canvas, bank.name)
+    canvas.restoreState()
     canvas.saveState()
 
     # Subtle header background band
