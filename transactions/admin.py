@@ -87,14 +87,15 @@ class TransactionAdmin(admin.ModelAdmin):
     type_badge.short_description = 'Type'
 
     def amount_display(self, obj):
+        amount_str = f"{obj.amount:,.2f}"
         if obj.is_debit:
             return format_html(
-                '<span style="color:#dc2626;font-weight:700;font-family:monospace;">− {:,.2f} {}</span>',
-                obj.amount, obj.currency
+                '<span style="color:#dc2626;font-weight:700;font-family:monospace;">− {} {}</span>',
+                amount_str, obj.currency
             )
         return format_html(
-            '<span style="color:#16a34a;font-weight:700;font-family:monospace;">+ {:,.2f} {}</span>',
-            obj.amount, obj.currency
+            '<span style="color:#16a34a;font-weight:700;font-family:monospace;">+ {} {}</span>',
+            amount_str, obj.currency
         )
     amount_display.short_description = 'Montant'
     amount_display.admin_order_field = 'amount'
@@ -117,9 +118,10 @@ class TransactionAdmin(admin.ModelAdmin):
             return '—'
         account = obj.account
         color = '#16a34a' if account.balance >= 0 else '#dc2626'
+        balance_str = f"{account.balance:,.2f}"
         return format_html(
-            '<span style="color:{};font-weight:700;font-size:14px;font-family:monospace;">{:,.2f} {}</span>',
-            color, account.balance, account.currency
+            '<span style="color:{};font-weight:700;font-size:14px;font-family:monospace;">{} {}</span>',
+            color, balance_str, account.currency
         )
     account_balance_info.short_description = 'Solde actuel du compte'
 
