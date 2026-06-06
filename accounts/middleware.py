@@ -13,7 +13,9 @@ WINDOW_MINUTES = 15
 def get_client_ip(request):
     x_forwarded = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded:
-        return x_forwarded.split(',')[0].strip()
+        # Vercel injecte la vraie IP client en dernière position — on prend la dernière
+        # pour éviter le spoofing via un X-Forwarded-For forgé par le client
+        return x_forwarded.split(',')[-1].strip()
     return request.META.get('REMOTE_ADDR', '0.0.0.0')
 
 

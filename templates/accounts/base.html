@@ -508,7 +508,7 @@
     }
     function dismissBlockModal() {
         document.getElementById('block-modal').remove();
-        fetch('/{{ bank.slug }}/dismiss-block-modal/', {
+        fetch('{% url "dismiss_block_modal" bank_slug=bank.slug %}', {
             method: 'POST',
             headers: { 'X-CSRFToken': '{{ csrf_token }}' }
         });

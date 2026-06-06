@@ -7,6 +7,7 @@ from .models import Notification
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ['title', 'account', 'type_badge', 'is_read', 'created_at']
     list_filter = ['notification_type', 'is_read', 'account__bank']
+    list_select_related = ['account', 'account__bank']
     search_fields = ['title', 'message', 'account__first_name', 'account__last_name', 'account__account_id']
     ordering = ['-created_at']
 

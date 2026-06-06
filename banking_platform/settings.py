@@ -137,6 +137,8 @@ SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
 
 # ── Chiffrement champs sensibles (Fernet) ─────────────────────────────────
 FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY', '')
+if not DEBUG and not FIELD_ENCRYPTION_KEY:
+    raise ValueError("FIELD_ENCRYPTION_KEY est obligatoire en production (les mots de passe seraient stockés en clair).")
 
 # ── Session ────────────────────────────────────────────────────────────────
 SESSION_COOKIE_AGE = 3600          # 1h d'inactivité

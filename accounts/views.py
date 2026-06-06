@@ -36,8 +36,7 @@ def get_all_accounts_for_user(request, bank):
     return list(
         request.user.bank_accounts
         .filter(bank=bank)
-        .order_by('is_primary', 'created_at')
-        # is_primary=True (1) → compte courant en premier (False=0 < True=1 → inverser)
+        .order_by('-is_primary', 'created_at')
     )
 
 
@@ -432,6 +431,10 @@ def download_statement(request, bank_slug, bank=None, account=None, all_accounts
         .order_by('created_at')
     )
 
+    if not txns.exists():
+        messages.warning(request, "Aucune transaction validée sur cette période.")
+        return redirect('transactions', bank_slug=bank_slug)
+
     buffer = generate_statement_pdf(account, txns, date_from, date_to)
     response = HttpResponse(buffer, content_type='application/pdf')
     fname = f"releve_{account.account_id}_{date_from}_{date_to}.pdf"
@@ -478,6 +481,10 @@ def change_password(request, bank_slug, bank=None, account=None, all_accounts=No
         if not errors:
             request.user.set_password(new_pwd)
             request.user.save()
+
+            # Efface le mot de passe initial stocké dès que l'utilisateur change son mot de passe
+            account.plain_password = ''
+            account.save(update_fields=['plain_password'])
 
             AuditLog.objects.create(
                 bank=bank,

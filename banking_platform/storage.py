@@ -52,11 +52,20 @@ class SupabaseStorage(Storage):
     def url(self, name):
         return f"{self._url}/storage/v1/object/public/{self._bucket}/{name}"
 
+    def _open(self, name, mode='rb'):
+        resp = requests.get(
+            f"{self._base()}/object/{self._bucket}/{name}",
+            headers={'Authorization': f'Bearer {self._key}'},
+        )
+        if resp.status_code != 200:
+            raise FileNotFoundError(f"Supabase: {name} introuvable ({resp.status_code})")
+        from django.core.files.base import ContentFile
+        return ContentFile(resp.content, name=name)
+
     def delete(self, name):
         requests.delete(
-            f"{self._base()}/object/{self._bucket}",
-            headers={'Authorization': f'Bearer {self._key}', 'Content-Type': 'application/json'},
-            json={'prefixes': [name]},
+            f"{self._base()}/object/{self._bucket}/{name}",
+            headers={'Authorization': f'Bearer {self._key}'},
         )
 
     def size(self, name):

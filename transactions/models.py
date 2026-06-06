@@ -38,7 +38,7 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=15, decimal_places=2, verbose_name="Montant")
     currency = models.CharField(max_length=3, verbose_name="Devise")
     description = models.TextField(blank=True, verbose_name="Description / Libellé")
-    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_VALIDATED, verbose_name="Statut")
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default=STATUS_PENDING, verbose_name="Statut")
 
     # Pour les virements sortants avec bénéficiaire enregistré
     beneficiary = models.ForeignKey(Beneficiary, null=True, blank=True, on_delete=models.SET_NULL, verbose_name="Bénéficiaire")
