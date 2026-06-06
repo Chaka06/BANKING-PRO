@@ -102,7 +102,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # ── Storage (Supabase REST API — pas de S3) ───────────────────────────────
-_supabase_url = os.getenv('SUPABASE_URL', 'https://kcydvfkarrqnkvthympe.supabase.co')
+_supabase_url = os.getenv('SUPABASE_URL', 'https://xdlaoyyokxsetknjvaru.supabase.co')
 _supabase_service_key = os.getenv('SUPABASE_SERVICE_KEY', '')
 _bucket = os.getenv('STORAGE_BUCKET_NAME', 'media')
 
@@ -154,6 +154,13 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    _csrf_origins = [
+        'https://royalacces.com',
+        'https://www.royalacces.com',
+    ]
+    if os.getenv('VERCEL_URL'):
+        _csrf_origins.append(f"https://{os.getenv('VERCEL_URL')}")
+    CSRF_TRUSTED_ORIGINS = _csrf_origins
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'

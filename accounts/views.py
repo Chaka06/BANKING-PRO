@@ -1,6 +1,7 @@
 import logging
 import datetime
 from decimal import Decimal, InvalidOperation
+from functools import wraps
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -62,6 +63,7 @@ def bank_login_url(bank_slug: str) -> str:
 
 def require_account(view_func):
     """Décorateur : vérifie auth + appartenance à cette banque. Passe account + all_accounts."""
+    @wraps(view_func)
     def wrapper(request, bank_slug, *args, **kwargs):
         bank = get_bank_or_404(bank_slug)
         if not request.user.is_authenticated:
@@ -72,7 +74,6 @@ def require_account(view_func):
             return redirect(bank_login_url(bank_slug))
         all_accounts = get_all_accounts_for_user(request, bank)
         return view_func(request, bank_slug, *args, bank=bank, account=account, all_accounts=all_accounts, **kwargs)
-    wrapper.__name__ = view_func.__name__
     return wrapper
 
 

@@ -658,8 +658,13 @@ def _page_bg(canvas, doc, bank, doc_type):
     # Footer text (left-aligned, leaving right side for stamp)
     canvas.setFillColorRGB(*gray)
     canvas.setFont('Helvetica', 7)
-    info = f"{bank.name}  ·  {bank.address}  ·  {bank.phone}  ·  {bank.email}"
-    canvas.drawString(ML, footer_y - 5.5*mm, info[:78])
+    _footer_parts = [p for p in [bank.name, bank.address, bank.phone, bank.email] if p]
+    info = '  ·  '.join(_footer_parts)
+    canvas.drawString(ML, footer_y - 5.5*mm, info[:90])
+
+    # Numéro de page
+    canvas.setFont('Helvetica', 7)
+    canvas.drawCentredString(PAGE_W / 2, 10*mm, f"Page {doc.page}")
     canvas.setFont('Helvetica', 6.5)
     canvas.setFillColorRGB(0.74, 0.76, 0.80)
     canvas.drawString(ML, footer_y - 10*mm,
@@ -713,10 +718,11 @@ def generate_rib_pdf(bank_account, all_accounts=None):
     common_data = [
         ['Titulaire du compte', bank_account.get_full_name()],
         ['Domiciliation', bank.name],
-        ['Adresse de la banque', bank.address],
+        ['Adresse de la banque', bank.address or '—'],
         ['BIC / SWIFT', bank.swift or '—'],
         ['Pays', bank_account.country],
         ['Devise', bank_account.currency],
+        ['Solde disponible', f"{bank_account.balance:,.2f} {bank_account.currency}"],
     ]
     story.append(_build_info_table(common_data, primary))
     story.append(Spacer(1, 7*mm))
@@ -726,9 +732,9 @@ def generate_rib_pdf(bank_account, all_accounts=None):
         label = acc.get_account_type_display().upper()
         story.append(Paragraph(
             f'<b>{label}</b>',
-            ParagraphStyle('AccLabel', fontSize=9, textColor=primary,
-                           fontName='Helvetica-Bold', spaceBefore=4, spaceAfter=3,
-                           leftIndent=2)
+            ParagraphStyle('AccLabel', fontSize=10, textColor=colors.white,
+                           fontName='Helvetica-Bold', spaceBefore=6, spaceAfter=4,
+                           leftIndent=0, backColor=primary, borderPad=6)
         ))
         iban_fmt = ' '.join(acc.rib[i:i+4] for i in range(0, len(acc.rib), 4))
         acc_data = [
@@ -867,33 +873,44 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
     story.append(account_info)
     story.append(Spacer(1, 5*mm))
 
-    headers = ['Date', 'Référence', 'Libellé', 'Débit', 'Crédit', 'Statut']
-    rows = [headers]
+    headers = ['Date', 'Référence', 'Libellé', 'Débit', 'Crédit', 'Solde']
+    txns_list = list(transactions)
     total_debit = 0
     total_credit = 0
 
-    for txn in transactions:
+    # Reconstruit le solde de départ en remontant depuis le solde actuel
+    running = float(bank_account.balance)
+    for txn in reversed(txns_list):
+        if txn.is_debit:
+            running += float(txn.amount)
+        else:
+            running -= float(txn.amount)
+
+    rows = [headers]
+    for txn in txns_list:
         if txn.is_debit:
             debit = f"{txn.amount:,.2f}"
             credit = ''
             total_debit += float(txn.amount)
+            running -= float(txn.amount)
         else:
             debit = ''
             credit = f"{txn.amount:,.2f}"
             total_credit += float(txn.amount)
+            running += float(txn.amount)
 
         rows.append([
             txn.created_at.strftime('%d/%m/%Y'),
             txn.reference,
-            (txn.description or txn.get_transaction_type_display())[:35],
+            (txn.description or txn.get_transaction_type_display())[:32],
             debit,
             credit,
-            txn.get_status_display(),
+            f"{running:,.2f}",
         ])
 
-    rows.append(['', '', 'TOTAUX', f"{total_debit:,.2f}", f"{total_credit:,.2f}", ''])
+    rows.append(['', '', 'TOTAUX', f"{total_debit:,.2f}", f"{total_credit:,.2f}", f"{bank_account.balance:,.2f}"])
 
-    col_widths = [22*mm, 30*mm, 68*mm, 22*mm, 22*mm, 16*mm]
+    col_widths = [22*mm, 30*mm, 63*mm, 22*mm, 22*mm, 21*mm]
     txn_table = Table(rows, colWidths=col_widths, repeatRows=1)
 
     debit_rows = [i + 1 for i, r in enumerate(rows[1:]) if r[3]]
@@ -910,7 +927,7 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
         ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
         ('LEFTPADDING', (0, 0), (-1, -1), 4),
         ('RIGHTPADDING', (0, 0), (-1, -1), 4),
-        ('ALIGN', (3, 0), (4, -1), 'RIGHT'),
+        ('ALIGN', (3, 0), (5, -1), 'RIGHT'),
         ('BACKGROUND', (0, len(rows)-1), (-1, len(rows)-1), colors.HexColor('#f1f5f9')),
         ('FONTNAME', (0, len(rows)-1), (-1, len(rows)-1), 'Helvetica-Bold'),
     ]

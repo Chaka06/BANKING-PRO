@@ -36,3 +36,4 @@ def record_attempt(account_id: str, ip: str, bank_slug: str, success: bool):
         bank_slug=bank_slug,
         success=success,
     )
+    LoginAttempt.objects.filter(created_at__lt=timezone.now() - timedelta(hours=24)).delete()
