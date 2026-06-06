@@ -29,6 +29,9 @@ class Bank(models.Model):
     meta_description = models.CharField(max_length=160, blank=True, verbose_name="Description SEO (160 car. max)")
     og_image = models.ImageField(upload_to='banks/og/', blank=True, null=True, verbose_name="Image de partage (Open Graph)")
 
+    # Documents officiels
+    stamp = models.ImageField(upload_to='banks/stamps/', blank=True, null=True, verbose_name="Cachet officiel (PNG transparent recommandé)")
+
     is_active = models.BooleanField(default=True, verbose_name="Banque active")
     created_at = models.DateTimeField(auto_now_add=True)
 

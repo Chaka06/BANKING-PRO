@@ -502,129 +502,12 @@ def _hex_to_rgb(hex_color):
     return tuple(int(h[i:i+2], 16) / 255 for i in (0, 2, 4))
 
 
-def _draw_arc_text(canvas, text, cx, cy, radius, angle_start, angle_end,
-                   font_name='Helvetica-Bold', font_size=6, top_arc=True):
-    """Place each character individually along a circular arc.
-    angle_start/end in degrees (math convention: 0=right, CCW positive).
-    top_arc=True  → char tops face outward (top half text).
-    top_arc=False → char bottoms face outward (bottom half text).
-    """
-    n = len(text)
-    if n == 0:
-        return
-    span = angle_end - angle_start
-    canvas.setFont(font_name, font_size)
-    for i, char in enumerate(text):
-        t = i / max(n - 1, 1)
-        angle_deg = angle_start + t * span
-        angle_rad = math.radians(angle_deg)
-        x = cx + radius * math.cos(angle_rad)
-        y = cy + radius * math.sin(angle_rad)
-        rotate = angle_deg - 90 if top_arc else angle_deg + 90
-        canvas.saveState()
-        canvas.translate(x, y)
-        canvas.rotate(rotate)
-        canvas.drawCentredString(0, 0, char)
-        canvas.restoreState()
-
-
-def _draw_5star(canvas, cx, cy, outer_r):
-    """Draw a filled 5-pointed star."""
-    inner_r = outer_r * 0.40
-    path = canvas.beginPath()
-    for i in range(10):
-        angle = math.radians(90 + i * 36)
-        r = outer_r if i % 2 == 0 else inner_r
-        x = cx + r * math.cos(angle)
-        y = cy + r * math.sin(angle)
-        if i == 0:
-            path.moveTo(x, y)
-        else:
-            path.lineTo(x, y)
-    path.close()
-    canvas.drawPath(path, fill=1, stroke=0)
-
-
-def _stamp_initials(bank_name):
-    """'BCG Banque' → 'BCG',  'Crédit Agricole' → 'CA'."""
-    words = bank_name.split()
-    if words and words[0].isupper() and len(words[0]) <= 5:
-        return words[0]
-    return ''.join(w[0].upper() for w in words if w)[:3]
-
-
-def _draw_stamp(canvas, bank, cx, cy, radius=15*mm):
-    """Professional three-ring bank seal with curved arc text, star separators
-    and a monogram centre emblem."""
-    primary = _hex_to_rgb(bank.color_primary)
-
-    canvas.saveState()
-    canvas.setStrokeColorRGB(*primary)
-    canvas.setFillColorRGB(*primary)
-
-    # ── Three concentric rings ─────────────────────────────────────
-    # 1. Outer border (thick)
-    canvas.setLineWidth(2.4)
-    canvas.circle(cx, cy, radius, stroke=1, fill=0)
-
-    # 2. Inner edge of text band
-    band_r = radius - 3*mm
-    canvas.setLineWidth(0.7)
-    canvas.circle(cx, cy, band_r, stroke=1, fill=0)
-
-    # 3. Centre zone border
-    zone_r = radius - 5.2*mm
-    canvas.setLineWidth(0.7)
-    canvas.circle(cx, cy, zone_r, stroke=1, fill=0)
-
-    # ── 5-pointed star separators (left ~10° and right ~170°) ─────
-    star_mid_r = (radius + band_r) / 2
-    for angle_deg in (10, 170):
-        a = math.radians(angle_deg)
-        _draw_5star(canvas,
-                    cx + star_mid_r * math.cos(a),
-                    cy + star_mid_r * math.sin(a),
-                    outer_r=1.4)
-
-    # ── Curved bank name — top arc (148° → 32°, left to right) ────
-    arc_r = radius - 1.55*mm
-    bank_name = bank.name.upper()[:22]
-    _draw_arc_text(canvas, bank_name, cx, cy, arc_r,
-                   148, 32, 'Helvetica-Bold', 5.5, top_arc=True)
-
-    # ── Curved label — bottom arc (212° → 328°, left to right) ────
-    _draw_arc_text(canvas, 'CERTIFIÉ CONFORME', cx, cy, arc_r,
-                   212, 328, 'Helvetica', 4.8, top_arc=False)
-
-    # ── Centre emblem ──────────────────────────────────────────────
-    initials = _stamp_initials(bank.name)
-
-    # Large initials
-    canvas.setFont('Helvetica-Bold', 12)
-    canvas.drawCentredString(cx, cy + 1.8*mm, initials)
-
-    # Thin horizontal rule below initials
-    rule_w = zone_r * 0.70
-    canvas.setLineWidth(0.5)
-    canvas.line(cx - rule_w, cy + 0.8*mm, cx + rule_w, cy + 0.8*mm)
-
-    # SWIFT / BIC
-    canvas.setFont('Helvetica', 6.5)
-    canvas.drawCentredString(cx, cy - 2.5*mm, bank.swift or '')
-
-    # Date
-    canvas.setFont('Helvetica', 5)
-    canvas.drawCentredString(cx, cy - 5*mm, datetime.now().strftime('%d/%m/%Y'))
-
-    canvas.restoreState()
-
-
-def _get_logo_reader(bank):
-    """Retourne un ImageReader ReportLab pour le logo, via URL Supabase ou chemin local."""
-    if not bank.logo:
+def _fetch_image_reader(url_or_field):
+    """Retourne un ImageReader ReportLab depuis une URL Supabase ou un chemin local."""
+    if not url_or_field:
         return None
     try:
-        raw = bank.logo.url
+        raw = url_or_field.url
         if raw.startswith('http'):
             resp = _requests.get(raw, timeout=5)
             if resp.status_code == 200:
@@ -632,9 +515,9 @@ def _get_logo_reader(bank):
     except Exception:
         pass
     try:
-        path = bank.logo.path
+        path = url_or_field.path
         if os.path.exists(path):
-            return path
+            return ImageReader(path)
     except Exception:
         pass
     return None
@@ -644,124 +527,157 @@ def _draw_watermark(canvas, text):
     """Filigrane diagonal centré, très transparent."""
     PAGE_W, PAGE_H = A4
     canvas.saveState()
-    canvas.setFillColorRGB(0.88, 0.88, 0.88)
-    canvas.setFont('Helvetica-Bold', 52)
+    canvas.setFillColorRGB(0.85, 0.85, 0.85)
+    canvas.setFont('Helvetica-Bold', 58)
     canvas.translate(PAGE_W / 2, PAGE_H / 2)
-    canvas.rotate(40)
-    canvas.setFillAlpha(0.07)
+    canvas.rotate(38)
+    canvas.setFillAlpha(0.06)
     canvas.drawCentredString(0, 0, text.upper())
     canvas.restoreState()
 
 
-def _page_bg(canvas, doc, bank, doc_type):
-    """Header (logo, bank name, rule, doc type, date) + footer (HR, info, stamp) on every page."""
+def _draw_stamp_image(canvas, bank, cx, cy, size=30*mm, angle=-15):
+    """Affiche le cachet de la banque (image uploadée), incliné comme un vrai tampon."""
+    img = _fetch_image_reader(bank.stamp if hasattr(bank, 'stamp') else None)
+    if not img:
+        return
+    canvas.saveState()
+    canvas.translate(cx, cy)
+    canvas.rotate(angle)
+    canvas.drawImage(img, -size / 2, -size / 2,
+                     width=size, height=size,
+                     preserveAspectRatio=True, mask='auto')
+    canvas.restoreState()
+
+
+def _page_bg(canvas, doc, bank, doc_type, doc_ref=''):
+    """
+    Layout inspiré de la facture Stripe/Anthropic :
+    - Bande grise très légère en haut
+    - Logo à gauche, nom de la banque dessous
+    - Type de document grand et gras à droite (couleur primaire)
+    - Référence + date sous le titre
+    - Ligne primaire fine de séparation
+    - Footer minimaliste + cachet incliné
+    """
     PAGE_W, PAGE_H = A4
-    ML, MR = 22*mm, 22*mm
+    ML, MR = 25*mm, 25*mm
     primary = _hex_to_rgb(bank.color_primary)
-    gray = (0.42, 0.45, 0.50)
-    light = (0.97, 0.98, 0.99)
+    dark    = (0.10, 0.10, 0.12)
+    gray    = (0.44, 0.46, 0.50)
+    xlight  = (0.96, 0.96, 0.96)
 
     canvas.saveState()
 
-    # Filigrane diagonal discret
+    # ── Filigrane ──────────────────────────────────────────────────
     _draw_watermark(canvas, bank.name)
     canvas.restoreState()
     canvas.saveState()
 
-    # Subtle header background band
-    canvas.setFillColorRGB(*light)
-    canvas.rect(0, PAGE_H - 43*mm, PAGE_W, 43*mm, stroke=0, fill=1)
+    # ── Bande grise très légère en haut (comme la facture) ─────────
+    canvas.setFillColorRGB(*xlight)
+    canvas.rect(0, PAGE_H - 4*mm, PAGE_W, 4*mm, stroke=0, fill=1)
 
-    # Logo — top left (URL Supabase ou fichier local)
+    # ── Logo banque — haut gauche ───────────────────────────────────
+    logo_img = _fetch_image_reader(bank.logo)
     logo_drawn = False
-    logo_img = _get_logo_reader(bank)
+    logo_bottom = PAGE_H - 4*mm - 22*mm
     if logo_img:
         try:
-            canvas.drawImage(logo_img, ML, PAGE_H - 6*mm - 16*mm,
-                             width=48*mm, height=16*mm,
+            canvas.drawImage(logo_img, ML, logo_bottom,
+                             width=52*mm, height=20*mm,
                              preserveAspectRatio=True, anchor='nw', mask='auto')
             logo_drawn = True
         except Exception:
             pass
 
-    # Bank name
+    # Nom + tagline (affiché toujours, sous le logo ou à la place)
+    name_y = logo_bottom - 5*mm if logo_drawn else PAGE_H - 4*mm - 14*mm
     canvas.setFillColorRGB(*primary)
-    if logo_drawn:
-        canvas.setFont('Helvetica-Bold', 13)
-        canvas.drawString(ML + 52*mm, PAGE_H - 11*mm, bank.name)
-        if bank.tagline:
-            canvas.setFont('Helvetica', 7.5)
-            canvas.setFillColorRGB(*gray)
-            canvas.drawString(ML + 52*mm, PAGE_H - 18*mm, bank.tagline)
-    else:
-        canvas.setFont('Helvetica-Bold', 15)
-        canvas.drawCentredString(PAGE_W / 2, PAGE_H - 13*mm, bank.name)
-        if bank.tagline:
-            canvas.setFont('Helvetica', 8.5)
-            canvas.setFillColorRGB(*gray)
-            canvas.drawCentredString(PAGE_W / 2, PAGE_H - 20*mm, bank.tagline)
+    canvas.setFont('Helvetica-Bold', 13)
+    canvas.drawString(ML, name_y, bank.name)
+    if bank.tagline:
+        canvas.setFillColorRGB(*gray)
+        canvas.setFont('Helvetica', 7.5)
+        canvas.drawString(ML, name_y - 5*mm, bank.tagline)
 
-    # Date — top right
+    # ── Type de document — grand, couleur primaire, aligné à droite ─
+    canvas.setFillColorRGB(*primary)
+    canvas.setFont('Helvetica-Bold', 20)
+    canvas.drawRightString(PAGE_W - MR, PAGE_H - 4*mm - 16*mm, doc_type)
+
+    # Référence + date sous le titre
     canvas.setFillColorRGB(*gray)
     canvas.setFont('Helvetica', 8)
-    canvas.drawRightString(PAGE_W - MR, PAGE_H - 8*mm, datetime.now().strftime('%d/%m/%Y'))
+    if doc_ref:
+        canvas.drawRightString(PAGE_W - MR, PAGE_H - 4*mm - 24*mm, f"Réf. {doc_ref}")
+        canvas.drawRightString(PAGE_W - MR, PAGE_H - 4*mm - 31*mm, datetime.now().strftime('%d/%m/%Y'))
+    else:
+        canvas.drawRightString(PAGE_W - MR, PAGE_H - 4*mm - 24*mm, datetime.now().strftime('%d/%m/%Y'))
 
-    # Document type — centred
-    canvas.setFillColorRGB(*primary)
-    canvas.setFont('Helvetica-Bold', 12)
-    canvas.drawCentredString(PAGE_W / 2, PAGE_H - 31*mm, doc_type)
-
-    # Primary rule separating header from content
+    # ── Ligne primaire de séparation header / contenu ───────────────
+    rule_y = PAGE_H - 46*mm
     canvas.setStrokeColorRGB(*primary)
-    canvas.setLineWidth(2.5)
-    canvas.line(ML, PAGE_H - 42*mm, PAGE_W - MR, PAGE_H - 42*mm)
+    canvas.setLineWidth(1.5)
+    canvas.line(ML, rule_y, PAGE_W - MR, rule_y)
 
-    # Footer HR
-    footer_y = 37*mm
-    canvas.setStrokeColorRGB(0.89, 0.90, 0.92)
-    canvas.setLineWidth(0.4)
+    # ── Footer ─────────────────────────────────────────────────────
+    footer_y = 30*mm
+
+    canvas.setStrokeColorRGB(*xlight)
+    canvas.setLineWidth(0.6)
     canvas.line(ML, footer_y, PAGE_W - MR, footer_y)
 
-    # Footer text (left-aligned, leaving right side for stamp)
     canvas.setFillColorRGB(*gray)
     canvas.setFont('Helvetica', 7)
-    _footer_parts = [p for p in [bank.name, bank.address, bank.phone, bank.email] if p]
-    info = '  ·  '.join(_footer_parts)
-    canvas.drawString(ML, footer_y - 5.5*mm, info[:90])
+    _parts = [p for p in [bank.name, bank.address, bank.phone, bank.email] if p]
+    canvas.drawString(ML, footer_y - 5.5*mm, ('  ·  '.join(_parts))[:90])
 
-    # Numéro de page
-    canvas.setFont('Helvetica', 7)
-    canvas.drawCentredString(PAGE_W / 2, 10*mm, f"Page {doc.page}")
+    canvas.setFillColorRGB(0.72, 0.74, 0.78)
     canvas.setFont('Helvetica', 6.5)
-    canvas.setFillColorRGB(0.74, 0.76, 0.80)
     canvas.drawString(ML, footer_y - 10*mm,
                       "Document généré automatiquement — Ne constitue pas un document contractuel sans signature.")
 
-    # Stamp — bottom right
-    _draw_stamp(canvas, bank, PAGE_W - MR - 16*mm, footer_y / 2, radius=15*mm)
+    # Numéro de page centré
+    canvas.setFillColorRGB(*gray)
+    canvas.setFont('Helvetica', 7)
+    canvas.drawCentredString(PAGE_W / 2, 10*mm, f"Page {doc.page}")
+
+    # ── Cachet image incliné — bas droite ───────────────────────────
+    _draw_stamp_image(canvas, bank, PAGE_W - MR - 18*mm, footer_y / 2 - 2*mm)
 
     canvas.restoreState()
 
 
 def _build_info_table(data, primary, col_widths=None):
+    """Table épurée style facture — séparateurs fins, pas de bordures lourdes."""
     if col_widths is None:
-        col_widths = [65*mm, 105*mm]
+        col_widths = [68*mm, 102*mm]
     table = Table(data, colWidths=col_widths)
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f8fafc')),
-        ('TEXTCOLOR', (0, 0), (0, -1), primary),
-        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-        ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 9.5),
-        ('ROWBACKGROUNDS', (0, 0), (-1, -1), [colors.white, colors.HexColor('#f8fafc')]),
-        ('LINEBELOW', (0, 0), (-1, -2), 0.3, colors.HexColor('#e5e7eb')),
-        ('BOX', (0, 0), (-1, -1), 0.5, colors.HexColor('#e5e7eb')),
-        ('TOPPADDING', (0, 0), (-1, -1), 7),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 7),
-        ('LEFTPADDING', (0, 0), (-1, -1), 10),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+    n = len(data)
+    style = [
+        # Pas de box extérieure — juste une ligne fine en haut
+        ('LINEABOVE', (0, 0), (-1, 0), 0.5, colors.HexColor('#e2e8f0')),
+        # Séparateur fin sous chaque ligne
+        ('LINEBELOW', (0, 0), (-1, -1), 0.5, colors.HexColor('#e2e8f0')),
+        # Colonne label : couleur grise, petite casse
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#64748b')),
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (0, -1), 8.5),
+        # Colonne valeur : noir foncé, gras
+        ('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor('#0f172a')),
+        ('FONTNAME', (1, 0), (1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (1, 0), (1, -1), 9),
+        # Alignement valeur à droite
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('TOPPADDING', (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ('LEFTPADDING', (0, 0), (0, -1), 0),
+        ('LEFTPADDING', (1, 0), (1, -1), 8),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 0),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
+    ]
+    table.setStyle(TableStyle(style))
     return table
 
 
@@ -771,20 +687,30 @@ def generate_rib_pdf(bank_account, all_accounts=None):
     buffer = io.BytesIO()
     bank = bank_account.bank
     primary = colors.HexColor(bank.color_primary)
+    primary_rgb = _hex_to_rgb(bank.color_primary)
+    gray_style = colors.HexColor('#64748b')
 
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
-        topMargin=45*mm, bottomMargin=38*mm,
-        leftMargin=22*mm, rightMargin=22*mm,
+        topMargin=52*mm, bottomMargin=42*mm,
+        leftMargin=25*mm, rightMargin=25*mm,
     )
     story = []
-    page_fn = lambda c, d: _page_bg(c, d, bank, "RELEVÉ D'IDENTITÉ BANCAIRE (RIB)")
+    page_fn = lambda c, d: _page_bg(c, d, bank, "RELEVÉ D'IDENTITÉ BANCAIRE",
+                                    doc_ref=bank_account.account_id)
 
-    story.append(Spacer(1, 3*mm))
+    story.append(Spacer(1, 6*mm))
 
+    # Section titulaire
+    story.append(Paragraph(
+        'TITULAIRE',
+        ParagraphStyle('SectionTitle', fontSize=7.5, textColor=gray_style,
+                       fontName='Helvetica', spaceBefore=0, spaceAfter=4,
+                       letterSpacing=1.2)
+    ))
     common_data = [
-        ['Titulaire du compte', bank_account.get_full_name()],
-        ['Domiciliation', bank.name],
+        ['Nom complet', bank_account.get_full_name()],
+        ['Établissement', bank.name],
         ['Adresse de la banque', bank.address or '—'],
         ['BIC / SWIFT', bank.swift or '—'],
         ['Pays', bank_account.country],
@@ -792,16 +718,17 @@ def generate_rib_pdf(bank_account, all_accounts=None):
         ['Solde disponible', f"{bank_account.balance:,.2f} {bank_account.currency}"],
     ]
     story.append(_build_info_table(common_data, primary))
-    story.append(Spacer(1, 7*mm))
+    story.append(Spacer(1, 8*mm))
 
+    # Sections comptes
     accounts_to_show = all_accounts if (all_accounts and len(all_accounts) > 1) else [bank_account]
     for acc in accounts_to_show:
         label = acc.get_account_type_display().upper()
         story.append(Paragraph(
-            f'<b>{label}</b>',
-            ParagraphStyle('AccLabel', fontSize=10, textColor=colors.white,
-                           fontName='Helvetica-Bold', spaceBefore=6, spaceAfter=4,
-                           leftIndent=0, backColor=primary, borderPad=6)
+            label,
+            ParagraphStyle('AccLabel', fontSize=7.5, textColor=gray_style,
+                           fontName='Helvetica', spaceBefore=6, spaceAfter=4,
+                           letterSpacing=1.2)
         ))
         iban_fmt = ' '.join(acc.rib[i:i+4] for i in range(0, len(acc.rib), 4))
         acc_data = [
@@ -812,17 +739,21 @@ def generate_rib_pdf(bank_account, all_accounts=None):
             ['IBAN',         iban_fmt],
         ]
         story.append(_build_info_table(acc_data, primary))
-        story.append(Spacer(1, 4*mm))
+        story.append(Spacer(1, 6*mm))
 
-    story.append(Spacer(1, 4*mm))
-    story.append(KeepTogether([
-        Paragraph(
-            "Je soussigné(e), certifie que les coordonnées bancaires figurant sur ce document "
-            f"sont exactes et correspondent à mon/mes compte(s) ouvert(s) auprès de <b>{bank.name}</b>.",
-            ParagraphStyle('Decl', fontSize=9, textColor=colors.HexColor('#374151'),
-                           leading=14, spaceAfter=12, leftIndent=4, rightIndent=4)
-        ),
-    ]))
+        # IBAN en grand — style visuel
+        story.append(Paragraph(
+            f'<font name="Courier-Bold" size="12" color="{bank.color_primary}">{iban_fmt}</font>',
+            ParagraphStyle('IBAN', alignment=TA_CENTER, spaceBefore=2, spaceAfter=8)
+        ))
+
+    story.append(Spacer(1, 6*mm))
+    story.append(Paragraph(
+        f"Je soussigné(e) certifie que les coordonnées bancaires figurant sur ce document "
+        f"sont exactes et correspondent à mon/mes compte(s) ouvert(s) auprès de <b>{bank.name}</b>.",
+        ParagraphStyle('Decl', fontSize=8.5, textColor=colors.HexColor('#475569'),
+                       leading=14, spaceAfter=12)
+    ))
 
     doc.build(story, onFirstPage=page_fn, onLaterPages=page_fn)
     buffer.seek(0)
@@ -847,35 +778,43 @@ def generate_transfer_slip_pdf(transaction):
 
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
-        topMargin=45*mm, bottomMargin=38*mm,
-        leftMargin=22*mm, rightMargin=22*mm,
+        topMargin=52*mm, bottomMargin=42*mm,
+        leftMargin=25*mm, rightMargin=25*mm,
     )
     story = []
-    page_fn = lambda c, d: _page_bg(c, d, bank, "BORDEREAU DE VIREMENT")
+    page_fn = lambda c, d: _page_bg(c, d, bank, "BORDEREAU DE VIREMENT",
+                                    doc_ref=transaction.reference)
 
     story.append(Spacer(1, 4*mm))
-    status_table = Table(
-        [[Paragraph(f'<b>● {s_label}</b>',
-                    ParagraphStyle('StatusLabel', fontSize=11, textColor=colors.HexColor(s_fg),
-                                   alignment=TA_CENTER, fontName='Helvetica-Bold'))]],
-        colWidths=[166*mm],
+
+    # Badge de statut — style pill sans bordure lourde
+    status_style = ParagraphStyle(
+        'StatusPill', fontSize=12, textColor=colors.HexColor(s_fg),
+        alignment=TA_CENTER, fontName='Helvetica-Bold', spaceBefore=0, spaceAfter=0,
+        backColor=colors.HexColor(s_bg), borderPad=10,
     )
-    status_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor(s_bg)),
-        ('BOX', (0, 0), (-1, -1), 1.5, colors.HexColor(s_border)),
-        ('TOPPADDING', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
-        ('LEFTPADDING', (0, 0), (-1, -1), 10),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 10),
-    ]))
-    story.append(status_table)
+    story.append(Paragraph(f'● {s_label}', status_style))
+    story.append(Spacer(1, 8*mm))
+
+    # Montant mis en avant
+    story.append(Paragraph(
+        f'<font name="Helvetica-Bold" size="28" color="{bank.color_primary}">'
+        f'{transaction.amount:,.2f}</font>'
+        f' <font name="Helvetica" size="14" color="#94a3b8">{transaction.currency}</font>',
+        ParagraphStyle('Amount', alignment=TA_CENTER, spaceAfter=8)
+    ))
     story.append(Spacer(1, 6*mm))
+
+    story.append(Paragraph(
+        'DÉTAILS DE L\'OPÉRATION',
+        ParagraphStyle('SectionTitle', fontSize=7.5, textColor=colors.HexColor('#64748b'),
+                       fontName='Helvetica', spaceBefore=0, spaceAfter=4, letterSpacing=1.2)
+    ))
 
     data = [
         ['Référence', transaction.reference],
         ['Date d\'initiation', transaction.created_at.strftime('%d/%m/%Y à %H:%M')],
         ['Type', transaction.get_transaction_type_display()],
-        ['Montant', f"{transaction.amount:,.2f} {transaction.currency}"],
         ["Donneur d'ordre", transaction.account.get_full_name()],
         ["IBAN donneur d'ordre", transaction.account.rib],
         ['Bénéficiaire', transaction.get_beneficiary_display_name()],
@@ -907,45 +846,44 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
     buffer = io.BytesIO()
     bank = bank_account.bank
     primary = colors.HexColor(bank.color_primary)
+    gray_label = colors.HexColor('#64748b')
+    period = f"{date_from.strftime('%d/%m/%Y')} — {date_to.strftime('%d/%m/%Y')}"
 
     doc = SimpleDocTemplate(
         buffer, pagesize=A4,
-        topMargin=45*mm, bottomMargin=38*mm,
-        leftMargin=15*mm, rightMargin=15*mm,
+        topMargin=52*mm, bottomMargin=42*mm,
+        leftMargin=18*mm, rightMargin=18*mm,
     )
     story = []
-    period = f"Période du {date_from.strftime('%d/%m/%Y')} au {date_to.strftime('%d/%m/%Y')}"
-    page_fn = lambda c, d: _page_bg(c, d, bank, f"RELEVÉ DE COMPTE  —  {period}")
+    page_fn = lambda c, d: _page_bg(c, d, bank, "RELEVÉ DE COMPTE", doc_ref=period)
 
-    story.append(Spacer(1, 3*mm))
+    story.append(Spacer(1, 4*mm))
 
-    account_info = Table(
+    # Infos titulaire
+    story.append(Paragraph(
+        'TITULAIRE',
+        ParagraphStyle('SectionTitle', fontSize=7.5, textColor=gray_label,
+                       fontName='Helvetica', spaceBefore=0, spaceAfter=4, letterSpacing=1.2)
+    ))
+    story.append(_build_info_table(
         [['Titulaire', bank_account.get_full_name()],
-         ['IBAN', bank_account.rib],
+         ['IBAN', ' '.join(bank_account.rib[i:i+4] for i in range(0, len(bank_account.rib), 4))],
          ['Devise', bank_account.currency]],
-        colWidths=[45*mm, 135*mm]
-    )
-    account_info.setStyle(TableStyle([
-        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-        ('TEXTCOLOR', (0, 0), (0, -1), primary),
-        ('FONTSIZE', (0, 0), (-1, -1), 9),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-        ('LEFTPADDING', (0, 0), (-1, -1), 8),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f8fafc')),
-        ('LINEBELOW', (0, 0), (-1, -2), 0.3, colors.HexColor('#e5e7eb')),
-        ('BOX', (0, 0), (-1, -1), 0.4, colors.HexColor('#e5e7eb')),
-    ]))
-    story.append(account_info)
-    story.append(Spacer(1, 5*mm))
+        primary, col_widths=[45*mm, 115*mm]
+    ))
+    story.append(Spacer(1, 6*mm))
+
+    story.append(Paragraph(
+        'MOUVEMENTS',
+        ParagraphStyle('SectionTitle', fontSize=7.5, textColor=gray_label,
+                       fontName='Helvetica', spaceBefore=0, spaceAfter=4, letterSpacing=1.2)
+    ))
 
     headers = ['Date', 'Référence', 'Libellé', 'Débit', 'Crédit', 'Solde']
     txns_list = list(transactions)
     total_debit = 0
     total_credit = 0
 
-    # Reconstruit le solde de départ en remontant depuis le solde actuel
     running = float(bank_account.balance)
     for txn in reversed(txns_list):
         if txn.is_debit:
@@ -965,51 +903,64 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
             credit = f"{txn.amount:,.2f}"
             total_credit += float(txn.amount)
             running += float(txn.amount)
-
         rows.append([
             txn.created_at.strftime('%d/%m/%Y'),
             txn.reference,
             (txn.description or txn.get_transaction_type_display())[:32],
-            debit,
-            credit,
+            debit, credit,
             f"{running:,.2f}",
         ])
 
     rows.append(['', '', 'TOTAUX', f"{total_debit:,.2f}", f"{total_credit:,.2f}", f"{bank_account.balance:,.2f}"])
 
-    col_widths = [22*mm, 30*mm, 63*mm, 22*mm, 22*mm, 21*mm]
+    col_widths = [22*mm, 32*mm, 62*mm, 22*mm, 22*mm, 22*mm]
     txn_table = Table(rows, colWidths=col_widths, repeatRows=1)
 
-    debit_rows = [i + 1 for i, r in enumerate(rows[1:]) if r[3]]
+    debit_rows  = [i + 1 for i, r in enumerate(rows[1:]) if r[3]]
     credit_rows = [i + 1 for i, r in enumerate(rows[1:]) if r[4]]
+    last = len(rows) - 1
 
-    style_commands = [
+    style_cmds = [
+        # En-tête : fond couleur primaire, texte blanc
         ('BACKGROUND', (0, 0), (-1, 0), primary),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 8),
-        ('ROWBACKGROUNDS', (0, 1), (-1, -2), [colors.white, colors.HexColor('#f9fafb')]),
-        ('GRID', (0, 0), (-1, -1), 0.2, colors.HexColor('#e5e7eb')),
+        ('FONTSIZE', (0, 0), (-1, 0), 8),
+        # Corps
+        ('FONTNAME', (0, 1), (-1, last - 1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, -1), 7.5),
+        ('ROWBACKGROUNDS', (0, 1), (-1, last - 1), [colors.white, colors.HexColor('#f8fafc')]),
+        # Séparateurs fins seulement (pas de grid lourde)
+        ('LINEBELOW', (0, 0), (-1, last - 1), 0.3, colors.HexColor('#e2e8f0')),
+        ('LINEABOVE', (0, 0), (-1, 0), 0, colors.white),
+        # Ligne totaux
+        ('BACKGROUND', (0, last), (-1, last), colors.HexColor('#f1f5f9')),
+        ('FONTNAME', (0, last), (-1, last), 'Helvetica-Bold'),
+        ('LINEABOVE', (0, last), (-1, last), 0.8, colors.HexColor('#cbd5e1')),
+        # Paddings
         ('TOPPADDING', (0, 0), (-1, -1), 5),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
         ('LEFTPADDING', (0, 0), (-1, -1), 4),
         ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        # Alignements numériques
         ('ALIGN', (3, 0), (5, -1), 'RIGHT'),
-        ('BACKGROUND', (0, len(rows)-1), (-1, len(rows)-1), colors.HexColor('#f1f5f9')),
-        ('FONTNAME', (0, len(rows)-1), (-1, len(rows)-1), 'Helvetica-Bold'),
     ]
     for r in debit_rows:
-        style_commands.append(('TEXTCOLOR', (3, r), (3, r), colors.HexColor('#dc2626')))
+        style_cmds.append(('TEXTCOLOR', (3, r), (3, r), colors.HexColor('#dc2626')))
+        style_cmds.append(('FONTNAME', (3, r), (3, r), 'Helvetica-Bold'))
     for r in credit_rows:
-        style_commands.append(('TEXTCOLOR', (4, r), (4, r), colors.HexColor('#16a34a')))
+        style_cmds.append(('TEXTCOLOR', (4, r), (4, r), colors.HexColor('#16a34a')))
+        style_cmds.append(('FONTNAME', (4, r), (4, r), 'Helvetica-Bold'))
 
-    txn_table.setStyle(TableStyle(style_commands))
+    txn_table.setStyle(TableStyle(style_cmds))
     story.append(txn_table)
-    story.append(Spacer(1, 5*mm))
+    story.append(Spacer(1, 6*mm))
 
     story.append(Paragraph(
-        f"Solde au {date_to.strftime('%d/%m/%Y')} : <b>{bank_account.balance:,.2f} {bank_account.currency}</b>",
-        ParagraphStyle('Balance', fontSize=11, textColor=primary, alignment=TA_RIGHT, spaceAfter=4)
+        f"Solde au {date_to.strftime('%d/%m/%Y')} : "
+        f"<font name='Helvetica-Bold' size='12' color='{bank.color_primary}'>"
+        f"{bank_account.balance:,.2f} {bank_account.currency}</font>",
+        ParagraphStyle('Balance', fontSize=10, alignment=TA_RIGHT, spaceAfter=4)
     ))
 
     doc.build(story, onFirstPage=page_fn, onLaterPages=page_fn)

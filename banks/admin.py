@@ -39,6 +39,14 @@ class BankAdmin(admin.ModelAdmin):
                 'iMessage, réseaux sociaux, etc. Format recommandé : 1200×630 px.'
             ),
         }),
+        ('Documents officiels', {
+            'fields': ('stamp',),
+            'description': (
+                'Cachet officiel apposé sur tous les PDFs (RIB, bordereaux, relevés). '
+                'Format recommandé : PNG avec fond transparent, carré (ex: 400×400 px). '
+                'Le cachet sera affiché incliné sur les documents, comme un vrai tampon.'
+            ),
+        }),
         ('URL de connexion', {
             'fields': ('login_url_preview',)
         }),
