@@ -60,20 +60,19 @@ class BankUserAdmin(UserAdmin):
 @admin.register(BankAccount)
 class BankAccountAdmin(BankScopedAdmin):
     list_display = [
-        'get_full_name', 'account_id_display', 'bank_badge', 'country',
+        'get_full_name', 'account_id_display', 'bank_badge', 'account_type', 'country',
         'currency', 'balance_display', 'status_badge',
         'manager_name', 'created_at',
     ]
-    list_filter = ['bank', 'status', 'country', 'currency']
+    list_filter = ['bank', 'account_type', 'status', 'country', 'currency']
     list_select_related = ['bank', 'user']
     search_fields = ['first_name', 'last_name', 'account_id', 'rib', 'email', 'phone']
     ordering = ['-created_at']
     date_hierarchy = 'created_at'
 
     def get_queryset(self, request):
-        # Un seul portefeuille par client → affiche uniquement les comptes courants
-        # Filtre par account_type (plus fiable que is_primary qui peut être mal initialisé)
-        return super().get_queryset(request).filter(account_type=BankAccount.TYPE_COURANT)
+        # Affiche TOUS les types de comptes (courant + épargne)
+        return super().get_queryset(request)
 
     _ADD_FIELDSETS = (
         ('Banque & Gestionnaire', {
