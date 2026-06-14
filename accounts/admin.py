@@ -9,6 +9,7 @@ from django.db import transaction as db_transaction
 
 from .models import BankUser, BankAccount, Beneficiary, AuditLog, LoginAttempt
 from .services import AccountService
+from .utils import fmt_amount
 
 
 # ── Multi-tenant mixin ────────────────────────────────────────────────────
@@ -164,7 +165,7 @@ class BankAccountAdmin(BankScopedAdmin):
 
     def balance_display(self, obj):
         color = '#16a34a' if obj.balance >= 0 else '#dc2626'
-        amount = f'{obj.balance:,.2f}'
+        amount = f'{fmt_amount(obj.balance)}'
         return format_html(
             '<span style="color:{};font-weight:700;font-family:monospace;">{} {}</span>',
             color, amount, obj.currency

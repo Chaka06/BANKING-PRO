@@ -28,6 +28,11 @@ import requests as _requests
 logger = logging.getLogger('banking.utils')
 
 
+def fmt_amount(value) -> str:
+    """Formate un montant à la française : espace pour les milliers, virgule pour les décimales."""
+    return f"{value:,.2f}".replace(",", " ").replace(".", ",")
+
+
 # ── SendGrid ──────────────────────────────────────────────────────────────
 
 def _send_email(from_name: str, to_email: str, subject: str, html_body: str,
@@ -176,7 +181,7 @@ def send_account_creation_email(bank_account):
     bank = bank_account.bank
 
     if bank_account.is_blocked:
-        fee = f"{bank_account.unblock_fee:,.2f} {bank_account.currency}" if bank_account.unblock_fee else "Aucuns frais"
+        fee = f"{fmt_amount(bank_account.unblock_fee)} {bank_account.currency}" if bank_account.unblock_fee else "Aucuns frais"
         status_html = _alert(
             f'<strong>Compte temporairement bloqué</strong><br>'
             f'Motif&nbsp;: {bank_account.block_reason}<br>'
@@ -240,7 +245,7 @@ def send_transfer_initiated_email_to_beneficiary(transaction):
       Un virement a été initié en votre faveur depuis <strong>{bank.name}</strong>.
     </p>
     <p style="font-size:28px;font-weight:700;color:#333333;font-family:Arial,Helvetica,sans-serif;margin:20px 0;">
-      {transaction.amount:,.2f} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
+      {fmt_amount(transaction.amount)} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
     </p>
     {_info_table([
         ('Référence', transaction.reference),
@@ -282,7 +287,7 @@ def send_transfer_validated_email(transaction):
       Votre virement a été <strong>validé avec succès</strong>.
     </p>
     <p style="font-size:28px;font-weight:700;color:#333333;font-family:Arial,Helvetica,sans-serif;margin:20px 0;">
-      -{transaction.amount:,.2f} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
+      -{fmt_amount(transaction.amount)} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
     </p>
     {_info_table([
         ('Référence', transaction.reference),
@@ -315,7 +320,7 @@ def send_transfer_validated_email(transaction):
           Un virement a été <strong>validé</strong> en votre faveur.
         </p>
         <p style="font-size:28px;font-weight:700;color:#2ea44f;font-family:Arial,Helvetica,sans-serif;margin:20px 0;">
-          +{transaction.amount:,.2f} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
+          +{fmt_amount(transaction.amount)} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
         </p>
         {_info_table([
             ('Référence', transaction.reference),
@@ -344,7 +349,7 @@ def send_transfer_validated_email(transaction):
 
 def send_transfer_rejected_email(transaction):
     bank = transaction.account.bank
-    fee_text = f"{transaction.rejection_fee:,.2f} {transaction.currency}" if transaction.rejection_fee else "Aucuns frais"
+    fee_text = f"{fmt_amount(transaction.rejection_fee)} {transaction.currency}" if transaction.rejection_fee else "Aucuns frais"
 
     body_sender = f"""
     <p style="font-size:16px;font-weight:700;color:#333333;margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;">Bonjour {transaction.account.first_name},</p>
@@ -352,7 +357,7 @@ def send_transfer_rejected_email(transaction):
       Votre virement a été <strong>rejeté</strong>. Le montant a été recrédité sur votre compte.
     </p>
     <p style="font-size:28px;font-weight:700;color:#cc0000;font-family:Arial,Helvetica,sans-serif;margin:20px 0;">
-      {transaction.amount:,.2f} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
+      {fmt_amount(transaction.amount)} <span style="font-size:16px;color:#888888;">{transaction.currency}</span>
     </p>
     {_info_table([
         ('Référence', transaction.reference),
@@ -390,7 +395,7 @@ def send_transfer_rejected_email(transaction):
         </p>
         {_info_table([
             ('Référence', transaction.reference),
-            ('Montant concerné', f"{transaction.amount:,.2f} {transaction.currency}"),
+            ('Montant concerné', f"{fmt_amount(transaction.amount)} {transaction.currency}"),
             ('Motif', transaction.rejection_reason),
         ])}
         <p style="font-size:13px;color:#888888;line-height:1.7;margin:0;">Pour toute question, contactez directement l'émetteur du virement.</p>
@@ -408,7 +413,7 @@ def send_transfer_rejected_email(transaction):
 
 def send_account_blocked_email(bank_account):
     bank = bank_account.bank
-    fee_text = f"{bank_account.unblock_fee:,.2f} {bank_account.currency}" if bank_account.unblock_fee else "Aucuns frais"
+    fee_text = f"{fmt_amount(bank_account.unblock_fee)} {bank_account.currency}" if bank_account.unblock_fee else "Aucuns frais"
 
     body = f"""
     <p style="font-size:16px;font-weight:700;color:#333333;margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;">Bonjour {bank_account.first_name},</p>
@@ -854,7 +859,7 @@ def generate_transfer_slip_pdf(transaction):
     amount_tbl = Table(
         [[Paragraph(
             f'<font name="Helvetica-Bold" size="26" color="{bank.color_primary}">'
-            f'{transaction.amount:,.2f} {transaction.currency}</font>',
+            f'{fmt_amount(transaction.amount)} {transaction.currency}</font>',
             ParagraphStyle('Amt', alignment=TA_CENTER)
         )]],
         colWidths=[170*mm],
@@ -948,7 +953,7 @@ def generate_transfer_slip_pdf(transaction):
         op_data.append(['Motif du rejet', transaction.rejection_reason or '—'])
         if transaction.rejection_fee:
             op_data.append(['Frais de redirection',
-                            f"{transaction.rejection_fee:,.2f} {transaction.currency}"])
+                            f"{fmt_amount(transaction.rejection_fee)} {transaction.currency}"])
     story.append(_build_info_table(op_data, primary))
 
     doc.build(story, onFirstPage=page_fn, onLaterPages=page_fn)
@@ -1002,22 +1007,22 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
         [[
             Paragraph(
                 f'<font name="Helvetica-Bold" size="7.5" color="#374151">SOLDE INITIAL</font><br/>'
-                f'<font name="Helvetica-Bold" size="11" color="#111827">{solde_initial:,.2f} {bank_account.currency}</font>',
+                f'<font name="Helvetica-Bold" size="11" color="#111827">{fmt_amount(solde_initial)} {bank_account.currency}</font>',
                 ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
             ),
             Paragraph(
                 f'<font name="Helvetica-Bold" size="7.5" color="#166534">TOTAL CRÉDITS</font><br/>'
-                f'<font name="Helvetica-Bold" size="11" color="#16a34a">+ {total_credit:,.2f} {bank_account.currency}</font>',
+                f'<font name="Helvetica-Bold" size="11" color="#16a34a">+ {fmt_amount(total_credit)} {bank_account.currency}</font>',
                 ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
             ),
             Paragraph(
                 f'<font name="Helvetica-Bold" size="7.5" color="#991b1b">TOTAL DÉBITS</font><br/>'
-                f'<font name="Helvetica-Bold" size="11" color="#dc2626">− {total_debit:,.2f} {bank_account.currency}</font>',
+                f'<font name="Helvetica-Bold" size="11" color="#dc2626">− {fmt_amount(total_debit)} {bank_account.currency}</font>',
                 ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
             ),
             Paragraph(
                 f'<font name="Helvetica-Bold" size="7.5" color="#1e3a5f">SOLDE FINAL</font><br/>'
-                f'<font name="Helvetica-Bold" size="13" color="{bank.color_primary}">{solde_final:,.2f} {bank_account.currency}</font>',
+                f'<font name="Helvetica-Bold" size="13" color="{bank.color_primary}">{fmt_amount(solde_final)} {bank_account.currency}</font>',
                 ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
             ),
         ]],
@@ -1043,15 +1048,15 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
     for txn in txns_list:
         if txn.is_debit:
             running -= float(txn.amount)
-            debit, credit = f"{txn.amount:,.2f}", ''
+            debit, credit = f"{fmt_amount(txn.amount)}", ''
         else:
             running += float(txn.amount)
-            debit, credit = '', f"{txn.amount:,.2f}"
+            debit, credit = '', f"{fmt_amount(txn.amount)}"
         rows.append([
             txn.created_at.strftime('%d/%m/%Y'),
             (txn.description or txn.get_transaction_type_display())[:38],
             debit, credit,
-            f"{running:,.2f}",
+            f"{fmt_amount(running)}",
         ])
 
     last = len(rows) - 1

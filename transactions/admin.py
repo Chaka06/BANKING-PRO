@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from .models import Transaction
 from accounts.services import TransferService
+from accounts.utils import fmt_amount
 
 
 @admin.register(Transaction)
@@ -87,7 +88,7 @@ class TransactionAdmin(admin.ModelAdmin):
     type_badge.short_description = 'Type'
 
     def amount_display(self, obj):
-        amount_str = f"{obj.amount:,.2f}"
+        amount_str = f"{fmt_amount(obj.amount)}"
         if obj.is_debit:
             return format_html(
                 '<span style="color:#dc2626;font-weight:700;font-family:monospace;">− {} {}</span>',
@@ -118,7 +119,7 @@ class TransactionAdmin(admin.ModelAdmin):
             return '—'
         account = obj.account
         color = '#16a34a' if account.balance >= 0 else '#dc2626'
-        balance_str = f"{account.balance:,.2f}"
+        balance_str = f"{fmt_amount(account.balance)}"
         return format_html(
             '<span style="color:{};font-weight:700;font-size:14px;font-family:monospace;">{} {}</span>',
             color, balance_str, account.currency
