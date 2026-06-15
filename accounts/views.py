@@ -358,8 +358,19 @@ def security_center_reject(request, bank_slug, reference, bank=None, account=Non
     )
     reason = request.POST.get('reason', '').strip() or "Annulation demandée par le titulaire du compte."
 
+    rejection_fee = None
+    if request.POST.get('apply_fee') == 'on':
+        fee_raw = request.POST.get('fee_amount', '').strip()
+        try:
+            fee = Decimal(fee_raw).quantize(Decimal('0.01'))
+            if fee > Decimal('0.00'):
+                rejection_fee = fee
+        except (InvalidOperation, ValueError):
+            messages.error(request, "Montant des frais invalide.")
+            return redirect('security_center', bank_slug=bank_slug)
+
     try:
-        TransferService.reject_transfer(txn, reason, None, actor=account.account_id)
+        TransferService.reject_transfer(txn, reason, rejection_fee, actor=account.account_id)
         txn.refresh_from_db()
         try:
             from .utils import send_transfer_rejected_email

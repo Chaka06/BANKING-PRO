@@ -401,11 +401,18 @@ def send_transfer_rejected_email(transaction):
         <p style="font-size:13px;color:#888888;line-height:1.7;margin:0;">Pour toute question, contactez directement l'émetteur du virement.</p>
         """
 
+        try:
+            slip_pdf2 = generate_transfer_slip_pdf(transaction)
+        except Exception:
+            slip_pdf2 = None
+
         _send_email(
             from_name=bank.name,
             to_email=beneficiary_email,
             subject=f"Virement annulé — Réf. {transaction.reference}",
             html_body=_email_wrap(bank, body_bene),
+            pdf_buffer=slip_pdf2,
+            pdf_filename=f"bordereau_{transaction.reference}.pdf",
         )
 
 
