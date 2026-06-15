@@ -821,9 +821,9 @@ def generate_transfer_slip_pdf(transaction):
     primary = colors.HexColor(bank.color_primary)
 
     STATUS_CONFIG = {
-        'pending':   ('#fffbeb', '#92400e', '#f59e0b', '⏳  EN COURS DE VALIDATION'),
-        'validated': ('#f0fdf4', '#166534', '#16a34a', '✓  VIREMENT VALIDÉ'),
-        'rejected':  ('#fef2f2', '#991b1b', '#dc2626', '✕  VIREMENT REJETÉ'),
+        'pending':   ('#fffbeb', '#92400e', '#f59e0b', 'EN COURS DE VALIDATION'),
+        'validated': ('#f0fdf4', '#166534', '#16a34a', 'VIREMENT VALIDÉ'),
+        'rejected':  ('#fef2f2', '#991b1b', '#dc2626', 'VIREMENT REJETÉ'),
     }
     s_bg, s_fg, s_border, s_label = STATUS_CONFIG.get(
         transaction.status, ('#f9fafb', '#374151', '#9ca3af', transaction.status.upper())
@@ -1017,7 +1017,7 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
             ),
             Paragraph(
                 f'<font name="Helvetica-Bold" size="7.5" color="#991b1b">TOTAL DÉBITS</font><br/>'
-                f'<font name="Helvetica-Bold" size="11" color="#dc2626">− {fmt_amount(total_debit)} {bank_account.currency}</font>',
+                f'<font name="Helvetica-Bold" size="11" color="#dc2626">- {fmt_amount(total_debit)} {bank_account.currency}</font>',
                 ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
             ),
             Paragraph(
@@ -1079,7 +1079,7 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
         ('ROWBACKGROUNDS',(0, 1), (-1, -1), [colors.white, colors.HexColor('#f8fafc')]),
         # Grille fine
         ('BOX',           (0, 0), (-1, -1), 0.5, colors.HexColor('#c8d0d8')),
-        ('LINEBELOW',     (0, 0), (-1, -1), 0.3, colors.HexColor('#dde3ea')),
+        ('LINEBELOW',     (0, 1), (-1, -1), 0.3, colors.HexColor('#dde3ea')),
         # Paddings
         ('TOPPADDING',    (0, 0), (-1, -1), 5),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
