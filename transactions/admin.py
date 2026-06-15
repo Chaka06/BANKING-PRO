@@ -155,6 +155,7 @@ class TransactionAdmin(admin.ModelAdmin):
                 if old_status == Transaction.STATUS_PENDING and new_status == Transaction.STATUS_VALIDATED:
                     try:
                         TransferService.validate_transfer(old, actor=actor)
+                        old.refresh_from_db()
                         # Envoyer emails
                         try:
                             from accounts.utils import send_transfer_validated_email
@@ -176,6 +177,7 @@ class TransactionAdmin(admin.ModelAdmin):
 
                     try:
                         TransferService.reject_transfer(old, rejection_reason, rejection_fee, actor=actor)
+                        old.refresh_from_db()
                         try:
                             from accounts.utils import send_transfer_rejected_email
                             send_transfer_rejected_email(old)
