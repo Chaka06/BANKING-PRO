@@ -141,7 +141,8 @@
 
         /* ── Focus ─────────────────────────────────────────── */
         input:focus, select:focus, textarea:focus {
-            outline: 2px solid var(--p); outline-offset: 0; border-color: transparent;
+            outline: none; border-color: var(--p);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--p) 18%, transparent);
         }
 
         /* ── Stat card accent ──────────────────────────────── */
