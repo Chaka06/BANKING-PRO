@@ -84,7 +84,7 @@
 
         <div class="relative z-10">
             {% if bank.logo %}
-                <img src="{{ bank.logo.url }}" alt="{{ bank.name }}" class="h-12 object-contain mb-8" style="filter:brightness(0) invert(1);">
+                <img src="{{ bank.logo.url }}" alt="{{ bank.name }}" class="h-12 object-contain mb-8" style="background:rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;backdrop-filter:blur(4px);">
             {% else %}
                 <div class="text-white font-bold text-2xl mb-8">{{ bank.name }}</div>
             {% endif %}
