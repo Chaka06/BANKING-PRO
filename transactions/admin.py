@@ -202,7 +202,6 @@ class TransactionAdmin(admin.ModelAdmin):
         elif not change:
             # Nouvelle transaction créée manuellement par l'admin
             try:
-                from accounts.services import TransferService
                 txn = TransferService.create_manual_movement(
                     account=obj.account,
                     movement_type=obj.transaction_type,
