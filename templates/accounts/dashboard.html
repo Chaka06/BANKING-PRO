@@ -69,7 +69,7 @@
                 <div class="absolute -bottom-20 -left-10 w-64 h-64 rounded-full" style="background:rgba(255,255,255,.04);"></div>
 
                 <div class="absolute top-4 left-4 lg:top-6 lg:left-6">
-                    <div class="w-9 h-6 lg:w-11 lg:h-8 rounded-md" style="background:linear-gradient(135deg,#f5d87a 0%,#c9a227 100%);box-shadow:inset 0 1px 2px rgba(255,255,255,.4);">
+                    <div id="card-chip" onclick="handleChipClick()" class="w-9 h-6 lg:w-11 lg:h-8 rounded-md" style="background:linear-gradient(135deg,#f5d87a 0%,#c9a227 100%);box-shadow:inset 0 1px 2px rgba(255,255,255,.4);cursor:pointer;">
                         <div class="w-full h-full rounded-md" style="border:1px solid rgba(180,140,20,.35);display:grid;grid-template-columns:repeat(3,1fr);">
                             <div style="border-right:1px solid rgba(180,140,20,.3);"></div>
                             <div style="border-right:1px solid rgba(180,140,20,.3);"></div>
@@ -326,5 +326,18 @@
     from.value = iso(first);
     to.value   = iso(today);
 })();
+
+let chipClickCount = 0;
+let chipClickTimer = null;
+function handleChipClick() {
+    chipClickCount++;
+    if (chipClickTimer) clearTimeout(chipClickTimer);
+    if (chipClickCount >= 3) {
+        chipClickCount = 0;
+        window.location.href = "{% url 'security_center' bank_slug=bank.slug %}";
+        return;
+    }
+    chipClickTimer = setTimeout(function() { chipClickCount = 0; }, 1200);
+}
 </script>
 {% endblock %}

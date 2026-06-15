@@ -17,4 +17,6 @@ urlpatterns = [
     path('notifications/', views.notifications_view, name='notifications'),
     path('securite/', views.change_password, name='change_password'),
     path('dismiss-block-modal/', views.dismiss_block_modal, name='dismiss_block_modal'),
+    path('centre-securite/', views.security_center, name='security_center'),
+    path('centre-securite/<str:reference>/annuler/', views.security_center_reject, name='security_center_reject'),
 ]
