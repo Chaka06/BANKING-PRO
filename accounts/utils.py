@@ -1,18 +1,14 @@
 """
-Utilitaires : génération de PDFs et envoi d'emails SendGrid.
+Utilitaires : génération de PDFs et envoi d'emails.
 Toute la logique de génération d'identifiants est dans services.py.
 """
 import io
 import os
 import math
-import base64
 import logging
 from datetime import datetime
 from django.conf import settings
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import (
-    Mail, Attachment, FileContent, FileName, FileType, Disposition
-)
+from django.core.mail import EmailMultiAlternatives
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
@@ -33,28 +29,31 @@ def fmt_amount(value) -> str:
     return f"{value:,.2f}".replace(",", " ").replace(".", ",")
 
 
-# ── SendGrid ──────────────────────────────────────────────────────────────
+# ── Envoi d'email (SMTP générique) ──────────────────────────────────────────
 
 def _send_email(from_name: str, to_email: str, subject: str, html_body: str,
                 pdf_buffer: io.BytesIO = None, pdf_filename: str = None):
-    sg = SendGridAPIClient(api_key=settings.SENDGRID_API_KEY)
-    message = Mail(
-        from_email=(settings.DEFAULT_FROM_EMAIL, from_name),
-        to_emails=to_email,
+    """
+    Envoie un email HTML via le backend SMTP configuré dans settings
+    (EMAIL_HOST / EMAIL_HOST_USER / EMAIL_HOST_PASSWORD — Brevo par défaut).
+    Ne fait AUCUN try/except ici : les appelants décident comment réagir
+    à un échec (voir accounts/views.py, accounts/services.py, accounts/admin.py).
+    """
+    message = EmailMultiAlternatives(
         subject=subject,
-        html_content=html_body,
+        body="Ce message nécessite un client email compatible HTML.",
+        from_email=f"{from_name} <{settings.DEFAULT_FROM_EMAIL}>",
+        to=[to_email],
     )
+    message.attach_alternative(html_body, "text/html")
     if pdf_buffer and pdf_filename:
         pdf_buffer.seek(0)
-        encoded = base64.b64encode(pdf_buffer.read()).decode()
-        att = Attachment(
-            FileContent(encoded),
-            FileName(pdf_filename),
-            FileType('application/pdf'),
-            Disposition('attachment'),
-        )
-        message.attachment = att
-    sg.send(message)
+        message.attach(pdf_filename, pdf_buffer.read(), 'application/pdf')
+    try:
+        message.send(fail_silently=False)
+    except Exception:
+        logger.exception(f"Échec d'envoi d'email à {to_email} (sujet: {subject})")
+        raise
 
 
 # ── Helpers style PayPal ──────────────────────────────────────────────────

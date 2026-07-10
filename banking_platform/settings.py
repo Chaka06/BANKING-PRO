@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    'storages',
     'banks',
     'accounts',
     'transactions',
@@ -135,8 +134,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.BankUser'
 
-# ── Email ──────────────────────────────────────────────────────────────────
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
+# ── Email (SMTP générique — compatible n'importe quel hébergeur : LWS,
+# Brevo, Gmail, etc.) — changer de fournisseur = changer les variables
+# d'environnement, jamais le code.
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', '')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+# SSL implicite (port 465, ex. LWS) et STARTTLS (port 587) sont exclusifs
+# l'un de l'autre côté Django : EMAIL_USE_SSL a priorité si activé.
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+EMAIL_USE_TLS = not EMAIL_USE_SSL and os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_TIMEOUT = 10  # évite qu'un SMTP lent ne bloque la requête jusqu'au timeout Vercel
+
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bank.com')
 SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
 

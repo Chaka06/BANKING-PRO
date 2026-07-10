@@ -548,8 +548,8 @@ def change_password(request, bank_slug, bank=None, account=None, all_accounts=No
             try:
                 from .utils import send_password_changed_email
                 send_password_changed_email(account)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning(f"Email de changement de mot de passe non envoyé pour {account.account_id}: {e}")
 
             messages.success(request, "Mot de passe modifié. Veuillez vous reconnecter.")
             logout(request)
