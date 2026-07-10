@@ -18,5 +18,6 @@ urlpatterns = [
     path('securite/', views.change_password, name='change_password'),
     path('dismiss-block-modal/', views.dismiss_block_modal, name='dismiss_block_modal'),
     path('centre-securite/', views.security_center, name='security_center'),
+    path('centre-securite/<str:reference>/confirmer/', views.security_center_validate, name='security_center_validate'),
     path('centre-securite/<str:reference>/annuler/', views.security_center_reject, name='security_center_reject'),
 ]

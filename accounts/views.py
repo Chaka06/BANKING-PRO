@@ -351,6 +351,29 @@ def security_center(request, bank_slug, bank=None, account=None, all_accounts=No
 
 @require_POST
 @require_account
+def security_center_validate(request, bank_slug, reference, bank=None, account=None, all_accounts=None):
+    txn = get_object_or_404(
+        Transaction, reference=reference, account=account,
+        status=Transaction.STATUS_PENDING, transaction_type=Transaction.TYPE_TRANSFER_OUT,
+    )
+
+    try:
+        TransferService.validate_transfer(txn, actor=account.account_id)
+        txn.refresh_from_db()
+        try:
+            from .utils import send_transfer_validated_email
+            send_transfer_validated_email(txn)
+        except Exception as e:
+            logger.warning(f"Email de validation non envoyé: {e}")
+        messages.success(request, f"Virement {txn.reference} confirmé.")
+    except ValidationError as e:
+        messages.error(request, str(e.message))
+
+    return redirect('security_center', bank_slug=bank_slug)
+
+
+@require_POST
+@require_account
 def security_center_reject(request, bank_slug, reference, bank=None, account=None, all_accounts=None):
     txn = get_object_or_404(
         Transaction, reference=reference, account=account,

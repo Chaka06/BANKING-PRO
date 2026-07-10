@@ -11,7 +11,7 @@
 
     <div>
         <h1 class="text-xl lg:text-2xl font-bold text-gray-900">Centre de sécurité</h1>
-        <p class="text-gray-400 text-sm mt-0.5">Annulation des virements en attente de votre compte.</p>
+        <p class="text-gray-400 text-sm mt-0.5">Confirmation ou annulation des virements en attente de votre compte.</p>
     </div>
 
     {% if not pending_transfers %}
@@ -20,7 +20,7 @@
             <svg class="w-8 h-8" style="color:var(--p);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <h3 class="text-lg font-bold text-gray-900 mb-1">Aucun virement en attente</h3>
-        <p class="text-sm text-gray-400">Vous n'avez aucun virement à annuler pour le moment.</p>
+        <p class="text-sm text-gray-400">Vous n'avez aucun virement en attente pour le moment.</p>
     </div>
     {% else %}
     {% for txn in pending_transfers %}
@@ -33,6 +33,16 @@
             </div>
             <p class="font-bold text-gray-900 font-mono text-right">{{ txn.amount|floatformat:2 }} {{ txn.currency }}</p>
         </div>
+
+        <form method="post" action="{% url 'security_center_validate' bank_slug=bank.slug reference=txn.reference %}"
+              onsubmit="return confirm('Confirmer ce virement ? Il sera immédiatement validé.');">
+            {% csrf_token %}
+            <button type="submit"
+                    class="w-full py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 bg-green-50 text-green-600 hover:bg-green-100 transition-colors">
+                <i class="bx bx-check-circle" style="font-size:16px;"></i>
+                Confirmer ce virement
+            </button>
+        </form>
 
         <form method="post" action="{% url 'security_center_reject' bank_slug=bank.slug reference=txn.reference %}" class="space-y-3"
               onsubmit="return confirm('Annuler ce virement et recréditer le montant sur votre compte ?');">
