@@ -79,7 +79,7 @@ class BankAccount(models.Model):
     address = models.TextField(verbose_name="Adresse géographique")
     birth_date = models.DateField(verbose_name="Date de naissance")
 
-    currency = models.CharField(max_length=3, verbose_name="Devise")
+    currency = models.CharField(max_length=3, blank=True, verbose_name="Devise")
     balance = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'), verbose_name="Solde")
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_ACTIVE, verbose_name="Statut du compte", db_index=True)
 

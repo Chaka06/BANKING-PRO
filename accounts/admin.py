@@ -83,8 +83,8 @@ class BankAccountAdmin(BankScopedAdmin):
             'fields': ('first_name', 'last_name', 'email', 'phone', 'country', 'address', 'birth_date'),
         }),
         ('Compte', {
-            'fields': ('balance', 'status'),
-            'description': 'La devise est automatiquement déterminée par le pays sélectionné.',
+            'fields': ('currency', 'balance', 'status'),
+            'description': 'Laissez "Auto" pour déterminer la devise à partir du pays sélectionné, ou choisissez-en une manuellement.',
         }),
         ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee'),
@@ -130,12 +130,19 @@ class BankAccountAdmin(BankScopedAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         from django import forms
-        from .constants import COUNTRY_LIST
+        from .constants import COUNTRY_LIST, CURRENCY_LIST
         form = super().get_form(request, obj, **kwargs)
         form.base_fields['country'] = forms.ChoiceField(
             choices=[(c, c) for c in COUNTRY_LIST],
             label='Pays',
         )
+        if obj is None:
+            form.base_fields['currency'] = forms.ChoiceField(
+                choices=[('', 'Auto (déterminée par le pays)')] + [(c, c) for c in CURRENCY_LIST],
+                required=False,
+                label='Devise',
+                help_text="Laissez sur « Auto » pour utiliser la devise du pays, ou imposez-en une différente.",
+            )
         return form
 
     # ── Display helpers ───────────────────────────────────────────────────
