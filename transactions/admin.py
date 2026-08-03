@@ -21,7 +21,7 @@ class TransactionAdmin(admin.ModelAdmin):
         'account__account_id', 'beneficiary_name', 'beneficiary_iban',
     ]
     readonly_fields = [
-        'reference', 'created_at', 'validated_at',
+        'reference', 'validated_at',
         'account_balance_info', 'account_iban_display',
     ]
     ordering = ['-created_at']
@@ -213,7 +213,8 @@ class TransactionAdmin(admin.ModelAdmin):
                         'beneficiary_iban': obj.beneficiary_iban,
                         'beneficiary_email': obj.beneficiary_email,
                         'beneficiary_bank': obj.beneficiary_bank,
-                    }
+                    },
+                    created_at=obj.created_at,
                 )
                 messages.success(request, f"✅ Mouvement {txn.reference} enregistré. Solde mis à jour.")
             except ValidationError as e:

@@ -88,6 +88,36 @@ def generate_password() -> str:
             return pwd
 
 
+# ── Historique de démonstration ───────────────────────────────────────────
+# Transactions pré-remplies proposées à la création d'un compte (admin) :
+# montants, bénéficiaires/boutiques et types fixés à l'avance. Purement
+# cosmétique — n'impacte jamais le solde du compte (voir seed_demo_transactions).
+
+DEMO_TRANSACTION_TEMPLATES = [
+    {'key': 'facture_electricite', 'type': 'payment', 'amount': Decimal('89.50'),
+     'label': "Facture d'électricité — EDF (89,50)", 'beneficiary_name': 'EDF - Électricité de France',
+     'description': "Paiement facture d'électricité", 'hour': 8, 'minute': 20},
+    {'key': 'facture_telecom', 'type': 'payment', 'amount': Decimal('45.90'),
+     'label': "Facture internet/mobile — Orange (45,90)", 'beneficiary_name': 'Orange SA',
+     'description': 'Paiement forfait internet et mobile', 'hour': 9, 'minute': 5},
+    {'key': 'achat_amazon', 'type': 'payment', 'amount': Decimal('67.20'),
+     'label': 'Achat en ligne — Amazon (67,20)', 'beneficiary_name': 'Amazon.fr',
+     'description': 'Achat en ligne', 'hour': 14, 'minute': 32},
+    {'key': 'achat_zalando', 'type': 'payment', 'amount': Decimal('134.90'),
+     'label': 'Achat en ligne — Zalando (134,90)', 'beneficiary_name': 'Zalando',
+     'description': 'Achat en ligne — vêtements', 'hour': 16, 'minute': 48},
+    {'key': 'abonnement_netflix', 'type': 'payment', 'amount': Decimal('15.99'),
+     'label': 'Abonnement — Netflix (15,99)', 'beneficiary_name': 'Netflix',
+     'description': 'Abonnement mensuel streaming', 'hour': 10, 'minute': 0},
+    {'key': 'virement_entrant_salaire', 'type': 'transfer_in', 'amount': Decimal('1850.00'),
+     'label': 'Virement entrant — Salaire (1 850,00)', 'beneficiary_name': 'Virement salaire',
+     'description': 'Virement reçu — salaire', 'hour': 7, 'minute': 30},
+    {'key': 'virement_sortant_proche', 'type': 'transfer_out', 'amount': Decimal('200.00'),
+     'label': 'Virement sortant — Vers un proche (200,00)', 'beneficiary_name': 'Jean Dupont',
+     'description': 'Virement envoyé', 'hour': 18, 'minute': 12},
+]
+
+
 # ── AccountService ─────────────────────────────────────────────────────────
 
 class AccountService:
@@ -196,6 +226,7 @@ class AccountService:
             block_reason=block_reason,
             unblock_fee=unblock_fee,
             manager_name=data['manager_name'],
+            created_at=data.get('created_at') or timezone.now(),
         )
 
         AuditLog.objects.create(
@@ -224,6 +255,40 @@ class AccountService:
 
         logger.info(f"Compte créé: {account_id} ({account_type}) | Banque: {bank.name} | Acteur: {actor}")
         return account, plain_pwd
+
+    @staticmethod
+    @db_transaction.atomic
+    def seed_demo_transactions(account, keys: list, reference_date, actor: str = 'admin') -> list:
+        """
+        Ajoute des transactions d'historique de démonstration à la date choisie.
+        Purement cosmétique : n'impacte PAS le solde du compte (déjà fixé à la création).
+        """
+        from transactions.models import Transaction
+        import datetime
+
+        templates_by_key = {t['key']: t for t in DEMO_TRANSACTION_TEMPLATES}
+        created = []
+        for key in keys:
+            tpl = templates_by_key.get(key)
+            if not tpl:
+                continue
+            naive_dt = datetime.datetime.combine(reference_date, datetime.time(tpl['hour'], tpl['minute']))
+            txn_created_at = timezone.make_aware(naive_dt)
+            txn = Transaction.objects.create(
+                account=account,
+                transaction_type=tpl['type'],
+                amount=tpl['amount'],
+                currency=account.currency,
+                description=tpl['description'],
+                status=Transaction.STATUS_VALIDATED,
+                beneficiary_name=tpl['beneficiary_name'],
+                created_at=txn_created_at,
+                validated_at=txn_created_at,
+            )
+            created.append(txn)
+
+        logger.info(f"Historique démo: {len(created)} transaction(s) ajoutée(s) à {account.account_id} | Acteur: {actor}")
+        return created
 
     @staticmethod
     @db_transaction.atomic
@@ -455,7 +520,7 @@ class TransferService:
 
     @staticmethod
     @db_transaction.atomic
-    def create_manual_movement(account, movement_type: str, amount: Decimal, description: str, actor: str, extra: dict = None):
+    def create_manual_movement(account, movement_type: str, amount: Decimal, description: str, actor: str, extra: dict = None, created_at=None):
         """
         Enregistre un mouvement manuel (admin) : dépôt, retrait, virement entrant, paiement.
         """
@@ -480,6 +545,7 @@ class TransferService:
                 f"Solde insuffisant pour ce mouvement. Disponible : {locked_account.balance} {locked_account.currency}."
             )
 
+        movement_created_at = created_at or timezone.now()
         txn = Transaction.objects.create(
             account=locked_account,
             transaction_type=movement_type,
@@ -491,6 +557,8 @@ class TransferService:
             beneficiary_iban=(extra or {}).get('beneficiary_iban', ''),
             beneficiary_email=(extra or {}).get('beneficiary_email', ''),
             beneficiary_bank=(extra or {}).get('beneficiary_bank', ''),
+            created_at=movement_created_at,
+            validated_at=movement_created_at,
         )
 
         if is_debit:

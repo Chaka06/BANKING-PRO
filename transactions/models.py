@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.utils import timezone
 from accounts.models import BankAccount, Beneficiary
 
 
@@ -53,7 +54,7 @@ class Transaction(models.Model):
     rejection_reason = models.TextField(blank=True, verbose_name="Motif du rejet")
     rejection_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Frais de redirection")
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Date de la transaction")
     validated_at = models.DateTimeField(null=True, blank=True, verbose_name="Date de validation/rejet")
 
     class Meta:

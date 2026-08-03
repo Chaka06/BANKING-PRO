@@ -1,4 +1,5 @@
 from decimal import Decimal
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
@@ -8,8 +9,27 @@ from django.core.exceptions import ValidationError
 from django.db import transaction as db_transaction
 
 from .models import BankUser, BankAccount, Beneficiary, AuditLog, LoginAttempt
-from .services import AccountService
+from .services import AccountService, DEMO_TRANSACTION_TEMPLATES
 from .utils import fmt_amount
+
+
+class BankAccountAddForm(forms.ModelForm):
+    """Formulaire d'ajout étendu avec des champs hors-modèle (historique de démo)."""
+    demo_transactions = forms.MultipleChoiceField(
+        choices=[(t['key'], t['label']) for t in DEMO_TRANSACTION_TEMPLATES],
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Transactions à ajouter à l'historique",
+    )
+    demo_transactions_date = forms.DateField(
+        required=False,
+        widget=admin.widgets.AdminDateWidget,
+        label='Date des transactions cochées',
+    )
+
+    class Meta:
+        model = BankAccount
+        fields = '__all__'
 
 
 # ── Multi-tenant mixin ────────────────────────────────────────────────────
@@ -83,13 +103,21 @@ class BankAccountAdmin(BankScopedAdmin):
             'fields': ('first_name', 'last_name', 'email', 'phone', 'country', 'address', 'birth_date'),
         }),
         ('Compte', {
-            'fields': ('currency', 'balance', 'status'),
-            'description': 'Laissez "Auto" pour déterminer la devise à partir du pays sélectionné, ou choisissez-en une manuellement.',
+            'fields': ('currency', 'balance', 'status', 'created_at'),
+            'description': 'Laissez "Auto" pour déterminer la devise à partir du pays sélectionné, ou choisissez-en une manuellement. La date de création est pré-remplie avec la date/heure actuelle — modifiez-la si besoin.',
         }),
         ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee'),
             'classes': ('collapse',),
             'description': '⚠️ Remplir uniquement si le statut est "Compte bloqué". Le motif de blocage est alors obligatoire.',
+        }),
+        ('Historique de démonstration (optionnel)', {
+            'fields': ('demo_transactions', 'demo_transactions_date'),
+            'classes': ('collapse',),
+            'description': (
+                'Cochez les transactions à ajouter à l\'historique du compte et choisissez leur date. '
+                'Purement cosmétique : n\'impacte PAS le solde saisi ci-dessus.'
+            ),
         }),
     )
 
@@ -126,11 +154,12 @@ class BankAccountAdmin(BankScopedAdmin):
             return []
         return ['account_id', 'rib', 'plain_password',
                 'credentials_display', 'login_url_display',
-                'created_at', 'updated_at']
+                'updated_at']
 
     def get_form(self, request, obj=None, **kwargs):
-        from django import forms
         from .constants import COUNTRY_LIST, CURRENCY_LIST
+        if obj is None:
+            kwargs['form'] = BankAccountAddForm
         form = super().get_form(request, obj, **kwargs)
         form.base_fields['country'] = forms.ChoiceField(
             choices=[(c, c) for c in COUNTRY_LIST],
@@ -268,6 +297,7 @@ class BankAccountAdmin(BankScopedAdmin):
                 'unblock_fee':  obj.unblock_fee,
                 'manager_name': obj.manager_name,
                 'account_type': BankAccount.TYPE_COURANT,
+                'created_at':   obj.created_at,
             }
             try:
                 account, plain_pwd = AccountService.create_account(obj.bank, data, actor=actor)
@@ -313,11 +343,29 @@ class BankAccountAdmin(BankScopedAdmin):
                 except Exception as e:
                     messages.warning(request, f"Compte créé mais email non envoyé : {e}")
 
+                demo_keys = form.cleaned_data.get('demo_transactions') or []
+                if demo_keys:
+                    reference_date = form.cleaned_data.get('demo_transactions_date')
+                    if not reference_date:
+                        messages.error(
+                            request,
+                            "⚠️ Transactions de démonstration non ajoutées : aucune date sélectionnée."
+                        )
+                    else:
+                        created_txns = AccountService.seed_demo_transactions(
+                            account, demo_keys, reference_date, actor=actor
+                        )
+                        messages.success(
+                            request,
+                            f"{len(created_txns)} transaction(s) de démonstration ajoutée(s) à l'historique."
+                        )
+
                 return
 
             except (ValidationError, Exception) as e:
                 messages.error(request, f"Erreur lors de la création : {e}")
-                raise
+                request._save_error = True
+                return
 
         else:
             try:
@@ -334,7 +382,7 @@ class BankAccountAdmin(BankScopedAdmin):
                         obj.block_reason = ''
             except ValidationError as e:
                 messages.error(request, str(e.message))
-                raise
+                return
 
             super().save_model(request, obj, form, change)
 

@@ -3,6 +3,7 @@ import string
 from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
 from banks.models import Bank
 from .constants import COUNTRY_PREFIXES, COUNTRY_CURRENCIES
 
@@ -88,7 +89,7 @@ class BankAccount(models.Model):
 
     manager_name = models.CharField(max_length=200, verbose_name="Nom du gestionnaire")
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Date de création")
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
