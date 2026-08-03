@@ -302,7 +302,7 @@ def transfer(request, bank_slug, bank=None, account=None, all_accounts=None):
 
         try:
             beneficiary = Beneficiary.objects.get(pk=beneficiary_id, account=account)
-        except Beneficiary.DoesNotExist:
+        except (Beneficiary.DoesNotExist, ValueError):
             errors.append("Bénéficiaire invalide.")
             beneficiary = None
 
