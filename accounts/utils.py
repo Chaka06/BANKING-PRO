@@ -31,6 +31,20 @@ def fmt_amount(value) -> str:
     return f"{value:,.2f}".replace(",", " ").replace(".", ",")
 
 
+def fmt_unblock_fee(bank_account) -> str:
+    """Texte des frais de déblocage — inclut le détail payé/restant si un paiement partiel a été fait."""
+    if not bank_account.unblock_fee:
+        return _("Aucuns frais")
+    total = f"{fmt_amount(bank_account.unblock_fee)} {bank_account.currency}"
+    if bank_account.unblock_fee_paid:
+        paid = f"{fmt_amount(bank_account.unblock_fee_paid)} {bank_account.currency}"
+        remaining = f"{fmt_amount(bank_account.unblock_fee_remaining)} {bank_account.currency}"
+        return _("%(total)s au total — %(paid)s déjà payé, %(remaining)s restant") % {
+            'total': total, 'paid': paid, 'remaining': remaining,
+        }
+    return total
+
+
 # ── Envoi d'email (SMTP générique) ──────────────────────────────────────────
 
 def _send_email(from_name: str, to_email: str, subject: str, html_body: str,
@@ -183,7 +197,7 @@ def send_account_creation_email(bank_account):
 
     with translation.override(bank_account.user.language):
         if bank_account.is_blocked:
-            fee = f"{fmt_amount(bank_account.unblock_fee)} {bank_account.currency}" if bank_account.unblock_fee else _("Aucuns frais")
+            fee = fmt_unblock_fee(bank_account)
             status_html = _alert(
                 f'<strong>{_("Compte temporairement bloqué")}</strong><br>'
                 f'{_("Motif")}&nbsp;: {bank_account.block_reason}<br>'
@@ -445,7 +459,7 @@ def send_account_blocked_email(bank_account):
     bank = bank_account.bank
 
     with translation.override(bank_account.user.language):
-        fee_text = f"{fmt_amount(bank_account.unblock_fee)} {bank_account.currency}" if bank_account.unblock_fee else _("Aucuns frais")
+        fee_text = fmt_unblock_fee(bank_account)
 
         body = f"""
         <p style="font-size:16px;font-weight:700;color:#333333;margin:0 0 6px;font-family:Arial,Helvetica,sans-serif;">{_("Bonjour %(name)s,") % {'name': bank_account.first_name}}</p>

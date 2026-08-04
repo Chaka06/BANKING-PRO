@@ -477,8 +477,25 @@
         </div>
         {% if account.unblock_fee %}
         <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-3">
-            <p class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">{% trans "Frais de déblocage" %}</p>
+            <p class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-2">{% trans "Frais de déblocage" %}</p>
+            {% if account.unblock_fee_paid %}
+            <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-amber-700">{% trans "Total à payer" %}</span>
+                    <span class="font-semibold text-amber-900">{{ account.unblock_fee }} {{ account.currency }}</span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-amber-700">{% trans "Déjà payé" %}</span>
+                    <span class="font-semibold text-green-700">{{ account.unblock_fee_paid }} {{ account.currency }}</span>
+                </div>
+                <div class="flex items-center justify-between text-sm pt-1.5 mt-0.5 border-t border-amber-200">
+                    <span class="text-amber-900 font-semibold">{% trans "Restant à payer" %}</span>
+                    <span class="text-lg font-bold text-amber-900">{{ account.unblock_fee_remaining }} {{ account.currency }}</span>
+                </div>
+            </div>
+            {% else %}
             <p class="text-lg font-bold text-amber-800">{{ account.unblock_fee }} {{ account.currency }}</p>
+            {% endif %}
         </div>
         {% else %}
         <div class="bg-green-50 border border-green-100 rounded-xl p-3 mb-3 flex items-center gap-2">

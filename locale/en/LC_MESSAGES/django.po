@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 13:17+0200\n"
+"POT-Creation-Date: 2026-08-04 16:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,6 +75,13 @@ msgid ""
 msgstr ""
 "Insufficient balance for this movement. Available: %(balance)s %(currency)s."
 
+msgid "Aucuns frais"
+msgstr "No fees"
+
+#, python-format
+msgid "%(total)s au total — %(paid)s déjà payé, %(remaining)s restant"
+msgstr "%(total)s total — %(paid)s already paid, %(remaining)s remaining"
+
 msgid "Ce message nécessite un client email compatible HTML."
 msgstr "This message requires an HTML-compatible email client."
 
@@ -83,9 +90,6 @@ msgstr "Tel"
 
 msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr "This message is confidential and intended solely for its recipient."
-
-msgid "Aucuns frais"
-msgstr "No fees"
 
 msgid "Compte temporairement bloqué"
 msgstr "Account temporarily blocked"
@@ -387,7 +391,6 @@ msgstr "TRANSFER REJECTED"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "TRANSFER SLIP"
 
-#| msgid "BORDEREAU DE VIREMENT"
 msgid "MONTANT DU VIREMENT"
 msgstr "TRANSFER AMOUNT"
 
@@ -622,6 +625,15 @@ msgstr "More"
 
 msgid "Certaines opérations sont restreintes"
 msgstr "Some operations are restricted"
+
+msgid "Total à payer"
+msgstr "Total due"
+
+msgid "Déjà payé"
+msgstr "Already paid"
+
+msgid "Restant à payer"
+msgstr "Remaining balance"
 
 msgid "Aucuns frais de déblocage"
 msgstr "No unblocking fee"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 13:17+0200\n"
+"POT-Creation-Date: 2026-08-04 16:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -77,6 +77,13 @@ msgstr ""
 "Saldo insufficiente per questo movimento. Disponibile: %(balance)s "
 "%(currency)s."
 
+msgid "Aucuns frais"
+msgstr "Nessuna commissione"
+
+#, python-format
+msgid "%(total)s au total — %(paid)s déjà payé, %(remaining)s restant"
+msgstr "%(total)s in totale — %(paid)s già pagato, %(remaining)s rimanente"
+
 msgid "Ce message nécessite un client email compatible HTML."
 msgstr "Questo messaggio richiede un client email compatibile con HTML."
 
@@ -86,9 +93,6 @@ msgstr "Tel"
 msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr ""
 "Questo messaggio è riservato e destinato esclusivamente al suo destinatario."
-
-msgid "Aucuns frais"
-msgstr "Nessuna commissione"
 
 msgid "Compte temporairement bloqué"
 msgstr "Conto temporaneamente bloccato"
@@ -394,7 +398,6 @@ msgstr "BONIFICO RIFIUTATO"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "DISTINTA DI BONIFICO"
 
-#| msgid "BORDEREAU DE VIREMENT"
 msgid "MONTANT DU VIREMENT"
 msgstr "IMPORTO DEL BONIFICO"
 
@@ -630,6 +633,15 @@ msgstr "Altro"
 
 msgid "Certaines opérations sont restreintes"
 msgstr "Alcune operazioni sono limitate"
+
+msgid "Total à payer"
+msgstr "Totale da pagare"
+
+msgid "Déjà payé"
+msgstr "Già pagato"
+
+msgid "Restant à payer"
+msgstr "Rimanente da pagare"
 
 msgid "Aucuns frais de déblocage"
 msgstr "Nessuna commissione di sblocco"

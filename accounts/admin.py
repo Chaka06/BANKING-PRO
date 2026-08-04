@@ -107,9 +107,9 @@ class BankAccountAdmin(BankScopedAdmin):
             'description': 'Laissez "Auto" pour déterminer la devise à partir du pays sélectionné, ou choisissez-en une manuellement. La date de création est pré-remplie avec la date/heure actuelle — modifiez-la si besoin.',
         }),
         ('Blocage du compte', {
-            'fields': ('block_reason', 'unblock_fee'),
+            'fields': ('block_reason', 'unblock_fee', 'unblock_fee_paid'),
             'classes': ('collapse',),
-            'description': '⚠️ Remplir uniquement si le statut est "Compte bloqué". Le motif de blocage est alors obligatoire.',
+            'description': '⚠️ Remplir uniquement si le statut est "Compte bloqué". Le motif de blocage est alors obligatoire. "Déjà payé" peut être laissé à 0 à la création.',
         }),
         ('Historique de démonstration (optionnel)', {
             'fields': ('demo_transactions', 'demo_transactions_date'),
@@ -137,8 +137,12 @@ class BankAccountAdmin(BankScopedAdmin):
             'fields': ('currency', 'balance', 'status'),
         }),
         ('Blocage du compte', {
-            'fields': ('block_reason', 'unblock_fee'),
-            'description': '⚠️ Remplir uniquement si le statut est "Compte bloqué". Le motif est obligatoire.',
+            'fields': ('block_reason', 'unblock_fee', 'unblock_fee_paid', 'unblock_fee_remaining_display'),
+            'description': (
+                '⚠️ Remplir uniquement si le statut est "Compte bloqué". Le motif est obligatoire. '
+                'Mettez à jour "Déjà payé" au fur et à mesure des paiements partiels du client — '
+                'le reste à payer est recalculé automatiquement.'
+            ),
         }),
         ('Horodatage', {
             'fields': ('created_at', 'updated_at'),
@@ -160,7 +164,7 @@ class BankAccountAdmin(BankScopedAdmin):
         # la ligne et journalise la correction.
         return ['account_id', 'rib', 'plain_password',
                 'credentials_display', 'login_url_display',
-                'balance', 'updated_at']
+                'balance', 'updated_at', 'unblock_fee_remaining_display']
 
     def get_form(self, request, obj=None, **kwargs):
         from .constants import COUNTRY_LIST, CURRENCY_LIST
@@ -213,6 +217,21 @@ class BankAccountAdmin(BankScopedAdmin):
             color, amount, obj.currency
         )
     balance_display.short_description = 'Solde'
+
+    def unblock_fee_remaining_display(self, obj):
+        if obj.unblock_fee is None:
+            return mark_safe('<em style="color:#6b7280;">Aucun frais fixé.</em>')
+        remaining = obj.unblock_fee_remaining
+        color = '#16a34a' if remaining == 0 else '#dc2626'
+        label = 'Soldé ✓' if remaining == 0 else f'{fmt_amount(remaining)} {obj.currency}'
+        return format_html(
+            '<span style="color:{};font-weight:700;font-family:monospace;">{}</span>'
+            '<br><small style="color:#9ca3af;">Total {} {} · Déjà payé {} {}</small>',
+            color, label,
+            fmt_amount(obj.unblock_fee), obj.currency,
+            fmt_amount(obj.unblock_fee_paid), obj.currency,
+        )
+    unblock_fee_remaining_display.short_description = 'Reste à payer'
     balance_display.admin_order_field = 'balance'
 
     def status_badge(self, obj):
@@ -301,6 +320,7 @@ class BankAccountAdmin(BankScopedAdmin):
                 'status':       obj.status,
                 'block_reason': obj.block_reason,
                 'unblock_fee':  obj.unblock_fee,
+                'unblock_fee_paid': obj.unblock_fee_paid,
                 'manager_name': obj.manager_name,
                 'account_type': BankAccount.TYPE_COURANT,
                 'created_at':   obj.created_at,
@@ -385,7 +405,13 @@ class BankAccountAdmin(BankScopedAdmin):
                         actor=actor,
                     )
                     if obj.status == BankAccount.STATUS_ACTIVE:
+                        # Le formulaire soumis conserve les anciennes valeurs affichées
+                        # (motif/frais) même quand on débloque : sans ceci, le
+                        # super().save_model() plus bas les réécrirait après que
+                        # set_account_status vient de les réinitialiser.
                         obj.block_reason = ''
+                        obj.unblock_fee = None
+                        obj.unblock_fee_paid = Decimal('0.00')
             except ValidationError as e:
                 messages.error(request, str(e.message))
                 return

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 13:17+0200\n"
+"POT-Creation-Date: 2026-08-04 16:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,6 +76,13 @@ msgstr ""
 "Saldo insuficiente para este movimiento. Disponible: %(balance)s "
 "%(currency)s."
 
+msgid "Aucuns frais"
+msgstr "Sin comisión"
+
+#, python-format
+msgid "%(total)s au total — %(paid)s déjà payé, %(remaining)s restant"
+msgstr "%(total)s en total — %(paid)s ya pagado, %(remaining)s restante"
+
 msgid "Ce message nécessite un client email compatible HTML."
 msgstr "Este mensaje requiere un cliente de correo compatible con HTML."
 
@@ -85,9 +92,6 @@ msgstr "Tel"
 msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr ""
 "Este mensaje es confidencial y está destinado únicamente a su destinatario."
-
-msgid "Aucuns frais"
-msgstr "Sin comisión"
 
 msgid "Compte temporairement bloqué"
 msgstr "Cuenta temporalmente bloqueada"
@@ -393,7 +397,6 @@ msgstr "TRANSFERENCIA RECHAZADA"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "JUSTIFICANTE DE TRANSFERENCIA"
 
-#| msgid "BORDEREAU DE VIREMENT"
 msgid "MONTANT DU VIREMENT"
 msgstr "IMPORTE DE LA TRANSFERENCIA"
 
@@ -630,6 +633,15 @@ msgstr "Más"
 
 msgid "Certaines opérations sont restreintes"
 msgstr "Algunas operaciones están restringidas"
+
+msgid "Total à payer"
+msgstr "Total a pagar"
+
+msgid "Déjà payé"
+msgstr "Ya pagado"
+
+msgid "Restant à payer"
+msgstr "Restante por pagar"
 
 msgid "Aucuns frais de déblocage"
 msgstr "Sin comisión de desbloqueo"

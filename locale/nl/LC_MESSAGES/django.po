@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 13:17+0200\n"
+"POT-Creation-Date: 2026-08-04 16:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,6 +80,13 @@ msgid ""
 msgstr ""
 "Onvoldoende saldo voor deze mutatie. Beschikbaar: %(balance)s %(currency)s."
 
+msgid "Aucuns frais"
+msgstr "Geen kosten"
+
+#, python-format
+msgid "%(total)s au total — %(paid)s déjà payé, %(remaining)s restant"
+msgstr "%(total)s in totaal — %(paid)s al betaald, %(remaining)s resterend"
+
 msgid "Ce message nécessite un client email compatible HTML."
 msgstr "Dit bericht vereist een HTML-compatibele e-mailclient."
 
@@ -89,9 +96,6 @@ msgstr "Tel"
 msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr ""
 "Dit bericht is vertrouwelijk en uitsluitend bestemd voor de geadresseerde."
-
-msgid "Aucuns frais"
-msgstr "Geen kosten"
 
 msgid "Compte temporairement bloqué"
 msgstr "Rekening tijdelijk geblokkeerd"
@@ -398,7 +402,6 @@ msgstr "OVERSCHRIJVING AFGEWEZEN"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "OVERSCHRIJVINGSBEWIJS"
 
-#| msgid "BORDEREAU DE VIREMENT"
 msgid "MONTANT DU VIREMENT"
 msgstr "OVERSCHRIJVINGSBEDRAG"
 
@@ -633,6 +636,15 @@ msgstr "Meer"
 
 msgid "Certaines opérations sont restreintes"
 msgstr "Sommige handelingen zijn beperkt"
+
+msgid "Total à payer"
+msgstr "Totaal te betalen"
+
+msgid "Déjà payé"
+msgstr "Al betaald"
+
+msgid "Restant à payer"
+msgstr "Resterend te betalen"
 
 msgid "Aucuns frais de déblocage"
 msgstr "Geen deblokkeringskosten"

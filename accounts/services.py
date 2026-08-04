@@ -201,6 +201,7 @@ class AccountService:
         status = data.get('status', BankAccount.STATUS_ACTIVE)
         block_reason = data.get('block_reason', '')
         unblock_fee = data.get('unblock_fee')
+        unblock_fee_paid = data.get('unblock_fee_paid') or Decimal('0.00')
 
         if status == BankAccount.STATUS_BLOCKED and not block_reason:
             raise ValidationError(_("Un motif de blocage est obligatoire pour un compte bloqué."))
@@ -226,6 +227,7 @@ class AccountService:
             status=status,
             block_reason=block_reason,
             unblock_fee=unblock_fee,
+            unblock_fee_paid=unblock_fee_paid,
             manager_name=data['manager_name'],
             created_at=data.get('created_at') or timezone.now(),
         )
@@ -312,8 +314,9 @@ class AccountService:
         else:
             account.block_reason = ''
             account.unblock_fee = None
+            account.unblock_fee_paid = Decimal('0.00')
 
-        account.save(update_fields=['status', 'block_reason', 'unblock_fee', 'updated_at'])
+        account.save(update_fields=['status', 'block_reason', 'unblock_fee', 'unblock_fee_paid', 'updated_at'])
 
         action = AuditLog.ACTION_ACCOUNT_BLOCKED if new_status == BankAccount.STATUS_BLOCKED else AuditLog.ACTION_ACCOUNT_UNBLOCKED
         AuditLog.objects.create(

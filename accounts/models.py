@@ -96,7 +96,8 @@ class BankAccount(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_ACTIVE, verbose_name="Statut du compte", db_index=True)
 
     block_reason = models.TextField(blank=True, verbose_name="Motif du blocage")
-    unblock_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Frais de déblocage")
+    unblock_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Frais de déblocage (total à payer)")
+    unblock_fee_paid = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), verbose_name="Frais de déblocage déjà payés")
 
     manager_name = models.CharField(max_length=200, verbose_name="Nom du gestionnaire")
 
@@ -122,6 +123,14 @@ class BankAccount(models.Model):
     @property
     def is_blocked(self):
         return self.status == self.STATUS_BLOCKED
+
+    @property
+    def unblock_fee_remaining(self):
+        """Reste à payer sur les frais de déblocage (jamais négatif). None si aucun frais fixé."""
+        if self.unblock_fee is None:
+            return None
+        remaining = self.unblock_fee - (self.unblock_fee_paid or Decimal('0.00'))
+        return remaining if remaining > Decimal('0.00') else Decimal('0.00')
 
     def get_login_url(self):
         from django.conf import settings
