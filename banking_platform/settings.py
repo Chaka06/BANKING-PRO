@@ -97,15 +97,17 @@ USE_TZ = True
 USE_THOUSAND_SEPARATOR = True
 
 # ── Langues ────────────────────────────────────────────────────────────────
-from django.utils.translation import gettext_lazy as _
-
+# Chaînes non traduites volontairement : jamais affichées côté client (on
+# utilise LANGUAGE_OPTIONS dans accounts/constants.py, avec noms natifs
+# codés en dur). Un appel gettext_lazy() ici fait planter le build Vercel,
+# qui inspecte settings.py en JSON avant que django.setup() ait tourné.
 LANGUAGES = [
-    ('fr', _('Français')),
-    ('en', _('Anglais')),
-    ('es', _('Espagnol')),
-    ('de', _('Allemand')),
-    ('it', _('Italien')),
-    ('nl', _('Néerlandais')),
+    ('fr', 'Français'),
+    ('en', 'Anglais'),
+    ('es', 'Espagnol'),
+    ('de', 'Allemand'),
+    ('it', 'Italien'),
+    ('nl', 'Néerlandais'),
 ]
 LOCALE_PATHS = [BASE_DIR / 'locale']
 
