@@ -1,0 +1,900 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-04 11:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Compte actif"
+msgstr "Aktives Konto"
+
+msgid "Compte bloqué"
+msgstr "Gesperrtes Konto"
+
+msgid "Compte courant"
+msgstr "Girokonto"
+
+msgid "Compte épargne"
+msgstr "Sparkonto"
+
+#, python-format
+msgid ""
+"L'identifiant %(account_id)s est déjà utilisé par un autre compte actif. "
+"Supprimez d'abord l'ancien compte avant d'en créer un nouveau."
+msgstr ""
+"Die Kennung %(account_id)s wird bereits von einem anderen aktiven Konto "
+"verwendet. Löschen Sie zuerst das alte Konto, bevor Sie ein neues erstellen."
+
+msgid "Un motif de blocage est obligatoire pour un compte bloqué."
+msgstr "Für ein gesperrtes Konto ist ein Sperrgrund erforderlich."
+
+msgid "Un motif de blocage est obligatoire."
+msgstr "Ein Sperrgrund ist erforderlich."
+
+msgid "Le montant doit être strictement positif."
+msgstr "Der Betrag muss streng positiv sein."
+
+msgid "Ce compte est bloqué. Impossible d'initier un virement."
+msgstr ""
+"Dieses Konto ist gesperrt. Eine Überweisung kann nicht eingeleitet werden."
+
+#, python-format
+msgid ""
+"Solde insuffisant. Disponible : %(balance)s %(currency)s, demandé : "
+"%(amount)s %(currency)s."
+msgstr ""
+"Unzureichendes Guthaben. Verfügbar: %(balance)s %(currency)s, angefordert: "
+"%(amount)s %(currency)s."
+
+#, python-format
+msgid "Ce virement ne peut pas être validé (statut actuel : %(status)s)."
+msgstr ""
+"Diese Überweisung kann nicht bestätigt werden (aktueller Status: "
+"%(status)s)."
+
+msgid "Un motif de rejet est obligatoire."
+msgstr "Ein Ablehnungsgrund ist erforderlich."
+
+#, python-format
+msgid "Ce virement ne peut pas être rejeté (statut actuel : %(status)s)."
+msgstr ""
+"Diese Überweisung kann nicht abgelehnt werden (aktueller Status: "
+"%(status)s)."
+
+#, python-format
+msgid ""
+"Solde insuffisant pour ce mouvement. Disponible : %(balance)s %(currency)s."
+msgstr ""
+"Unzureichendes Guthaben für diese Buchung. Verfügbar: %(balance)s "
+"%(currency)s."
+
+msgid ""
+"Trop de tentatives. Votre accès est temporairement suspendu. Réessayez dans "
+"15 minutes."
+msgstr ""
+"Zu viele Versuche. Ihr Zugang wurde vorübergehend gesperrt. Bitte versuchen "
+"Sie es in 15 Minuten erneut."
+
+msgid "Identifiants incorrects."
+msgstr "Falsche Zugangsdaten."
+
+msgid "Identifiant ou mot de passe incorrect."
+msgstr "Falsche Kennung oder falsches Passwort."
+
+msgid "Votre compte est bloqué. Les virements sont désactivés."
+msgstr "Ihr Konto ist gesperrt. Überweisungen sind deaktiviert."
+
+msgid "Le montant doit être supérieur à zéro."
+msgstr "Der Betrag muss größer als null sein."
+
+msgid "Montant invalide."
+msgstr "Ungültiger Betrag."
+
+msgid "Bénéficiaire invalide."
+msgstr "Ungültiger Begünstigter."
+
+#, python-format
+msgid ""
+"Virement initié. Référence : %(reference)s. Traitement sous 48h ouvrées."
+msgstr ""
+"Überweisung eingeleitet. Referenz: %(reference)s. Bearbeitung innerhalb von "
+"48 Werkstunden."
+
+#, python-format
+msgid "Virement %(reference)s confirmé."
+msgstr "Überweisung %(reference)s bestätigt."
+
+msgid "Montant des frais invalide."
+msgstr "Ungültiger Gebührenbetrag."
+
+#, python-format
+msgid "Virement %(reference)s annulé et solde recrédité."
+msgstr "Überweisung %(reference)s storniert und Guthaben zurückerstattet."
+
+msgid "Votre compte est bloqué."
+msgstr "Ihr Konto ist gesperrt."
+
+msgid "Le prénom est obligatoire."
+msgstr "Der Vorname ist erforderlich."
+
+msgid "Le nom est obligatoire."
+msgstr "Der Nachname ist erforderlich."
+
+msgid "Le numéro de compte IBAN est obligatoire."
+msgstr "Die IBAN-Kontonummer ist erforderlich."
+
+msgid "Le nom de la banque est obligatoire."
+msgstr "Der Name der Bank ist erforderlich."
+
+msgid "Ce numéro de compte est déjà enregistré comme bénéficiaire."
+msgstr "Diese Kontonummer ist bereits als Begünstigter registriert."
+
+#, python-format
+msgid "Bénéficiaire %(name)s ajouté."
+msgstr "Begünstigter %(name)s hinzugefügt."
+
+#, python-format
+msgid "Bénéficiaire %(name)s supprimé."
+msgstr "Begünstigter %(name)s entfernt."
+
+msgid "Dates invalides."
+msgstr "Ungültige Daten."
+
+msgid "La date de début doit être antérieure à la date de fin."
+msgstr "Das Startdatum muss vor dem Enddatum liegen."
+
+msgid "Aucune transaction validée sur cette période."
+msgstr "Keine bestätigte Transaktion in diesem Zeitraum."
+
+msgid "Mot de passe actuel incorrect."
+msgstr "Aktuelles Passwort falsch."
+
+msgid "Les mots de passe ne correspondent pas."
+msgstr "Die Passwörter stimmen nicht überein."
+
+msgid "Le mot de passe doit contenir au moins 8 caractères."
+msgstr "Das Passwort muss mindestens 8 Zeichen enthalten."
+
+msgid "Le nouveau mot de passe doit être différent de l'ancien."
+msgstr "Das neue Passwort muss sich vom alten unterscheiden."
+
+msgid "Mot de passe modifié. Veuillez vous reconnecter."
+msgstr "Passwort geändert. Bitte melden Sie sich erneut an."
+
+msgid "Français"
+msgstr "Französisch"
+
+msgid "Anglais"
+msgstr "Englisch"
+
+msgid "Espagnol"
+msgstr "Spanisch"
+
+msgid "Allemand"
+msgstr "Deutsch"
+
+msgid "Italien"
+msgstr "Italienisch"
+
+msgid "Néerlandais"
+msgstr "Niederländisch"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "Succès"
+msgstr "Erfolg"
+
+msgid "Avertissement"
+msgstr "Warnung"
+
+msgid "Alerte"
+msgstr "Alarm"
+
+msgid "Page introuvable"
+msgstr "Seite nicht gefunden"
+
+msgid "La page que vous cherchez n'existe pas ou a été déplacée."
+msgstr "Die gesuchte Seite existiert nicht oder wurde verschoben."
+
+msgid "Vérifiez l'adresse ou revenez à la page précédente."
+msgstr ""
+"Überprüfen Sie die Adresse oder kehren Sie zur vorherigen Seite zurück."
+
+msgid "Retour"
+msgstr "Zurück"
+
+msgid "Erreur serveur"
+msgstr "Serverfehler"
+
+msgid "Erreur interne du serveur"
+msgstr "Interner Serverfehler"
+
+msgid "Une erreur inattendue s'est produite."
+msgstr "Ein unerwarteter Fehler ist aufgetreten."
+
+msgid "Notre équipe a été notifiée et travaille à la résolution du problème."
+msgstr ""
+"Unser Team wurde benachrichtigt und arbeitet an der Lösung des Problems."
+
+msgid "Veuillez réessayer dans quelques instants."
+msgstr "Bitte versuchen Sie es in Kürze erneut."
+
+msgid "Accueil"
+msgstr "Startseite"
+
+msgid "Mes comptes"
+msgstr "Meine Konten"
+
+msgid "Actif"
+msgstr "Aktiv"
+
+msgid "Tableau de bord"
+msgstr "Übersicht"
+
+msgid "Historique"
+msgstr "Verlauf"
+
+msgid "Virement"
+msgstr "Überweisung"
+
+msgid "Bénéficiaires"
+msgstr "Begünstigte"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Sécurité"
+msgstr "Sicherheit"
+
+msgid "Déconnexion"
+msgstr "Abmelden"
+
+msgid "Alertes"
+msgstr "Warnungen"
+
+msgid "Plus"
+msgstr "Mehr"
+
+msgid "Compte temporairement bloqué"
+msgstr "Konto vorübergehend gesperrt"
+
+msgid "Certaines opérations sont restreintes"
+msgstr "Einige Vorgänge sind eingeschränkt"
+
+msgid "Motif"
+msgstr "Grund"
+
+msgid "Frais de déblocage"
+msgstr "Freischaltgebühr"
+
+msgid "Aucuns frais de déblocage"
+msgstr "Keine Freischaltgebühr"
+
+#, python-format
+msgid ""
+"Contactez <strong class=\"text-gray-600\">%(manager)s</strong> pour "
+"débloquer votre compte."
+msgstr ""
+"Wenden Sie sich an <strong class=\"text-gray-600\">%(manager)s</strong>, um "
+"Ihr Konto freizuschalten."
+
+msgid "J'ai compris"
+msgstr "Verstanden"
+
+#, python-format
+msgid "Bénéficiaires — %(bank_name)s"
+msgstr "Begünstigte — %(bank_name)s"
+
+msgid "Mes bénéficiaires"
+msgstr "Meine Begünstigten"
+
+msgid "Gérez vos comptes de destination"
+msgstr "Verwalten Sie Ihre Zielkonten"
+
+msgid "Ajouter"
+msgstr "Hinzufügen"
+
+msgid "Virer"
+msgstr "Überweisen"
+
+#, python-format
+msgid "Supprimer %(full_name)s de vos bénéficiaires ?"
+msgstr "%(full_name)s aus Ihren Begünstigten entfernen?"
+
+msgid "Supprimer"
+msgstr "Entfernen"
+
+msgid "Aucun bénéficiaire enregistré"
+msgstr "Kein Begünstigter registriert"
+
+msgid "Ajoutez un bénéficiaire pour commencer à effectuer des virements"
+msgstr "Fügen Sie einen Begünstigten hinzu, um Überweisungen zu tätigen"
+
+msgid "Ajouter mon premier bénéficiaire"
+msgstr "Meinen ersten Begünstigten hinzufügen"
+
+msgid "Ajouter un bénéficiaire"
+msgstr "Einen Begünstigten hinzufügen"
+
+msgid "Renseignez les coordonnées bancaires"
+msgstr "Geben Sie die Bankverbindung ein"
+
+msgid "Prénom"
+msgstr "Vorname"
+
+msgid "Nom"
+msgstr "Nachname"
+
+msgid "IBAN / Numéro de compte"
+msgstr "IBAN / Kontonummer"
+
+msgid "Banque du bénéficiaire"
+msgstr "Bank des Begünstigten"
+
+msgid "Email du bénéficiaire"
+msgstr "E-Mail des Begünstigten"
+
+msgid "Utilisé pour envoyer les confirmations de virement"
+msgstr "Wird verwendet, um Überweisungsbestätigungen zu senden"
+
+msgid "Annuler"
+msgstr "Abbrechen"
+
+msgid "Enregistrer"
+msgstr "Speichern"
+
+#, python-format
+msgid "Sécurité — %(bank_name)s"
+msgstr "Sicherheit — %(bank_name)s"
+
+msgid "Paramètres du compte"
+msgstr "Kontoeinstellungen"
+
+msgid "Langue, mot de passe et sécurité de connexion"
+msgstr "Sprache, Passwort und Anmeldesicherheit"
+
+msgid "Langue"
+msgstr "Sprache"
+
+msgid "Change la langue de tout le contenu de votre espace"
+msgstr "Ändert die Sprache aller Inhalte in Ihrem Bereich"
+
+msgid "Mot de passe actuel"
+msgstr "Aktuelles Passwort"
+
+msgid "Nouveau mot de passe"
+msgstr "Neues Passwort"
+
+msgid "Minimum 8 caractères"
+msgstr "Mindestens 8 Zeichen"
+
+msgid "Confirmer le nouveau mot de passe"
+msgstr "Neues Passwort bestätigen"
+
+msgid "Les mots de passe ne correspondent pas"
+msgstr "Die Passwörter stimmen nicht überein"
+
+msgid "Les mots de passe correspondent ✓"
+msgstr "Passwörter stimmen überein ✓"
+
+msgid "Changer le mot de passe"
+msgstr "Passwort ändern"
+
+msgid "Conseils de sécurité"
+msgstr "Sicherheitstipps"
+
+msgid ""
+"Utilisez un mot de passe <strong class=\"text-gray-700\">unique</strong> que"
+" vous n'utilisez nulle part ailleurs."
+msgstr ""
+"Verwenden Sie ein <strong class=\"text-gray-700\">einzigartiges</strong> "
+"Passwort, das Sie nirgendwo sonst verwenden."
+
+msgid ""
+"Mélangez <strong class=\"text-gray-700\">majuscules, minuscules, chiffres et"
+" caractères spéciaux</strong>."
+msgstr ""
+"Mischen Sie <strong class=\"text-gray-700\">Groß- und Kleinbuchstaben, "
+"Zahlen und Sonderzeichen</strong>."
+
+msgid ""
+"Ne partagez jamais votre mot de passe, <strong class=\"text-gray-700\">même "
+"avec votre gestionnaire</strong>."
+msgstr ""
+"Geben Sie Ihr Passwort niemals weiter, <strong class=\"text-gray-700\">auch "
+"nicht an Ihren Kundenbetreuer</strong>."
+
+msgid ""
+"Après le changement, vous serez automatiquement <strong class=\"text-"
+"gray-700\">déconnecté</strong>."
+msgstr ""
+"Nach der Änderung werden Sie automatisch <strong class=\"text-"
+"gray-700\">abgemeldet</strong>."
+
+#, python-format
+msgid ""
+"Votre identifiant de connexion (<strong class=\"font-"
+"mono\">%(account_id)s</strong>) ne peut pas être modifié. Contactez votre "
+"gestionnaire pour toute question."
+msgstr ""
+"Ihre Anmeldekennung (<strong class=\"font-mono\">%(account_id)s</strong>) "
+"kann nicht geändert werden. Wenden Sie sich bei Fragen an Ihren "
+"Kundenbetreuer."
+
+msgid "Faible"
+msgstr "Schwach"
+
+msgid "Passable"
+msgstr "Ausreichend"
+
+msgid "Bon"
+msgstr "Gut"
+
+msgid "Excellent"
+msgstr "Ausgezeichnet"
+
+msgid "Mise à jour…"
+msgstr "Wird aktualisiert…"
+
+#, python-format
+msgid "Tableau de bord — %(bank_name)s"
+msgstr "Übersicht — %(bank_name)s"
+
+#, python-format
+msgid "Bonjour, %(first_name)s"
+msgstr "Hallo, %(first_name)s"
+
+#, python-format
+msgid ""
+"Gestionnaire : <span class=\"text-gray-600 font-medium\">%(manager)s</span>"
+msgstr ""
+"Kundenbetreuer: <span class=\"text-gray-600 font-medium\">%(manager)s</span>"
+
+msgid "Bloqué"
+msgstr "Gesperrt"
+
+msgid "Activer"
+msgstr "Aktivieren"
+
+msgid "Solde disponible"
+msgstr "Verfügbares Guthaben"
+
+#, python-format
+msgid "%(counter)s en attente"
+msgid_plural "%(counter)s en attente"
+msgstr[0] "%(counter)s ausstehend"
+msgstr[1] "%(counter)s ausstehend"
+
+msgid "Télécharger"
+msgstr "Herunterladen"
+
+msgid "Crédits"
+msgstr "Gutschriften"
+
+msgid "Débits"
+msgstr "Belastungen"
+
+msgid "En attente"
+msgstr "Ausstehend"
+
+msgid "opération"
+msgid_plural "opérations"
+msgstr[0] "Vorgang"
+msgstr[1] "Vorgänge"
+
+msgid "Transactions récentes"
+msgstr "Letzte Transaktionen"
+
+msgid "Tout voir"
+msgstr "Alle anzeigen"
+
+msgid "Validé"
+msgstr "Bestätigt"
+
+msgid "En cours"
+msgstr "In Bearbeitung"
+
+msgid "Rejeté"
+msgstr "Abgelehnt"
+
+msgid "Aucune transaction"
+msgstr "Keine Transaktionen"
+
+msgid "Coordonnées bancaires"
+msgstr "Bankverbindung"
+
+msgid "Titulaire"
+msgstr "Kontoinhaber"
+
+msgid "Code banque"
+msgstr "Bankleitzahl"
+
+msgid "Code guichet"
+msgstr "Filialcode"
+
+msgid "N° de compte"
+msgstr "Kontonummer"
+
+msgid "Clé RIB"
+msgstr "Prüfschlüssel"
+
+msgid "Devise"
+msgstr "Währung"
+
+msgid "Relevé PDF"
+msgstr "PDF-Kontoauszug"
+
+msgid "Téléchargez vos opérations"
+msgstr "Laden Sie Ihre Umsätze herunter"
+
+msgid "Du"
+msgstr "Von"
+
+msgid "ex : 01/01/2026"
+msgstr "z. B. 01.01.2026"
+
+msgid "Au"
+msgstr "Bis"
+
+msgid "ex : 31/12/2026"
+msgstr "z. B. 31.12.2026"
+
+msgid "Voir tout"
+msgstr "Alle anzeigen"
+
+#, python-format
+msgid "Connexion — %(bank_name)s"
+msgstr "Anmeldung — %(bank_name)s"
+
+msgid "Choisissez votre langue"
+msgstr "Wählen Sie Ihre Sprache"
+
+msgid "Vous pourrez la modifier à tout moment dans les paramètres"
+msgstr "Sie können sie jederzeit in den Einstellungen ändern"
+
+msgid "Votre banque,"
+msgstr "Ihre Bank,"
+
+msgid "à portée de main."
+msgstr "immer griffbereit."
+
+msgid "Gérez votre compte en toute sécurité, où que vous soyez."
+msgstr "Verwalten Sie Ihr Konto sicher, wo immer Sie sind."
+
+msgid "Connexion sécurisée"
+msgstr "Sichere Anmeldung"
+
+msgid "Chiffrement TLS · Session protégée"
+msgstr "TLS-Verschlüsselung · Geschützte Sitzung"
+
+msgid "Établissement agréé"
+msgstr "Zugelassenes Institut"
+
+msgid "Supervisé et certifié"
+msgstr "Beaufsichtigt und zertifiziert"
+
+msgid "Virements rapides"
+msgstr "Schnelle Überweisungen"
+
+msgid "Traitement sous 48h ouvrées"
+msgstr "Bearbeitung innerhalb von 48 Werkstunden"
+
+#, python-format
+msgid "© %(bank_name)s · Tous droits réservés"
+msgstr "© %(bank_name)s · Alle Rechte vorbehalten"
+
+msgid "Bienvenue"
+msgstr "Willkommen"
+
+msgid "Connectez-vous à votre espace bancaire"
+msgstr "Melden Sie sich in Ihrem Bankbereich an"
+
+msgid "Identifiant"
+msgstr "Kennung"
+
+msgid "Ex : FR1234567"
+msgstr "Z. B.: FR1234567"
+
+msgid "Mot de passe"
+msgstr "Passwort"
+
+msgid "Afficher/masquer le mot de passe"
+msgstr "Passwort anzeigen/ausblenden"
+
+msgid "Se connecter"
+msgstr "Anmelden"
+
+msgid "Vos identifiants vous ont été communiqués par votre gestionnaire."
+msgstr "Ihre Zugangsdaten wurden Ihnen von Ihrem Kundenbetreuer mitgeteilt."
+
+#, python-format
+msgid ""
+"Pour toute assistance, contactez <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong> au <strong class=\"text-"
+"gray-600\">%(bank_phone)s</strong>"
+msgstr ""
+"Bei Fragen wenden Sie sich an <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong> unter <strong class=\"text-"
+"gray-600\">%(bank_phone)s</strong>"
+
+#, python-format
+msgid ""
+"Pour toute assistance, contactez <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong>"
+msgstr ""
+"Bei Fragen wenden Sie sich an <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong>"
+
+msgid "Connexion…"
+msgstr "Anmeldung läuft…"
+
+#, python-format
+msgid "Notifications — %(bank_name)s"
+msgstr "Benachrichtigungen — %(bank_name)s"
+
+msgid "Toutes vos alertes et messages"
+msgstr "Alle Ihre Warnungen und Nachrichten"
+
+#, python-format
+msgid "%(counter)s message"
+msgid_plural "%(counter)s messages"
+msgstr[0] "%(counter)s Nachricht"
+msgstr[1] "%(counter)s Nachrichten"
+
+#, python-format
+msgid "Page %(number)s/%(num_pages)s"
+msgstr "Seite %(number)s/%(num_pages)s"
+
+msgid "Précédent"
+msgstr "Zurück"
+
+msgid "Suivant"
+msgstr "Weiter"
+
+msgid "Aucune notification"
+msgstr "Keine Benachrichtigungen"
+
+msgid "Vous serez notifié ici des activités importantes sur votre compte"
+msgstr "Hier werden Sie über wichtige Aktivitäten auf Ihrem Konto informiert"
+
+#, python-format
+msgid "Centre de sécurité — %(bank_name)s"
+msgstr "Sicherheitszentrum — %(bank_name)s"
+
+msgid "Centre de sécurité"
+msgstr "Sicherheitszentrum"
+
+msgid "Confirmation ou annulation des virements en attente de votre compte."
+msgstr ""
+"Bestätigung oder Stornierung der ausstehenden Überweisungen Ihres Kontos."
+
+msgid "Aucun virement en attente"
+msgstr "Keine ausstehenden Überweisungen"
+
+msgid "Vous n'avez aucun virement en attente pour le moment."
+msgstr "Sie haben derzeit keine ausstehenden Überweisungen."
+
+msgid "Confirmer ce virement ? Il sera immédiatement validé."
+msgstr "Diese Überweisung bestätigen? Sie wird sofort bestätigt."
+
+msgid "Confirmer ce virement"
+msgstr "Diese Überweisung bestätigen"
+
+msgid "Annuler ce virement et recréditer le montant sur votre compte ?"
+msgstr "Diese Überweisung stornieren und den Betrag Ihrem Konto gutschreiben?"
+
+msgid "Motif de l'annulation"
+msgstr "Stornierungsgrund"
+
+msgid "Ex : Erreur de saisie, changement d'avis…"
+msgstr "Z. B.: Eingabefehler, Meinungsänderung…"
+
+msgid "Frais de redirection"
+msgstr "Weiterleitungsgebühr"
+
+msgid "Sans frais"
+msgstr "Ohne Gebühr"
+
+msgid "Avec frais"
+msgstr "Mit Gebühr"
+
+msgid "Annuler ce virement"
+msgstr "Diese Überweisung stornieren"
+
+#, python-format
+msgid "Historique — %(bank_name)s"
+msgstr "Verlauf — %(bank_name)s"
+
+msgid "Télécharger un relevé"
+msgstr "Kontoauszug herunterladen"
+
+msgid "Référence, libellé, bénéficiaire…"
+msgstr "Referenz, Bezeichnung, Begünstigter…"
+
+msgid "Tous les types"
+msgstr "Alle Typen"
+
+msgid "Tous les statuts"
+msgstr "Alle Status"
+
+msgid "Filtrer"
+msgstr "Filtern"
+
+msgid "Effacer"
+msgstr "Löschen"
+
+msgid "jj/mm/aaaa"
+msgstr "tt.mm.jjjj"
+
+msgid "Filtres :"
+msgstr "Filter:"
+
+#, python-format
+msgid "Depuis %(date_from)s"
+msgstr "Seit %(date_from)s"
+
+#, python-format
+msgid "Jusqu'au %(date_to)s"
+msgstr "Bis %(date_to)s"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Référence"
+msgstr "Referenz"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Montant"
+msgstr "Betrag"
+
+msgid "Statut"
+msgstr "Status"
+
+msgid "En cours de validation"
+msgstr "In Bearbeitung"
+
+msgid "Télécharger le bordereau"
+msgstr "Beleg herunterladen"
+
+#, python-format
+msgid "%(counter)s résultat"
+msgid_plural "%(counter)s résultats"
+msgstr[0] "%(counter)s Ergebnis"
+msgstr[1] "%(counter)s Ergebnisse"
+
+msgid "Aucune transaction trouvée"
+msgstr "Keine Transaktionen gefunden"
+
+msgid "Effacer les filtres"
+msgstr "Filter löschen"
+
+msgid "Détail de l'opération"
+msgstr "Details der Transaktion"
+
+msgid "Date d'initiation"
+msgstr "Einleitungsdatum"
+
+msgid "Date de validation"
+msgstr "Bestätigungsdatum"
+
+msgid "Libellé"
+msgstr "Bezeichnung"
+
+msgid "Bénéficiaire"
+msgstr "Begünstigter"
+
+msgid "Banque"
+msgstr "Bank"
+
+msgid "Motif du rejet"
+msgstr "Ablehnungsgrund"
+
+msgid "Fermer"
+msgstr "Schließen"
+
+msgid "Sélectionnez la période"
+msgstr "Zeitraum auswählen"
+
+msgid "Date de rejet"
+msgstr "Ablehnungsdatum"
+
+msgid "Frais de redirection :"
+msgstr "Weiterleitungsgebühr:"
+
+#, python-format
+msgid "Virement — %(bank_name)s"
+msgstr "Überweisung — %(bank_name)s"
+
+msgid "Effectuer un virement"
+msgstr "Eine Überweisung tätigen"
+
+msgid "Solde disponible :"
+msgstr "Verfügbares Guthaben:"
+
+msgid "Délai de traitement : 48h ouvrées"
+msgstr "Bearbeitungszeit: 48 Werkstunden"
+
+msgid ""
+"Le montant est immédiatement réservé sur votre compte à l'initiation. En cas"
+" de rejet, il est intégralement recrédité."
+msgstr ""
+"Der Betrag wird bei der Einleitung sofort auf Ihrem Konto reserviert. Im "
+"Falle einer Ablehnung wird er vollständig zurückerstattet."
+
+msgid "Vous devez ajouter un bénéficiaire avant d'effectuer un virement."
+msgstr ""
+"Sie müssen einen Begünstigten hinzufügen, bevor Sie eine Überweisung "
+"tätigen."
+
+msgid "Sélectionner un bénéficiaire…"
+msgstr "Begünstigten auswählen…"
+
+msgid "Solde restant après virement :"
+msgstr "Verbleibendes Guthaben nach der Überweisung:"
+
+msgid "Motif du virement"
+msgstr "Verwendungszweck"
+
+msgid "Ex : Remboursement, loyer, facture…"
+msgstr "Z. B.: Rückerstattung, Miete, Rechnung…"
+
+msgid ""
+"Le montant est immédiatement <strong class=\"text-"
+"gray-700\">réservé</strong> sur votre compte à l'initiation."
+msgstr ""
+"Der Betrag wird bei der Einleitung sofort auf Ihrem Konto <strong "
+"class=\"text-gray-700\">reserviert</strong>."
+
+msgid ""
+"Le virement sera <strong class=\"text-gray-700\">validé ou rejeté</strong> "
+"par notre équipe sous 48h ouvrées."
+msgstr ""
+"Die Überweisung wird von unserem Team innerhalb von 48 Werkstunden <strong "
+"class=\"text-gray-700\">bestätigt oder abgelehnt</strong>."
+
+msgid ""
+"En cas de rejet, le montant sera <strong class=\"text-"
+"gray-700\">intégralement recrédité</strong> sur votre compte."
+msgstr ""
+"Im Falle einer Ablehnung wird der Betrag Ihrem Konto <strong class=\"text-"
+"gray-700\">vollständig zurückerstattet</strong>."
+
+msgid "Initier le virement"
+msgstr "Überweisung einleiten"
+
+msgid "Envoi en cours…"
+msgstr "Wird gesendet…"
+
+msgid "Virement sortant"
+msgstr "Ausgehende Überweisung"
+
+msgid "Virement entrant"
+msgstr "Eingehende Überweisung"
+
+msgid "Retrait au guichet"
+msgstr "Barabhebung am Schalter"
+
+msgid "Dépôt en banque"
+msgstr "Bankeinzahlung"
+
+msgid "Paiement de facture"
+msgstr "Rechnungszahlung"

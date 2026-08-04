@@ -1,0 +1,900 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-04 11:52+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Compte actif"
+msgstr "Actieve rekening"
+
+msgid "Compte bloqué"
+msgstr "Geblokkeerde rekening"
+
+msgid "Compte courant"
+msgstr "Betaalrekening"
+
+msgid "Compte épargne"
+msgstr "Spaarrekening"
+
+#, python-format
+msgid ""
+"L'identifiant %(account_id)s est déjà utilisé par un autre compte actif. "
+"Supprimez d'abord l'ancien compte avant d'en créer un nouveau."
+msgstr ""
+"De identificatie %(account_id)s wordt al gebruikt door een andere actieve "
+"rekening. Verwijder eerst de oude rekening voordat u een nieuwe aanmaakt."
+
+msgid "Un motif de blocage est obligatoire pour un compte bloqué."
+msgstr "Een blokkeringsreden is verplicht voor een geblokkeerde rekening."
+
+msgid "Un motif de blocage est obligatoire."
+msgstr "Een blokkeringsreden is verplicht."
+
+msgid "Le montant doit être strictement positif."
+msgstr "Het bedrag moet strikt positief zijn."
+
+msgid "Ce compte est bloqué. Impossible d'initier un virement."
+msgstr ""
+"Deze rekening is geblokkeerd. Het is niet mogelijk een overschrijving te "
+"starten."
+
+#, python-format
+msgid ""
+"Solde insuffisant. Disponible : %(balance)s %(currency)s, demandé : "
+"%(amount)s %(currency)s."
+msgstr ""
+"Onvoldoende saldo. Beschikbaar: %(balance)s %(currency)s, aangevraagd: "
+"%(amount)s %(currency)s."
+
+#, python-format
+msgid "Ce virement ne peut pas être validé (statut actuel : %(status)s)."
+msgstr ""
+"Deze overschrijving kan niet worden gevalideerd (huidige status: "
+"%(status)s)."
+
+msgid "Un motif de rejet est obligatoire."
+msgstr "Een reden voor afwijzing is verplicht."
+
+#, python-format
+msgid "Ce virement ne peut pas être rejeté (statut actuel : %(status)s)."
+msgstr ""
+"Deze overschrijving kan niet worden afgewezen (huidige status: %(status)s)."
+
+#, python-format
+msgid ""
+"Solde insuffisant pour ce mouvement. Disponible : %(balance)s %(currency)s."
+msgstr ""
+"Onvoldoende saldo voor deze mutatie. Beschikbaar: %(balance)s %(currency)s."
+
+msgid ""
+"Trop de tentatives. Votre accès est temporairement suspendu. Réessayez dans "
+"15 minutes."
+msgstr ""
+"Te veel pogingen. Uw toegang is tijdelijk opgeschort. Probeer het over 15 "
+"minuten opnieuw."
+
+msgid "Identifiants incorrects."
+msgstr "Onjuiste inloggegevens."
+
+msgid "Identifiant ou mot de passe incorrect."
+msgstr "Onjuiste gebruikersnaam of wachtwoord."
+
+msgid "Votre compte est bloqué. Les virements sont désactivés."
+msgstr "Uw rekening is geblokkeerd. Overschrijvingen zijn uitgeschakeld."
+
+msgid "Le montant doit être supérieur à zéro."
+msgstr "Het bedrag moet groter zijn dan nul."
+
+msgid "Montant invalide."
+msgstr "Ongeldig bedrag."
+
+msgid "Bénéficiaire invalide."
+msgstr "Ongeldige begunstigde."
+
+#, python-format
+msgid ""
+"Virement initié. Référence : %(reference)s. Traitement sous 48h ouvrées."
+msgstr ""
+"Overschrijving gestart. Referentie: %(reference)s. Verwerking binnen 48 "
+"werkuren."
+
+#, python-format
+msgid "Virement %(reference)s confirmé."
+msgstr "Overschrijving %(reference)s bevestigd."
+
+msgid "Montant des frais invalide."
+msgstr "Ongeldig kostenbedrag."
+
+#, python-format
+msgid "Virement %(reference)s annulé et solde recrédité."
+msgstr "Overschrijving %(reference)s geannuleerd en saldo teruggestort."
+
+msgid "Votre compte est bloqué."
+msgstr "Uw rekening is geblokkeerd."
+
+msgid "Le prénom est obligatoire."
+msgstr "Voornaam is verplicht."
+
+msgid "Le nom est obligatoire."
+msgstr "Achternaam is verplicht."
+
+msgid "Le numéro de compte IBAN est obligatoire."
+msgstr "Het IBAN-rekeningnummer is verplicht."
+
+msgid "Le nom de la banque est obligatoire."
+msgstr "De naam van de bank is verplicht."
+
+msgid "Ce numéro de compte est déjà enregistré comme bénéficiaire."
+msgstr "Dit rekeningnummer is al geregistreerd als begunstigde."
+
+#, python-format
+msgid "Bénéficiaire %(name)s ajouté."
+msgstr "Begunstigde %(name)s toegevoegd."
+
+#, python-format
+msgid "Bénéficiaire %(name)s supprimé."
+msgstr "Begunstigde %(name)s verwijderd."
+
+msgid "Dates invalides."
+msgstr "Ongeldige datums."
+
+msgid "La date de début doit être antérieure à la date de fin."
+msgstr "De begindatum moet vóór de einddatum liggen."
+
+msgid "Aucune transaction validée sur cette période."
+msgstr "Geen gevalideerde transactie in deze periode."
+
+msgid "Mot de passe actuel incorrect."
+msgstr "Huidig wachtwoord onjuist."
+
+msgid "Les mots de passe ne correspondent pas."
+msgstr "Wachtwoorden komen niet overeen."
+
+msgid "Le mot de passe doit contenir au moins 8 caractères."
+msgstr "Het wachtwoord moet minimaal 8 tekens bevatten."
+
+msgid "Le nouveau mot de passe doit être différent de l'ancien."
+msgstr "Het nieuwe wachtwoord moet verschillen van het oude."
+
+msgid "Mot de passe modifié. Veuillez vous reconnecter."
+msgstr "Wachtwoord gewijzigd. Log opnieuw in."
+
+msgid "Français"
+msgstr "Frans"
+
+msgid "Anglais"
+msgstr "Engels"
+
+msgid "Espagnol"
+msgstr "Spaans"
+
+msgid "Allemand"
+msgstr "Duits"
+
+msgid "Italien"
+msgstr "Italiaans"
+
+msgid "Néerlandais"
+msgstr "Nederlands"
+
+msgid "Information"
+msgstr "Informatie"
+
+msgid "Succès"
+msgstr "Succes"
+
+msgid "Avertissement"
+msgstr "Waarschuwing"
+
+msgid "Alerte"
+msgstr "Melding"
+
+msgid "Page introuvable"
+msgstr "Pagina niet gevonden"
+
+msgid "La page que vous cherchez n'existe pas ou a été déplacée."
+msgstr "De pagina die u zoekt bestaat niet of is verplaatst."
+
+msgid "Vérifiez l'adresse ou revenez à la page précédente."
+msgstr "Controleer het adres of ga terug naar de vorige pagina."
+
+msgid "Retour"
+msgstr "Terug"
+
+msgid "Erreur serveur"
+msgstr "Serverfout"
+
+msgid "Erreur interne du serveur"
+msgstr "Interne serverfout"
+
+msgid "Une erreur inattendue s'est produite."
+msgstr "Er is een onverwachte fout opgetreden."
+
+msgid "Notre équipe a été notifiée et travaille à la résolution du problème."
+msgstr "Ons team is op de hoogte gebracht en werkt aan een oplossing."
+
+msgid "Veuillez réessayer dans quelques instants."
+msgstr "Probeer het over enkele ogenblikken opnieuw."
+
+msgid "Accueil"
+msgstr "Start"
+
+msgid "Mes comptes"
+msgstr "Mijn rekeningen"
+
+msgid "Actif"
+msgstr "Actief"
+
+msgid "Tableau de bord"
+msgstr "Dashboard"
+
+msgid "Historique"
+msgstr "Geschiedenis"
+
+msgid "Virement"
+msgstr "Overschrijving"
+
+msgid "Bénéficiaires"
+msgstr "Begunstigden"
+
+msgid "Notifications"
+msgstr "Meldingen"
+
+msgid "Sécurité"
+msgstr "Beveiliging"
+
+msgid "Déconnexion"
+msgstr "Uitloggen"
+
+msgid "Alertes"
+msgstr "Meldingen"
+
+msgid "Plus"
+msgstr "Meer"
+
+msgid "Compte temporairement bloqué"
+msgstr "Rekening tijdelijk geblokkeerd"
+
+msgid "Certaines opérations sont restreintes"
+msgstr "Sommige handelingen zijn beperkt"
+
+msgid "Motif"
+msgstr "Reden"
+
+msgid "Frais de déblocage"
+msgstr "Deblokkeringskosten"
+
+msgid "Aucuns frais de déblocage"
+msgstr "Geen deblokkeringskosten"
+
+#, python-format
+msgid ""
+"Contactez <strong class=\"text-gray-600\">%(manager)s</strong> pour "
+"débloquer votre compte."
+msgstr ""
+"Neem contact op met <strong class=\"text-gray-600\">%(manager)s</strong> om "
+"uw rekening te deblokkeren."
+
+msgid "J'ai compris"
+msgstr "Begrepen"
+
+#, python-format
+msgid "Bénéficiaires — %(bank_name)s"
+msgstr "Begunstigden — %(bank_name)s"
+
+msgid "Mes bénéficiaires"
+msgstr "Mijn begunstigden"
+
+msgid "Gérez vos comptes de destination"
+msgstr "Beheer uw bestemmingsrekeningen"
+
+msgid "Ajouter"
+msgstr "Toevoegen"
+
+msgid "Virer"
+msgstr "Overschrijven"
+
+#, python-format
+msgid "Supprimer %(full_name)s de vos bénéficiaires ?"
+msgstr "%(full_name)s verwijderen uit uw begunstigden?"
+
+msgid "Supprimer"
+msgstr "Verwijderen"
+
+msgid "Aucun bénéficiaire enregistré"
+msgstr "Geen begunstigde geregistreerd"
+
+msgid "Ajoutez un bénéficiaire pour commencer à effectuer des virements"
+msgstr "Voeg een begunstigde toe om overschrijvingen te starten"
+
+msgid "Ajouter mon premier bénéficiaire"
+msgstr "Mijn eerste begunstigde toevoegen"
+
+msgid "Ajouter un bénéficiaire"
+msgstr "Een begunstigde toevoegen"
+
+msgid "Renseignez les coordonnées bancaires"
+msgstr "Voer de bankgegevens in"
+
+msgid "Prénom"
+msgstr "Voornaam"
+
+msgid "Nom"
+msgstr "Achternaam"
+
+msgid "IBAN / Numéro de compte"
+msgstr "IBAN / Rekeningnummer"
+
+msgid "Banque du bénéficiaire"
+msgstr "Bank van de begunstigde"
+
+msgid "Email du bénéficiaire"
+msgstr "E-mail van de begunstigde"
+
+msgid "Utilisé pour envoyer les confirmations de virement"
+msgstr "Wordt gebruikt om overschrijvingsbevestigingen te versturen"
+
+msgid "Annuler"
+msgstr "Annuleren"
+
+msgid "Enregistrer"
+msgstr "Opslaan"
+
+#, python-format
+msgid "Sécurité — %(bank_name)s"
+msgstr "Beveiliging — %(bank_name)s"
+
+msgid "Paramètres du compte"
+msgstr "Accountinstellingen"
+
+msgid "Langue, mot de passe et sécurité de connexion"
+msgstr "Taal, wachtwoord en inlogbeveiliging"
+
+msgid "Langue"
+msgstr "Taal"
+
+msgid "Change la langue de tout le contenu de votre espace"
+msgstr "Wijzigt de taal van alle inhoud in uw omgeving"
+
+msgid "Mot de passe actuel"
+msgstr "Huidig wachtwoord"
+
+msgid "Nouveau mot de passe"
+msgstr "Nieuw wachtwoord"
+
+msgid "Minimum 8 caractères"
+msgstr "Minimaal 8 tekens"
+
+msgid "Confirmer le nouveau mot de passe"
+msgstr "Bevestig het nieuwe wachtwoord"
+
+msgid "Les mots de passe ne correspondent pas"
+msgstr "Wachtwoorden komen niet overeen"
+
+msgid "Les mots de passe correspondent ✓"
+msgstr "Wachtwoorden komen overeen ✓"
+
+msgid "Changer le mot de passe"
+msgstr "Wachtwoord wijzigen"
+
+msgid "Conseils de sécurité"
+msgstr "Beveiligingstips"
+
+msgid ""
+"Utilisez un mot de passe <strong class=\"text-gray-700\">unique</strong> que"
+" vous n'utilisez nulle part ailleurs."
+msgstr ""
+"Gebruik een <strong class=\"text-gray-700\">uniek</strong> wachtwoord dat u "
+"nergens anders gebruikt."
+
+msgid ""
+"Mélangez <strong class=\"text-gray-700\">majuscules, minuscules, chiffres et"
+" caractères spéciaux</strong>."
+msgstr ""
+"Combineer <strong class=\"text-gray-700\">hoofdletters, kleine letters, "
+"cijfers en speciale tekens</strong>."
+
+msgid ""
+"Ne partagez jamais votre mot de passe, <strong class=\"text-gray-700\">même "
+"avec votre gestionnaire</strong>."
+msgstr ""
+"Deel uw wachtwoord nooit, <strong class=\"text-gray-700\">ook niet met uw "
+"accountbeheerder</strong>."
+
+msgid ""
+"Après le changement, vous serez automatiquement <strong class=\"text-"
+"gray-700\">déconnecté</strong>."
+msgstr ""
+"Na de wijziging wordt u automatisch <strong class=\"text-"
+"gray-700\">uitgelogd</strong>."
+
+#, python-format
+msgid ""
+"Votre identifiant de connexion (<strong class=\"font-"
+"mono\">%(account_id)s</strong>) ne peut pas être modifié. Contactez votre "
+"gestionnaire pour toute question."
+msgstr ""
+"Uw inlogidentificatie (<strong class=\"font-mono\">%(account_id)s</strong>) "
+"kan niet worden gewijzigd. Neem bij vragen contact op met uw "
+"accountbeheerder."
+
+msgid "Faible"
+msgstr "Zwak"
+
+msgid "Passable"
+msgstr "Matig"
+
+msgid "Bon"
+msgstr "Goed"
+
+msgid "Excellent"
+msgstr "Uitstekend"
+
+msgid "Mise à jour…"
+msgstr "Bijwerken…"
+
+#, python-format
+msgid "Tableau de bord — %(bank_name)s"
+msgstr "Dashboard — %(bank_name)s"
+
+#, python-format
+msgid "Bonjour, %(first_name)s"
+msgstr "Hallo, %(first_name)s"
+
+#, python-format
+msgid ""
+"Gestionnaire : <span class=\"text-gray-600 font-medium\">%(manager)s</span>"
+msgstr ""
+"Accountbeheerder: <span class=\"text-gray-600 font-"
+"medium\">%(manager)s</span>"
+
+msgid "Bloqué"
+msgstr "Geblokkeerd"
+
+msgid "Activer"
+msgstr "Activeren"
+
+msgid "Solde disponible"
+msgstr "Beschikbaar saldo"
+
+#, python-format
+msgid "%(counter)s en attente"
+msgid_plural "%(counter)s en attente"
+msgstr[0] "%(counter)s in behandeling"
+msgstr[1] "%(counter)s in behandeling"
+
+msgid "Télécharger"
+msgstr "Downloaden"
+
+msgid "Crédits"
+msgstr "Bijschrijvingen"
+
+msgid "Débits"
+msgstr "Afschrijvingen"
+
+msgid "En attente"
+msgstr "In behandeling"
+
+msgid "opération"
+msgid_plural "opérations"
+msgstr[0] "transactie"
+msgstr[1] "transacties"
+
+msgid "Transactions récentes"
+msgstr "Recente transacties"
+
+msgid "Tout voir"
+msgstr "Alles bekijken"
+
+msgid "Validé"
+msgstr "Gevalideerd"
+
+msgid "En cours"
+msgstr "In behandeling"
+
+msgid "Rejeté"
+msgstr "Afgewezen"
+
+msgid "Aucune transaction"
+msgstr "Geen transacties"
+
+msgid "Coordonnées bancaires"
+msgstr "Bankgegevens"
+
+msgid "Titulaire"
+msgstr "Rekeninghouder"
+
+msgid "Code banque"
+msgstr "Bankcode"
+
+msgid "Code guichet"
+msgstr "Kantoorcode"
+
+msgid "N° de compte"
+msgstr "Rekeningnummer"
+
+msgid "Clé RIB"
+msgstr "Controlecijfer"
+
+msgid "Devise"
+msgstr "Valuta"
+
+msgid "Relevé PDF"
+msgstr "PDF-afschrift"
+
+msgid "Téléchargez vos opérations"
+msgstr "Download uw transacties"
+
+msgid "Du"
+msgstr "Van"
+
+msgid "ex : 01/01/2026"
+msgstr "bijv. 01/01/2026"
+
+msgid "Au"
+msgstr "Tot"
+
+msgid "ex : 31/12/2026"
+msgstr "bijv. 31/12/2026"
+
+msgid "Voir tout"
+msgstr "Alles bekijken"
+
+#, python-format
+msgid "Connexion — %(bank_name)s"
+msgstr "Inloggen — %(bank_name)s"
+
+msgid "Choisissez votre langue"
+msgstr "Kies uw taal"
+
+msgid "Vous pourrez la modifier à tout moment dans les paramètres"
+msgstr "U kunt dit op elk moment wijzigen in de instellingen"
+
+msgid "Votre banque,"
+msgstr "Uw bank,"
+
+msgid "à portée de main."
+msgstr "binnen handbereik."
+
+msgid "Gérez votre compte en toute sécurité, où que vous soyez."
+msgstr "Beheer uw rekening veilig, waar u ook bent."
+
+msgid "Connexion sécurisée"
+msgstr "Beveiligd inloggen"
+
+msgid "Chiffrement TLS · Session protégée"
+msgstr "TLS-versleuteling · Beveiligde sessie"
+
+msgid "Établissement agréé"
+msgstr "Erkende instelling"
+
+msgid "Supervisé et certifié"
+msgstr "Onder toezicht en gecertificeerd"
+
+msgid "Virements rapides"
+msgstr "Snelle overschrijvingen"
+
+msgid "Traitement sous 48h ouvrées"
+msgstr "Verwerking binnen 48 werkuren"
+
+#, python-format
+msgid "© %(bank_name)s · Tous droits réservés"
+msgstr "© %(bank_name)s · Alle rechten voorbehouden"
+
+msgid "Bienvenue"
+msgstr "Welkom"
+
+msgid "Connectez-vous à votre espace bancaire"
+msgstr "Log in op uw bankomgeving"
+
+msgid "Identifiant"
+msgstr "Gebruikersnaam"
+
+msgid "Ex : FR1234567"
+msgstr "Bijv.: FR1234567"
+
+msgid "Mot de passe"
+msgstr "Wachtwoord"
+
+msgid "Afficher/masquer le mot de passe"
+msgstr "Wachtwoord tonen/verbergen"
+
+msgid "Se connecter"
+msgstr "Inloggen"
+
+msgid "Vos identifiants vous ont été communiqués par votre gestionnaire."
+msgstr "Uw inloggegevens zijn door uw accountbeheerder aan u verstrekt."
+
+#, python-format
+msgid ""
+"Pour toute assistance, contactez <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong> au <strong class=\"text-"
+"gray-600\">%(bank_phone)s</strong>"
+msgstr ""
+"Neem voor hulp contact op met <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong> op <strong class=\"text-"
+"gray-600\">%(bank_phone)s</strong>"
+
+#, python-format
+msgid ""
+"Pour toute assistance, contactez <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong>"
+msgstr ""
+"Neem voor hulp contact op met <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong>"
+
+msgid "Connexion…"
+msgstr "Bezig met inloggen…"
+
+#, python-format
+msgid "Notifications — %(bank_name)s"
+msgstr "Meldingen — %(bank_name)s"
+
+msgid "Toutes vos alertes et messages"
+msgstr "Al uw meldingen en berichten"
+
+#, python-format
+msgid "%(counter)s message"
+msgid_plural "%(counter)s messages"
+msgstr[0] "%(counter)s bericht"
+msgstr[1] "%(counter)s berichten"
+
+#, python-format
+msgid "Page %(number)s/%(num_pages)s"
+msgstr "Pagina %(number)s/%(num_pages)s"
+
+msgid "Précédent"
+msgstr "Vorige"
+
+msgid "Suivant"
+msgstr "Volgende"
+
+msgid "Aucune notification"
+msgstr "Geen meldingen"
+
+msgid "Vous serez notifié ici des activités importantes sur votre compte"
+msgstr ""
+"Hier wordt u op de hoogte gebracht van belangrijke activiteiten op uw "
+"rekening"
+
+#, python-format
+msgid "Centre de sécurité — %(bank_name)s"
+msgstr "Beveiligingscentrum — %(bank_name)s"
+
+msgid "Centre de sécurité"
+msgstr "Beveiligingscentrum"
+
+msgid "Confirmation ou annulation des virements en attente de votre compte."
+msgstr ""
+"Bevestiging of annulering van de openstaande overschrijvingen van uw "
+"rekening."
+
+msgid "Aucun virement en attente"
+msgstr "Geen openstaande overschrijvingen"
+
+msgid "Vous n'avez aucun virement en attente pour le moment."
+msgstr "U heeft momenteel geen openstaande overschrijvingen."
+
+msgid "Confirmer ce virement ? Il sera immédiatement validé."
+msgstr "Deze overschrijving bevestigen? Deze wordt onmiddellijk gevalideerd."
+
+msgid "Confirmer ce virement"
+msgstr "Deze overschrijving bevestigen"
+
+msgid "Annuler ce virement et recréditer le montant sur votre compte ?"
+msgstr ""
+"Deze overschrijving annuleren en het bedrag terugstorten op uw rekening?"
+
+msgid "Motif de l'annulation"
+msgstr "Reden voor annulering"
+
+msgid "Ex : Erreur de saisie, changement d'avis…"
+msgstr "Bijv.: Invoerfout, van gedachten veranderd…"
+
+msgid "Frais de redirection"
+msgstr "Doorstuurkosten"
+
+msgid "Sans frais"
+msgstr "Zonder kosten"
+
+msgid "Avec frais"
+msgstr "Met kosten"
+
+msgid "Annuler ce virement"
+msgstr "Deze overschrijving annuleren"
+
+#, python-format
+msgid "Historique — %(bank_name)s"
+msgstr "Geschiedenis — %(bank_name)s"
+
+msgid "Télécharger un relevé"
+msgstr "Een afschrift downloaden"
+
+msgid "Référence, libellé, bénéficiaire…"
+msgstr "Referentie, omschrijving, begunstigde…"
+
+msgid "Tous les types"
+msgstr "Alle types"
+
+msgid "Tous les statuts"
+msgstr "Alle statussen"
+
+msgid "Filtrer"
+msgstr "Filteren"
+
+msgid "Effacer"
+msgstr "Wissen"
+
+msgid "jj/mm/aaaa"
+msgstr "dd/mm/jjjj"
+
+msgid "Filtres :"
+msgstr "Filters:"
+
+#, python-format
+msgid "Depuis %(date_from)s"
+msgstr "Sinds %(date_from)s"
+
+#, python-format
+msgid "Jusqu'au %(date_to)s"
+msgstr "Tot %(date_to)s"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Référence"
+msgstr "Referentie"
+
+msgid "Description"
+msgstr "Omschrijving"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Montant"
+msgstr "Bedrag"
+
+msgid "Statut"
+msgstr "Status"
+
+msgid "En cours de validation"
+msgstr "Wordt gevalideerd"
+
+msgid "Télécharger le bordereau"
+msgstr "Bewijs downloaden"
+
+#, python-format
+msgid "%(counter)s résultat"
+msgid_plural "%(counter)s résultats"
+msgstr[0] "%(counter)s resultaat"
+msgstr[1] "%(counter)s resultaten"
+
+msgid "Aucune transaction trouvée"
+msgstr "Geen transacties gevonden"
+
+msgid "Effacer les filtres"
+msgstr "Filters wissen"
+
+msgid "Détail de l'opération"
+msgstr "Transactiedetails"
+
+msgid "Date d'initiation"
+msgstr "Startdatum"
+
+msgid "Date de validation"
+msgstr "Validatiedatum"
+
+msgid "Libellé"
+msgstr "Omschrijving"
+
+msgid "Bénéficiaire"
+msgstr "Begunstigde"
+
+msgid "Banque"
+msgstr "Bank"
+
+msgid "Motif du rejet"
+msgstr "Reden voor afwijzing"
+
+msgid "Fermer"
+msgstr "Sluiten"
+
+msgid "Sélectionnez la période"
+msgstr "Selecteer de periode"
+
+msgid "Date de rejet"
+msgstr "Datum van afwijzing"
+
+msgid "Frais de redirection :"
+msgstr "Doorstuurkosten:"
+
+#, python-format
+msgid "Virement — %(bank_name)s"
+msgstr "Overschrijving — %(bank_name)s"
+
+msgid "Effectuer un virement"
+msgstr "Een overschrijving doen"
+
+msgid "Solde disponible :"
+msgstr "Beschikbaar saldo:"
+
+msgid "Délai de traitement : 48h ouvrées"
+msgstr "Verwerkingstijd: 48 werkuren"
+
+msgid ""
+"Le montant est immédiatement réservé sur votre compte à l'initiation. En cas"
+" de rejet, il est intégralement recrédité."
+msgstr ""
+"Het bedrag wordt bij het starten direct gereserveerd op uw rekening. Bij "
+"afwijzing wordt het volledig teruggestort."
+
+msgid "Vous devez ajouter un bénéficiaire avant d'effectuer un virement."
+msgstr "U moet een begunstigde toevoegen voordat u een overschrijving doet."
+
+msgid "Sélectionner un bénéficiaire…"
+msgstr "Selecteer een begunstigde…"
+
+msgid "Solde restant après virement :"
+msgstr "Resterend saldo na overschrijving:"
+
+msgid "Motif du virement"
+msgstr "Omschrijving overschrijving"
+
+msgid "Ex : Remboursement, loyer, facture…"
+msgstr "Bijv.: Terugbetaling, huur, factuur…"
+
+msgid ""
+"Le montant est immédiatement <strong class=\"text-"
+"gray-700\">réservé</strong> sur votre compte à l'initiation."
+msgstr ""
+"Het bedrag wordt bij het starten direct <strong class=\"text-"
+"gray-700\">gereserveerd</strong> op uw rekening."
+
+msgid ""
+"Le virement sera <strong class=\"text-gray-700\">validé ou rejeté</strong> "
+"par notre équipe sous 48h ouvrées."
+msgstr ""
+"De overschrijving wordt binnen 48 werkuren door ons team <strong "
+"class=\"text-gray-700\">gevalideerd of afgewezen</strong>."
+
+msgid ""
+"En cas de rejet, le montant sera <strong class=\"text-"
+"gray-700\">intégralement recrédité</strong> sur votre compte."
+msgstr ""
+"Bij afwijzing wordt het bedrag <strong class=\"text-gray-700\">volledig "
+"teruggestort</strong> op uw rekening."
+
+msgid "Initier le virement"
+msgstr "Overschrijving starten"
+
+msgid "Envoi en cours…"
+msgstr "Bezig met verzenden…"
+
+msgid "Virement sortant"
+msgstr "Uitgaande overschrijving"
+
+msgid "Virement entrant"
+msgstr "Inkomende overschrijving"
+
+msgid "Retrait au guichet"
+msgstr "Opname aan het loket"
+
+msgid "Dépôt en banque"
+msgstr "Bankstorting"
+
+msgid "Paiement de facture"
+msgstr "Factuurbetaling"

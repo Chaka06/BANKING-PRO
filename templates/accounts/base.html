@@ -1,5 +1,6 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -219,7 +220,7 @@
 
     {% if all_accounts|length > 1 %}
     <div class="px-4 py-3">
-        <p class="text-xs uppercase tracking-widest mb-2.5" style="color:rgba(255,255,255,.3);font-weight:700;letter-spacing:.08em;">Mes comptes</p>
+        <p class="text-xs uppercase tracking-widest mb-2.5" style="color:rgba(255,255,255,.3);font-weight:700;letter-spacing:.08em;">{% trans "Mes comptes" %}</p>
         {% for acc in all_accounts %}
         <form method="post" action="{% url 'switch_account' bank_slug=bank.slug %}" class="mb-1.5">
             {% csrf_token %}
@@ -244,11 +245,11 @@
         <p class="font-mono text-xs mt-1" style="color:rgba(255,255,255,.38);">{{ account.rib_numero_compte }}</p>
         {% if account.is_blocked %}
             <span class="mt-2.5 inline-flex items-center gap-1.5 text-xs font-medium" style="color:#fca5a5;">
-                <i class="bx bx-lock-alt" style="font-size:13px;"></i>Compte bloqué
+                <i class="bx bx-lock-alt" style="font-size:13px;"></i>{% trans "Compte bloqué" %}
             </span>
         {% else %}
             <span class="mt-2.5 inline-flex items-center gap-1.5 text-xs" style="color:rgba(255,255,255,.45);">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" style="animation:pulse 2s infinite;"></span>Actif
+                <span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" style="animation:pulse 2s infinite;"></span>{% trans "Actif" %}
             </span>
         {% endif %}
     </div>
@@ -257,27 +258,27 @@
 
     <nav class="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
         <a href="{% url 'dashboard' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-            <i class="bx bxs-dashboard"></i>Tableau de bord
+            <i class="bx bxs-dashboard"></i>{% trans "Tableau de bord" %}
         </a>
         <a href="{% url 'transactions' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'transactions' %}active{% endif %}">
-            <i class="bx bx-receipt"></i>Historique
+            <i class="bx bx-receipt"></i>{% trans "Historique" %}
         </a>
         {% if not account.is_blocked %}
         <a href="{% url 'transfer' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'transfer' %}active{% endif %}">
-            <i class="bx bx-transfer-alt"></i>Virement
+            <i class="bx bx-transfer-alt"></i>{% trans "Virement" %}
         </a>
         <a href="{% url 'beneficiaries' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'beneficiaries' %}active{% endif %}">
-            <i class="bx bx-group"></i>Bénéficiaires
+            <i class="bx bx-group"></i>{% trans "Bénéficiaires" %}
         </a>
         {% endif %}
         <a href="{% url 'notifications' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'notifications' %}active{% endif %}">
-            <i class="bx bx-bell"></i>Notifications
+            <i class="bx bx-bell"></i>{% trans "Notifications" %}
             {% if unread_count > 0 %}
                 <span class="ml-auto bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center leading-none">{{ unread_count }}</span>
             {% endif %}
         </a>
         <a href="{% url 'change_password' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'change_password' %}active{% endif %}">
-            <i class="bx bx-shield-quarter"></i>Sécurité
+            <i class="bx bx-shield-quarter"></i>{% trans "Sécurité" %}
         </a>
     </nav>
 
@@ -286,7 +287,7 @@
         <form method="post" action="{% url 'logout' bank_slug=bank.slug %}">
             {% csrf_token %}
             <button type="submit" class="nav-link w-full text-left" style="color:rgba(255,255,255,.4);">
-                <i class="bx bx-log-out"></i>Déconnexion
+                <i class="bx bx-log-out"></i>{% trans "Déconnexion" %}
             </button>
         </form>
     </div>
@@ -357,19 +358,19 @@
         <a href="{% url 'dashboard' bank_slug=bank.slug %}"
            class="mob-tab {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
             <i class="bx {% if request.resolver_match.url_name == 'dashboard' %}bxs-dashboard{% else %}bx-home-alt-2{% endif %}"></i>
-            <span>Accueil</span>
+            <span>{% trans "Accueil" %}</span>
         </a>
 
         <a href="{% url 'transactions' bank_slug=bank.slug %}"
            class="mob-tab {% if request.resolver_match.url_name == 'transactions' %}active{% endif %}">
             <i class="bx bx-receipt"></i>
-            <span>Historique</span>
+            <span>{% trans "Historique" %}</span>
         </a>
 
         <a href="{% if not account.is_blocked %}{% url 'transfer' bank_slug=bank.slug %}{% else %}#{% endif %}"
            class="mob-tab-fab {% if account.is_blocked %}opacity-40 pointer-events-none{% endif %}">
             <div class="fab-btn"><i class="bx bx-transfer-alt"></i></div>
-            <span>Virement</span>
+            <span>{% trans "Virement" %}</span>
         </a>
 
         <a href="{% url 'notifications' bank_slug=bank.slug %}"
@@ -380,12 +381,12 @@
                 <span class="absolute -top-1.5 -right-2 w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center leading-none font-bold" style="font-size:9px;">{{ unread_count }}</span>
                 {% endif %}
             </div>
-            <span>Alertes</span>
+            <span>{% trans "Alertes" %}</span>
         </a>
 
         <button onclick="openMoreSheet()" class="mob-tab">
             <i class="bx bx-menu"></i>
-            <span>Plus</span>
+            <span>{% trans "Plus" %}</span>
         </button>
     </div>
 </nav>
@@ -403,7 +404,7 @@
 
         <!-- Compte actif -->
         <div class="px-5 pt-2 pb-4 border-b border-gray-100">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" style="letter-spacing:.08em;">Compte actif</p>
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" style="letter-spacing:.08em;">{% trans "Compte actif" %}</p>
             <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:color-mix(in srgb,var(--p) 12%,#f8faff);">
                     <i class="bx {% if account.account_type == 'epargne' %}bx-wallet{% else %}bx-credit-card{% endif %}" style="color:var(--p);font-size:20px;"></i>
@@ -437,12 +438,12 @@
         <div class="px-4 py-3 space-y-0.5">
             <a href="{% url 'beneficiaries' bank_slug=bank.slug %}" class="more-item">
                 <i class="bx bx-group"></i>
-                <span>Bénéficiaires</span>
+                <span>{% trans "Bénéficiaires" %}</span>
                 <i class="bx bx-chevron-right ml-auto text-gray-300" style="font-size:18px;flex-shrink:0;"></i>
             </a>
             <a href="{% url 'change_password' bank_slug=bank.slug %}" class="more-item">
                 <i class="bx bx-shield-quarter"></i>
-                <span>Sécurité</span>
+                <span>{% trans "Sécurité" %}</span>
                 <i class="bx bx-chevron-right ml-auto text-gray-300" style="font-size:18px;flex-shrink:0;"></i>
             </a>
         </div>
@@ -452,7 +453,7 @@
                 {% csrf_token %}
                 <button type="submit" class="more-item" style="color:#ef4444;">
                     <i class="bx bx-log-out" style="color:#ef4444;"></i>
-                    <span>Déconnexion</span>
+                    <span>{% trans "Déconnexion" %}</span>
                 </button>
             </form>
         </div>
@@ -467,26 +468,26 @@
             <div class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
                 <i class="bx bx-lock-alt text-red-500" style="font-size:30px;"></i>
             </div>
-            <h2 class="text-lg font-bold text-gray-900">Compte temporairement bloqué</h2>
-            <p class="text-gray-400 text-sm mt-1">Certaines opérations sont restreintes</p>
+            <h2 class="text-lg font-bold text-gray-900">{% trans "Compte temporairement bloqué" %}</h2>
+            <p class="text-gray-400 text-sm mt-1">{% trans "Certaines opérations sont restreintes" %}</p>
         </div>
         <div class="bg-red-50 border border-red-100 rounded-xl p-4 mb-3">
-            <p class="text-xs font-bold text-red-500 uppercase tracking-wider mb-1">Motif</p>
+            <p class="text-xs font-bold text-red-500 uppercase tracking-wider mb-1">{% trans "Motif" %}</p>
             <p class="text-sm text-red-700">{{ account.block_reason }}</p>
         </div>
         {% if account.unblock_fee %}
         <div class="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-3">
-            <p class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">Frais de déblocage</p>
+            <p class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-1">{% trans "Frais de déblocage" %}</p>
             <p class="text-lg font-bold text-amber-800">{{ account.unblock_fee }} {{ account.currency }}</p>
         </div>
         {% else %}
         <div class="bg-green-50 border border-green-100 rounded-xl p-3 mb-3 flex items-center gap-2">
             <i class="bx bx-check-circle text-green-500" style="font-size:18px;"></i>
-            <p class="text-sm text-green-700 font-medium">Aucuns frais de déblocage</p>
+            <p class="text-sm text-green-700 font-medium">{% trans "Aucuns frais de déblocage" %}</p>
         </div>
         {% endif %}
-        <p class="text-xs text-gray-400 text-center mb-4 leading-relaxed">Contactez <strong class="text-gray-600">{{ account.manager_name }}</strong> pour débloquer votre compte.</p>
-        <button onclick="dismissBlockModal()" class="w-full btn-primary py-3 rounded-xl text-sm">J'ai compris</button>
+        <p class="text-xs text-gray-400 text-center mb-4 leading-relaxed">{% blocktrans with manager=account.manager_name %}Contactez <strong class="text-gray-600">{{ manager }}</strong> pour débloquer votre compte.{% endblocktrans %}</p>
+        <button onclick="dismissBlockModal()" class="w-full btn-primary py-3 rounded-xl text-sm">{% trans "J'ai compris" %}</button>
     </div>
 </div>
 {% endif %}

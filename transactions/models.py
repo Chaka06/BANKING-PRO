@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from accounts.models import BankAccount, Beneficiary
 
 
@@ -16,11 +17,11 @@ class Transaction(models.Model):
     TYPE_PAYMENT = 'payment'
 
     TYPE_CHOICES = [
-        (TYPE_TRANSFER_OUT, 'Virement sortant'),
-        (TYPE_TRANSFER_IN, 'Virement entrant'),
-        (TYPE_WITHDRAWAL, 'Retrait au guichet'),
-        (TYPE_DEPOSIT, 'Dépôt en banque'),
-        (TYPE_PAYMENT, 'Paiement de facture'),
+        (TYPE_TRANSFER_OUT, _('Virement sortant')),
+        (TYPE_TRANSFER_IN, _('Virement entrant')),
+        (TYPE_WITHDRAWAL, _('Retrait au guichet')),
+        (TYPE_DEPOSIT, _('Dépôt en banque')),
+        (TYPE_PAYMENT, _('Paiement de facture')),
     ]
 
     STATUS_PENDING = 'pending'
@@ -28,9 +29,9 @@ class Transaction(models.Model):
     STATUS_REJECTED = 'rejected'
 
     STATUS_CHOICES = [
-        (STATUS_PENDING, 'En cours de validation'),
-        (STATUS_VALIDATED, 'Validé'),
-        (STATUS_REJECTED, 'Rejeté'),
+        (STATUS_PENDING, _('En cours de validation')),
+        (STATUS_VALIDATED, _('Validé')),
+        (STATUS_REJECTED, _('Rejeté')),
     ]
 
     account = models.ForeignKey(BankAccount, on_delete=models.PROTECT, related_name='transactions', verbose_name="Compte")

@@ -2,11 +2,13 @@ import logging
 import datetime
 from decimal import Decimal, InvalidOperation
 from functools import wraps
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
-from django.utils import timezone
+from django.utils import timezone, translation
+from django.utils.translation import gettext as _
 from django.db.models import Q, Sum
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
@@ -15,6 +17,7 @@ from django.core.exceptions import ValidationError
 from banks.models import Bank
 from .models import BankAccount, Beneficiary, AuditLog
 from .middleware import get_client_ip, is_ip_locked, record_attempt
+from .constants import LANGUAGE_OPTIONS
 from transactions.models import Transaction
 from notifications.models import Notification
 from .services import TransferService
@@ -27,6 +30,24 @@ logger = logging.getLogger('banking.views')
 
 def get_bank_or_404(bank_slug: str) -> Bank:
     return get_object_or_404(Bank, slug=bank_slug, is_active=True)
+
+
+def sync_session_language(request, user):
+    """
+    Synchronise la langue à la connexion :
+    - si l'utilisateur a explicitement choisi une langue pendant cette session
+      (bannière de connexion), elle devient sa préférence enregistrée ;
+    - sinon, sa préférence enregistrée est appliquée à la session.
+    """
+    session_key = translation.LANGUAGE_SESSION_KEY
+    if request.session.get('language_chosen'):
+        chosen = request.session.get(session_key)
+        if chosen and chosen != user.language:
+            user.language = chosen
+            user.save(update_fields=['language'])
+    else:
+        request.session[session_key] = user.language
+        request.session['language_chosen'] = True
 
 
 def get_all_accounts_for_user(request, bank):
@@ -82,6 +103,8 @@ def base_context(request, bank: Bank, account: BankAccount, all_accounts=None) -
         'account': account,
         'all_accounts': all_accounts or [account],
         'unread_count': account.notifications.filter(is_read=False).count(),
+        'language_options': LANGUAGE_OPTIONS,
+        'current_language': request.user.language if request.user.is_authenticated else None,
     }
 
 
@@ -93,6 +116,14 @@ def bank_root(request, bank_slug):
     if request.user.is_authenticated and get_account_for_request(request, bank):
         return redirect('dashboard', bank_slug=bank_slug)
     return redirect('login', bank_slug=bank_slug)
+
+
+def login_context(request, bank):
+    return {
+        'bank': bank,
+        'language_options': LANGUAGE_OPTIONS,
+        'language_chosen': request.session.get('language_chosen', False),
+    }
 
 
 def login_view(request, bank_slug):
@@ -108,9 +139,9 @@ def login_view(request, bank_slug):
         ip = get_client_ip(request)
 
         if is_ip_locked(ip):
-            messages.error(request, "Trop de tentatives. Votre accès est temporairement suspendu. Réessayez dans 15 minutes.")
+            messages.error(request, _("Trop de tentatives. Votre accès est temporairement suspendu. Réessayez dans 15 minutes."))
             logger.warning(f"IP bloquée tentative login: {ip} | Banque: {bank_slug}")
-            return render(request, 'accounts/login.html', {'bank': bank})
+            return render(request, 'accounts/login.html', login_context(request, bank))
 
         account_id = request.POST.get('account_id', '').strip().upper()
         password = request.POST.get('password', '').strip()
@@ -121,11 +152,13 @@ def login_view(request, bank_slug):
             accounts = user.bank_accounts.filter(bank=bank)
             if not accounts.exists():
                 record_attempt(account_id, ip, bank_slug, success=False)
-                messages.error(request, "Identifiants incorrects.")
-                return render(request, 'accounts/login.html', {'bank': bank})
+                messages.error(request, _("Identifiants incorrects."))
+                return render(request, 'accounts/login.html', login_context(request, bank))
 
             login(request, user)
             record_attempt(account_id, ip, bank_slug, success=True)
+
+            sync_session_language(request, user)
 
             # Activer le compte principal par défaut
             primary = accounts.filter(is_primary=True).first() or accounts.first()
@@ -144,16 +177,34 @@ def login_view(request, bank_slug):
             return redirect('dashboard', bank_slug=bank_slug)
         else:
             record_attempt(account_id, ip, bank_slug, success=False)
-            messages.error(request, "Identifiant ou mot de passe incorrect.")
+            messages.error(request, _("Identifiant ou mot de passe incorrect."))
             logger.warning(f"Echec connexion: {account_id} | Banque: {bank_slug} | IP: {ip}")
 
-    return render(request, 'accounts/login.html', {'bank': bank})
+    return render(request, 'accounts/login.html', login_context(request, bank))
 
 
 @require_POST
 def logout_view(request, bank_slug):
     logout(request)
     return redirect(bank_login_url(bank_slug))
+
+
+@require_POST
+def set_language_view(request):
+    """Change la langue active (bannière de connexion ou paramètres du compte)."""
+    lang = request.POST.get('language', '')
+    next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    valid_codes = {code for code, _label in settings.LANGUAGES}
+
+    if lang in valid_codes:
+        translation.activate(lang)
+        request.session[translation.LANGUAGE_SESSION_KEY] = lang
+        request.session['language_chosen'] = True
+        if request.user.is_authenticated and request.user.language != lang:
+            request.user.language = lang
+            request.user.save(update_fields=['language'])
+
+    return redirect(next_url)
 
 
 @require_POST
@@ -281,7 +332,7 @@ def download_transaction_slip(request, bank_slug, reference, bank=None, account=
 @require_account
 def transfer(request, bank_slug, bank=None, account=None, all_accounts=None):
     if account.is_blocked:
-        messages.error(request, "Votre compte est bloqué. Les virements sont désactivés.")
+        messages.error(request, _("Votre compte est bloqué. Les virements sont désactivés."))
         return redirect('dashboard', bank_slug=bank_slug)
 
     beneficiaries = account.beneficiaries.all().order_by('last_name', 'first_name')
@@ -295,15 +346,15 @@ def transfer(request, bank_slug, bank=None, account=None, all_accounts=None):
         try:
             amount = Decimal(amount_raw).quantize(Decimal('0.01'))
             if amount <= Decimal('0.00'):
-                errors.append("Le montant doit être supérieur à zéro.")
+                errors.append(_("Le montant doit être supérieur à zéro."))
         except (InvalidOperation, ValueError):
-            errors.append("Montant invalide.")
+            errors.append(_("Montant invalide."))
             amount = None
 
         try:
             beneficiary = Beneficiary.objects.get(pk=beneficiary_id, account=account)
         except (Beneficiary.DoesNotExist, ValueError):
-            errors.append("Bénéficiaire invalide.")
+            errors.append(_("Bénéficiaire invalide."))
             beneficiary = None
 
         if not errors:
@@ -321,7 +372,7 @@ def transfer(request, bank_slug, bank=None, account=None, all_accounts=None):
                 except Exception as e:
                     logger.warning(f"Email bénéficiaire non envoyé: {e}")
 
-                messages.success(request, f"Virement initié. Référence : {txn.reference}. Traitement sous 48h ouvrées.")
+                messages.success(request, _("Virement initié. Référence : %(reference)s. Traitement sous 48h ouvrées.") % {'reference': txn.reference})
                 return redirect('transactions', bank_slug=bank_slug)
             except ValidationError as e:
                 errors.append(str(e.message))
@@ -365,7 +416,7 @@ def security_center_validate(request, bank_slug, reference, bank=None, account=N
             send_transfer_validated_email(txn)
         except Exception as e:
             logger.warning(f"Email de validation non envoyé: {e}")
-        messages.success(request, f"Virement {txn.reference} confirmé.")
+        messages.success(request, _("Virement %(reference)s confirmé.") % {'reference': txn.reference})
     except ValidationError as e:
         messages.error(request, str(e.message))
 
@@ -389,7 +440,7 @@ def security_center_reject(request, bank_slug, reference, bank=None, account=Non
             if fee > Decimal('0.00'):
                 rejection_fee = fee
         except (InvalidOperation, ValueError):
-            messages.error(request, "Montant des frais invalide.")
+            messages.error(request, _("Montant des frais invalide."))
             return redirect('security_center', bank_slug=bank_slug)
 
     try:
@@ -400,7 +451,7 @@ def security_center_reject(request, bank_slug, reference, bank=None, account=Non
             send_transfer_rejected_email(txn)
         except Exception as e:
             logger.warning(f"Email de rejet non envoyé: {e}")
-        messages.success(request, f"Virement {txn.reference} annulé et solde recrédité.")
+        messages.success(request, _("Virement %(reference)s annulé et solde recrédité.") % {'reference': txn.reference})
     except ValidationError as e:
         messages.error(request, str(e.message))
 
@@ -412,7 +463,7 @@ def security_center_reject(request, bank_slug, reference, bank=None, account=Non
 @require_account
 def beneficiaries(request, bank_slug, bank=None, account=None, all_accounts=None):
     if account.is_blocked:
-        messages.error(request, "Votre compte est bloqué.")
+        messages.error(request, _("Votre compte est bloqué."))
         return redirect('dashboard', bank_slug=bank_slug)
 
     if request.method == 'POST':
@@ -425,17 +476,17 @@ def beneficiaries(request, bank_slug, bank=None, account=None, all_accounts=None
 
         errors = []
         if not first_name:
-            errors.append("Le prénom est obligatoire.")
+            errors.append(_("Le prénom est obligatoire."))
         if not last_name:
-            errors.append("Le nom est obligatoire.")
+            errors.append(_("Le nom est obligatoire."))
         if not account_number:
-            errors.append("Le numéro de compte IBAN est obligatoire.")
+            errors.append(_("Le numéro de compte IBAN est obligatoire."))
         if not bank_name:
-            errors.append("Le nom de la banque est obligatoire.")
+            errors.append(_("Le nom de la banque est obligatoire."))
 
         if not errors:
             if account.beneficiaries.filter(account_number=account_number).exists():
-                errors.append("Ce numéro de compte est déjà enregistré comme bénéficiaire.")
+                errors.append(_("Ce numéro de compte est déjà enregistré comme bénéficiaire."))
 
         if not errors:
             Beneficiary.objects.create(
@@ -447,7 +498,7 @@ def beneficiaries(request, bank_slug, bank=None, account=None, all_accounts=None
                 bank_name=bank_name,
                 bank_swift=bank_swift,
             )
-            messages.success(request, f"Bénéficiaire {first_name} {last_name} ajouté.")
+            messages.success(request, _("Bénéficiaire %(name)s ajouté.") % {'name': f"{first_name} {last_name}"})
             return redirect('beneficiaries', bank_slug=bank_slug)
 
         for err in errors:
@@ -464,7 +515,7 @@ def delete_beneficiary(request, bank_slug, pk, bank=None, account=None, all_acco
     beneficiary = get_object_or_404(Beneficiary, pk=pk, account=account)
     name = beneficiary.get_full_name()
     beneficiary.delete()
-    messages.success(request, f"Bénéficiaire {name} supprimé.")
+    messages.success(request, _("Bénéficiaire %(name)s supprimé.") % {'name': name})
     return redirect('beneficiaries', bank_slug=bank_slug)
 
 
@@ -487,11 +538,11 @@ def download_statement(request, bank_slug, bank=None, account=None, all_accounts
         date_from = datetime.date.fromisoformat(date_from_str)
         date_to = datetime.date.fromisoformat(date_to_str)
     except ValueError:
-        messages.error(request, "Dates invalides.")
+        messages.error(request, _("Dates invalides."))
         return redirect('transactions', bank_slug=bank_slug)
 
     if date_from > date_to:
-        messages.error(request, "La date de début doit être antérieure à la date de fin.")
+        messages.error(request, _("La date de début doit être antérieure à la date de fin."))
         return redirect('transactions', bank_slug=bank_slug)
 
     txns = (
@@ -505,7 +556,7 @@ def download_statement(request, bank_slug, bank=None, account=None, all_accounts
     )
 
     if not txns.exists():
-        messages.warning(request, "Aucune transaction validée sur cette période.")
+        messages.warning(request, _("Aucune transaction validée sur cette période."))
         return redirect('transactions', bank_slug=bank_slug)
 
     buffer = generate_statement_pdf(account, txns, date_from, date_to)
@@ -543,13 +594,13 @@ def change_password(request, bank_slug, bank=None, account=None, all_accounts=No
 
         errors = []
         if not request.user.check_password(current):
-            errors.append("Mot de passe actuel incorrect.")
+            errors.append(_("Mot de passe actuel incorrect."))
         elif new_pwd != confirm:
-            errors.append("Les mots de passe ne correspondent pas.")
+            errors.append(_("Les mots de passe ne correspondent pas."))
         elif len(new_pwd) < 8:
-            errors.append("Le mot de passe doit contenir au moins 8 caractères.")
+            errors.append(_("Le mot de passe doit contenir au moins 8 caractères."))
         elif new_pwd == current:
-            errors.append("Le nouveau mot de passe doit être différent de l'ancien.")
+            errors.append(_("Le nouveau mot de passe doit être différent de l'ancien."))
 
         if not errors:
             request.user.set_password(new_pwd)
@@ -574,7 +625,7 @@ def change_password(request, bank_slug, bank=None, account=None, all_accounts=No
             except Exception as e:
                 logger.warning(f"Email de changement de mot de passe non envoyé pour {account.account_id}: {e}")
 
-            messages.success(request, "Mot de passe modifié. Veuillez vous reconnecter.")
+            messages.success(request, _("Mot de passe modifié. Veuillez vous reconnecter."))
             logout(request)
             return redirect(bank_login_url(bank_slug))
 

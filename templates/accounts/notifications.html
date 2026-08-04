@@ -1,21 +1,22 @@
 {% extends "accounts/base.html" %}
+{% load i18n %}
 
-{% block title %}Notifications — {{ bank.name }}{% endblock %}
+{% block title %}{% blocktrans with bank_name=bank.name %}Notifications — {{ bank_name }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto space-y-4 lg:space-y-6">
 
     <a href="{% url 'dashboard' bank_slug=bank.slug %}" class="lg:hidden inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors">
-        <i class="bx bx-arrow-back" style="font-size:18px;"></i> Retour
+        <i class="bx bx-arrow-back" style="font-size:18px;"></i> {% trans "Retour" %}
     </a>
 
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-xl lg:text-2xl font-bold text-gray-900">Notifications</h1>
-            <p class="text-gray-400 text-sm mt-0.5">Toutes vos alertes et messages</p>
+            <h1 class="text-xl lg:text-2xl font-bold text-gray-900">{% trans "Notifications" %}</h1>
+            <p class="text-gray-400 text-sm mt-0.5">{% trans "Toutes vos alertes et messages" %}</p>
         </div>
         {% if notifications.paginator.count > 0 %}
-        <span class="text-xs text-gray-400">{{ notifications.paginator.count }} message{{ notifications.paginator.count|pluralize }}</span>
+        <span class="text-xs text-gray-400">{% blocktrans count counter=notifications.paginator.count %}{{ counter }} message{% plural %}{{ counter }} messages{% endblocktrans %}</span>
         {% endif %}
     </div>
 
@@ -65,26 +66,26 @@
     {% if notifications.paginator.num_pages > 1 %}
     <div class="flex items-center justify-between gap-3">
         <p class="text-xs text-gray-400 hidden sm:block">
-            Page {{ notifications.number }}/{{ notifications.paginator.num_pages }}
+            {% blocktrans with number=notifications.number num_pages=notifications.paginator.num_pages %}Page {{ number }}/{{ num_pages }}{% endblocktrans %}
         </p>
         <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
             {% if notifications.has_previous %}
                 <a href="?page={{ notifications.previous_page_number }}" class="page-btn page-btn-ghost">
-                    <i class="bx bx-arrow-back" style="font-size:15px;"></i> Précédent
+                    <i class="bx bx-arrow-back" style="font-size:15px;"></i> {% trans "Précédent" %}
                 </a>
             {% else %}
                 <span class="page-btn page-btn-ghost opacity-40 cursor-not-allowed">
-                    <i class="bx bx-arrow-back" style="font-size:15px;"></i> Précédent
+                    <i class="bx bx-arrow-back" style="font-size:15px;"></i> {% trans "Précédent" %}
                 </span>
             {% endif %}
             <span class="text-xs font-semibold text-gray-500">{{ notifications.number }} / {{ notifications.paginator.num_pages }}</span>
             {% if notifications.has_next %}
                 <a href="?page={{ notifications.next_page_number }}" class="page-btn page-btn-active">
-                    Suivant <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
+                    {% trans "Suivant" %} <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
                 </a>
             {% else %}
                 <span class="page-btn page-btn-ghost opacity-40 cursor-not-allowed">
-                    Suivant <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
+                    {% trans "Suivant" %} <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
                 </span>
             {% endif %}
         </div>
@@ -96,8 +97,8 @@
         <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 bg-gray-100">
             <i class="bx bx-bell" style="font-size:48px;opacity:.2;"></i>
         </div>
-        <p class="text-sm font-medium text-gray-600">Aucune notification</p>
-        <p class="text-xs mt-1">Vous serez notifié ici des activités importantes sur votre compte</p>
+        <p class="text-sm font-medium text-gray-600">{% trans "Aucune notification" %}</p>
+        <p class="text-xs mt-1">{% trans "Vous serez notifié ici des activités importantes sur votre compte" %}</p>
     </div>
     {% endif %}
 

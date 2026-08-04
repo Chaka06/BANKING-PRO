@@ -1,6 +1,7 @@
 {% extends "accounts/base.html" %}
+{% load i18n %}
 
-{% block title %}Tableau de bord — {{ bank.name }}{% endblock %}
+{% block title %}{% blocktrans with bank_name=bank.name %}Tableau de bord — {{ bank_name }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto space-y-4 lg:space-y-6">
@@ -8,17 +9,17 @@
     <!-- ── En-tête ──────────────────────────────────────────────────────── -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">Bonjour, {{ account.first_name }}</h1>
+            <h1 class="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">{% blocktrans with first_name=account.first_name %}Bonjour, {{ first_name }}{% endblocktrans %}</h1>
             <p class="text-gray-400 text-xs lg:text-sm mt-0.5">
                 {{ account.get_account_type_display }}
                 <span class="mx-1 text-gray-300">·</span>
-                Gestionnaire : <span class="text-gray-600 font-medium">{{ account.manager_name }}</span>
+                {% blocktrans with manager=account.manager_name %}Gestionnaire : <span class="text-gray-600 font-medium">{{ manager }}</span>{% endblocktrans %}
             </p>
         </div>
         {% if account.is_blocked %}
-            <span class="badge badge-blocked text-xs"><i class="bx bx-lock-alt" style="font-size:11px;"></i>Bloqué</span>
+            <span class="badge badge-blocked text-xs"><i class="bx bx-lock-alt" style="font-size:11px;"></i>{% trans "Bloqué" %}</span>
         {% else %}
-            <span class="badge badge-active text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block"></span>Actif</span>
+            <span class="badge badge-active text-xs"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse inline-block"></span>{% trans "Actif" %}</span>
         {% endif %}
     </div>
 
@@ -46,12 +47,12 @@
                 {% csrf_token %}
                 <input type="hidden" name="account_id" value="{{ acc.account_id }}">
                 <button type="submit" class="text-xs font-semibold flex items-center gap-0.5 hover:opacity-75 transition-opacity" style="color:var(--p);">
-                    Activer <i class="bx bx-right-arrow-alt" style="font-size:14px;"></i>
+                    {% trans "Activer" %} <i class="bx bx-right-arrow-alt" style="font-size:14px;"></i>
                 </button>
             </form>
             {% else %}
             <p class="text-xs text-gray-400 mt-2.5 flex items-center gap-1 font-medium">
-                <i class="bx bx-check-circle" style="color:var(--p);font-size:13px;"></i>Actif
+                <i class="bx bx-check-circle" style="color:var(--p);font-size:13px;"></i>{% trans "Actif" %}
             </p>
             {% endif %}
         </div>
@@ -107,7 +108,7 @@
         <!-- Solde + actions -->
         <div class="lg:col-span-2">
             <div class="card p-4 lg:p-6 flex flex-col h-full">
-                <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2" style="letter-spacing:.08em;">Solde disponible</p>
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2" style="letter-spacing:.08em;">{% trans "Solde disponible" %}</p>
                 <p class="font-bold text-gray-900 leading-none tracking-tight" style="font-size:clamp(1.8rem,6vw,2.5rem);">
                     {{ account.balance|floatformat:2 }}
                 </p>
@@ -115,20 +116,20 @@
                 {% if pending_count > 0 %}
                 <p class="text-xs text-amber-600 mt-2 font-semibold flex items-center gap-1">
                     <i class="bx bx-time-five" style="font-size:14px;"></i>
-                    {{ pending_count }} en attente
+                    {% blocktrans count counter=pending_count %}{{ counter }} en attente{% plural %}{{ counter }} en attente{% endblocktrans %}
                 </p>
                 {% endif %}
                 <div class="flex gap-2.5 mt-4 lg:mt-6 lg:flex-col">
                     <a href="{% url 'download_rib' bank_slug=bank.slug %}"
                        class="btn-ghost flex-1 lg:flex-none flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold">
                         <i class="bx bx-download" style="font-size:15px;"></i>
-                        <span class="hidden sm:inline">Télécharger </span>RIB
+                        <span class="hidden sm:inline">{% trans "Télécharger" %} </span>RIB
                     </a>
                     {% if not account.is_blocked %}
                     <a href="{% url 'transfer' bank_slug=bank.slug %}"
                        class="btn-primary flex-1 lg:flex-none flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold">
                         <i class="bx bx-transfer-alt" style="font-size:15px;"></i>
-                        Virement
+                        {% trans "Virement" %}
                     </a>
                     {% endif %}
                 </div>
@@ -143,7 +144,7 @@
             <div class="w-7 h-7 lg:w-9 lg:h-9 rounded-xl bg-green-50 flex items-center justify-center mb-2 lg:mb-3">
                 <i class="bx bx-trending-up text-green-500" style="font-size:16px;"></i>
             </div>
-            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">Crédits</p>
+            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">{% trans "Crédits" %}</p>
             <p class="font-bold text-green-600 tracking-tight leading-tight" style="font-size:clamp(.85rem,3vw,1.25rem);">+{{ month_credits|floatformat:0 }}</p>
             <p class="text-gray-400 font-medium" style="font-size:10px;">{{ account.currency }}</p>
         </div>
@@ -152,7 +153,7 @@
             <div class="w-7 h-7 lg:w-9 lg:h-9 rounded-xl bg-red-50 flex items-center justify-center mb-2 lg:mb-3">
                 <i class="bx bx-trending-down text-red-500" style="font-size:16px;"></i>
             </div>
-            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">Débits</p>
+            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">{% trans "Débits" %}</p>
             <p class="font-bold text-red-600 tracking-tight leading-tight" style="font-size:clamp(.85rem,3vw,1.25rem);">−{{ month_debits|floatformat:0 }}</p>
             <p class="text-gray-400 font-medium" style="font-size:10px;">{{ account.currency }}</p>
         </div>
@@ -161,9 +162,9 @@
             <div class="w-7 h-7 lg:w-9 lg:h-9 rounded-xl bg-amber-50 flex items-center justify-center mb-2 lg:mb-3">
                 <i class="bx bx-time-five text-amber-500" style="font-size:16px;"></i>
             </div>
-            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">En attente</p>
+            <p class="text-xs text-gray-400 font-medium mb-1 leading-tight" style="font-size:10px;">{% trans "En attente" %}</p>
             <p class="font-bold text-amber-600 tracking-tight leading-tight" style="font-size:clamp(.85rem,3vw,1.25rem);">{{ pending_count }}</p>
-            <p class="text-gray-400 font-medium" style="font-size:10px;">opération{{ pending_count|pluralize }}</p>
+            <p class="text-gray-400 font-medium" style="font-size:10px;">{% blocktrans count counter=pending_count %}opération{% plural %}opérations{% endblocktrans %}</p>
         </div>
     </div>
 
@@ -172,9 +173,9 @@
 
         <div class="lg:col-span-2 card overflow-hidden">
             <div class="flex items-center justify-between px-4 lg:px-6 py-4 border-b border-gray-50">
-                <h3 class="font-semibold text-gray-900 text-sm tracking-tight">Transactions récentes</h3>
+                <h3 class="font-semibold text-gray-900 text-sm tracking-tight">{% trans "Transactions récentes" %}</h3>
                 <a href="{% url 'transactions' bank_slug=bank.slug %}" class="text-xs font-semibold flex items-center gap-0.5 hover:opacity-80" style="color:var(--p);">
-                    Tout voir <i class="bx bx-chevron-right" style="font-size:15px;"></i>
+                    {% trans "Tout voir" %} <i class="bx bx-chevron-right" style="font-size:15px;"></i>
                 </a>
             </div>
             {% if recent_transactions %}
@@ -193,7 +194,7 @@
                             {% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }}
                         </p>
                         <span class="badge {% if txn.status == 'validated' %}badge-validated{% elif txn.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}" style="font-size:9px;padding:1px 6px;">
-                            {% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}
+                            {% if txn.status == 'validated' %}{% trans "Validé" %}{% elif txn.status == 'pending' %}{% trans "En cours" %}{% else %}{% trans "Rejeté" %}{% endif %}
                         </span>
                     </div>
                 </div>
@@ -202,7 +203,7 @@
             {% else %}
             <div class="text-center py-12 text-gray-300">
                 <i class="bx bx-receipt" style="font-size:44px;"></i>
-                <p class="text-sm mt-2 text-gray-400 font-medium">Aucune transaction</p>
+                <p class="text-sm mt-2 text-gray-400 font-medium">{% trans "Aucune transaction" %}</p>
             </div>
             {% endif %}
         </div>
@@ -211,26 +212,26 @@
         <div class="space-y-4">
 
             <div class="card p-4 lg:p-6">
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" style="letter-spacing:.1em;">Coordonnées bancaires</h3>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" style="letter-spacing:.1em;">{% trans "Coordonnées bancaires" %}</h3>
                 <div class="space-y-0">
                     <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span class="text-xs text-gray-400">Titulaire</span>
+                        <span class="text-xs text-gray-400">{% trans "Titulaire" %}</span>
                         <span class="text-xs font-semibold text-gray-800">{{ account.get_full_name }}</span>
                     </div>
                     <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span class="text-xs text-gray-400">Code banque</span>
+                        <span class="text-xs text-gray-400">{% trans "Code banque" %}</span>
                         <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_code_banque }}</span>
                     </div>
                     <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span class="text-xs text-gray-400">Code guichet</span>
+                        <span class="text-xs text-gray-400">{% trans "Code guichet" %}</span>
                         <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_code_guichet }}</span>
                     </div>
                     <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span class="text-xs text-gray-400">N° de compte</span>
+                        <span class="text-xs text-gray-400">{% trans "N° de compte" %}</span>
                         <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_numero_compte }}</span>
                     </div>
                     <div class="flex justify-between items-center py-2 border-b border-gray-50">
-                        <span class="text-xs text-gray-400">Clé RIB</span>
+                        <span class="text-xs text-gray-400">{% trans "Clé RIB" %}</span>
                         <span class="font-mono text-xs font-bold text-gray-800">{{ account.rib_cle }}</span>
                     </div>
                     <div class="py-2 border-b border-gray-50">
@@ -242,7 +243,7 @@
                         <span class="font-mono text-xs font-bold text-gray-800">{{ bank.swift }}</span>
                     </div>
                     <div class="flex justify-between items-center pt-2">
-                        <span class="text-xs text-gray-400">Devise</span>
+                        <span class="text-xs text-gray-400">{% trans "Devise" %}</span>
                         <span class="text-xs font-bold text-gray-800">{{ account.currency }}</span>
                     </div>
                 </div>
@@ -254,23 +255,23 @@
                         <i class="bx bx-file" style="font-size:17px;color:var(--p);"></i>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-900 text-sm leading-tight">Relevé PDF</h3>
-                        <p class="text-xs text-gray-400">Téléchargez vos opérations</p>
+                        <h3 class="font-semibold text-gray-900 text-sm leading-tight">{% trans "Relevé PDF" %}</h3>
+                        <p class="text-xs text-gray-400">{% trans "Téléchargez vos opérations" %}</p>
                     </div>
                 </div>
                 <form method="get" action="{% url 'download_statement' bank_slug=bank.slug %}" class="space-y-2.5">
                     <div>
-                        <label class="block text-xs text-gray-500 font-semibold mb-1">Du <span class="text-gray-300 font-normal">ex : 01/01/2026</span></label>
+                        <label class="block text-xs text-gray-500 font-semibold mb-1">{% trans "Du" %} <span class="text-gray-300 font-normal">{% trans "ex : 01/01/2026" %}</span></label>
                         <input type="date" name="date_from" id="dash-date-from"
                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs bg-gray-50 focus:outline-none focus:bg-white" required>
                     </div>
                     <div>
-                        <label class="block text-xs text-gray-500 font-semibold mb-1">Au <span class="text-gray-300 font-normal">ex : 31/12/2026</span></label>
+                        <label class="block text-xs text-gray-500 font-semibold mb-1">{% trans "Au" %} <span class="text-gray-300 font-normal">{% trans "ex : 31/12/2026" %}</span></label>
                         <input type="date" name="date_to" id="dash-date-to"
                                class="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs bg-gray-50 focus:outline-none focus:bg-white" required>
                     </div>
                     <button type="submit" class="w-full btn-primary py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
-                        <i class="bx bx-download" style="font-size:14px;"></i>Télécharger
+                        <i class="bx bx-download" style="font-size:14px;"></i>{% trans "Télécharger" %}
                     </button>
                 </form>
             </div>
@@ -282,11 +283,11 @@
     <div class="card p-4 lg:p-6">
         <div class="flex items-center justify-between mb-3">
             <h3 class="font-semibold text-gray-900 text-sm flex items-center gap-2">
-                Alertes
+                {% trans "Alertes" %}
                 <span class="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold leading-none">{{ unread_notifications|length }}</span>
             </h3>
             <a href="{% url 'notifications' bank_slug=bank.slug %}" class="text-xs font-semibold flex items-center gap-0.5 hover:opacity-80" style="color:var(--p);">
-                Voir tout <i class="bx bx-chevron-right" style="font-size:15px;"></i>
+                {% trans "Voir tout" %} <i class="bx bx-chevron-right" style="font-size:15px;"></i>
             </a>
         </div>
         <div class="space-y-2">

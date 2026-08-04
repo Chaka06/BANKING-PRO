@@ -1,3 +1,14 @@
+# (code, drapeau, nom natif) — le nom natif n'est jamais traduit : une langue
+# se désigne toujours elle-même dans son propre alphabet dans le sélecteur.
+LANGUAGE_OPTIONS = [
+    ('fr', '🇫🇷', 'Français'),
+    ('en', '🇬🇧', 'English'),
+    ('es', '🇪🇸', 'Español'),
+    ('de', '🇩🇪', 'Deutsch'),
+    ('it', '🇮🇹', 'Italiano'),
+    ('nl', '🇳🇱', 'Nederlands'),
+]
+
 COUNTRY_PREFIXES = {
     'France': 'FR',
     'Belgique': 'BE',

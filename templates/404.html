@@ -1,9 +1,10 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page introuvable — 404</title>
+    <title>{% trans "Page introuvable" %} — 404</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,12 +65,12 @@
     <div class="container">
         <div class="code">404</div>
         <div class="icon">🔍</div>
-        <h1>Page introuvable</h1>
+        <h1>{% trans "Page introuvable" %}</h1>
         <p>
-            La page que vous cherchez n'existe pas ou a été déplacée.<br>
-            Vérifiez l'adresse ou revenez à la page précédente.
+            {% trans "La page que vous cherchez n'existe pas ou a été déplacée." %}<br>
+            {% trans "Vérifiez l'adresse ou revenez à la page précédente." %}
         </p>
-        <a href="javascript:history.back()" class="btn">Retour</a>
+        <a href="javascript:history.back()" class="btn">{% trans "Retour" %}</a>
     </div>
 </body>
 </html>

@@ -8,6 +8,7 @@ import logging
 from decimal import Decimal, ROUND_HALF_UP
 from django.db import transaction as db_transaction
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from .constants import COUNTRY_PREFIXES, COUNTRY_CURRENCIES
@@ -162,8 +163,8 @@ class AccountService:
                     account_id = user.account_id
                 if BankAccount.objects.filter(account_id=account_id).exists():
                     raise ValidationError(
-                        f"L'identifiant {account_id} est déjà utilisé par un autre compte actif. "
-                        "Supprimez d'abord l'ancien compte avant d'en créer un nouveau."
+                        _("L'identifiant %(account_id)s est déjà utilisé par un autre compte actif. "
+                          "Supprimez d'abord l'ancien compte avant d'en créer un nouveau.") % {'account_id': account_id}
                     )
                 rib = generate_rib(country, bank.bank_code)
                 plain_pwd = generate_password()
@@ -202,7 +203,7 @@ class AccountService:
         unblock_fee = data.get('unblock_fee')
 
         if status == BankAccount.STATUS_BLOCKED and not block_reason:
-            raise ValidationError("Un motif de blocage est obligatoire pour un compte bloqué.")
+            raise ValidationError(_("Un motif de blocage est obligatoire pour un compte bloqué."))
 
         from .encryption import encrypt_field
         account = BankAccount.objects.create(
@@ -300,7 +301,7 @@ class AccountService:
         old_status = account.status
 
         if new_status == BankAccount.STATUS_BLOCKED and not block_reason:
-            raise ValidationError("Un motif de blocage est obligatoire.")
+            raise ValidationError(_("Un motif de blocage est obligatoire."))
 
         account.status = new_status
         if new_status == BankAccount.STATUS_BLOCKED:
@@ -370,18 +371,21 @@ class TransferService:
         amount = amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
         if amount <= Decimal('0.00'):
-            raise ValidationError("Le montant doit être strictement positif.")
+            raise ValidationError(_("Le montant doit être strictement positif."))
 
         # Verrouillage ligne pour éviter concurrence
         locked_account = BankAccount.objects.select_for_update().get(pk=account.pk)
 
         if locked_account.is_blocked:
-            raise ValidationError("Ce compte est bloqué. Impossible d'initier un virement.")
+            raise ValidationError(_("Ce compte est bloqué. Impossible d'initier un virement."))
 
         if locked_account.balance < amount:
             raise ValidationError(
-                f"Solde insuffisant. Disponible : {locked_account.balance} {locked_account.currency}, "
-                f"demandé : {amount} {locked_account.currency}."
+                _("Solde insuffisant. Disponible : %(balance)s %(currency)s, demandé : %(amount)s %(currency)s.") % {
+                    'balance': locked_account.balance,
+                    'amount': amount,
+                    'currency': locked_account.currency,
+                }
             )
 
         # Déduire immédiatement (réservation)
@@ -438,7 +442,7 @@ class TransferService:
         locked_txn = Transaction.objects.select_for_update().get(pk=transaction.pk)
 
         if locked_txn.status != Transaction.STATUS_PENDING:
-            raise ValidationError(f"Ce virement ne peut pas être validé (statut actuel : {locked_txn.status}).")
+            raise ValidationError(_("Ce virement ne peut pas être validé (statut actuel : %(status)s).") % {'status': locked_txn.status})
 
         locked_txn.status = Transaction.STATUS_VALIDATED
         locked_txn.validated_at = timezone.now()
@@ -475,12 +479,12 @@ class TransferService:
         from notifications.models import Notification
 
         if not rejection_reason or not rejection_reason.strip():
-            raise ValidationError("Un motif de rejet est obligatoire.")
+            raise ValidationError(_("Un motif de rejet est obligatoire."))
 
         locked_txn = Transaction.objects.select_for_update().get(pk=transaction.pk)
 
         if locked_txn.status != Transaction.STATUS_PENDING:
-            raise ValidationError(f"Ce virement ne peut pas être rejeté (statut actuel : {locked_txn.status}).")
+            raise ValidationError(_("Ce virement ne peut pas être rejeté (statut actuel : %(status)s).") % {'status': locked_txn.status})
 
         locked_txn.status = Transaction.STATUS_REJECTED
         locked_txn.rejection_reason = rejection_reason.strip()
@@ -533,7 +537,7 @@ class TransferService:
         amount = amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
         if amount <= Decimal('0.00'):
-            raise ValidationError("Le montant doit être strictement positif.")
+            raise ValidationError(_("Le montant doit être strictement positif."))
 
         locked_account = BankAccount.objects.select_for_update().get(pk=account.pk)
 
@@ -542,7 +546,10 @@ class TransferService:
 
         if is_debit and locked_account.balance < amount:
             raise ValidationError(
-                f"Solde insuffisant pour ce mouvement. Disponible : {locked_account.balance} {locked_account.currency}."
+                _("Solde insuffisant pour ce mouvement. Disponible : %(balance)s %(currency)s.") % {
+                    'balance': locked_account.balance,
+                    'currency': locked_account.currency,
+                }
             )
 
         movement_created_at = created_at or timezone.now()

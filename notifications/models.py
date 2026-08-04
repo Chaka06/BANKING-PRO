@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from accounts.models import BankAccount
 
 
@@ -9,10 +10,10 @@ class Notification(models.Model):
     TYPE_DANGER = 'danger'
 
     TYPE_CHOICES = [
-        (TYPE_INFO, 'Information'),
-        (TYPE_SUCCESS, 'Succès'),
-        (TYPE_WARNING, 'Avertissement'),
-        (TYPE_DANGER, 'Alerte'),
+        (TYPE_INFO, _('Information')),
+        (TYPE_SUCCESS, _('Succès')),
+        (TYPE_WARNING, _('Avertissement')),
+        (TYPE_DANGER, _('Alerte')),
     ]
 
     account = models.ForeignKey(BankAccount, on_delete=models.CASCADE, related_name='notifications', verbose_name="Compte")

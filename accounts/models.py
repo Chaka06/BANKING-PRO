@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from banks.models import Bank
 from .constants import COUNTRY_PREFIXES, COUNTRY_CURRENCIES
 
@@ -24,10 +25,20 @@ class BankUserManager(BaseUserManager):
 
 
 class BankUser(AbstractBaseUser, PermissionsMixin):
+    LANGUAGE_CHOICES = [
+        ('fr', 'Français'),
+        ('en', 'English'),
+        ('es', 'Español'),
+        ('de', 'Deutsch'),
+        ('it', 'Italiano'),
+        ('nl', 'Nederlands'),
+    ]
+
     account_id = models.CharField(max_length=20, unique=True, verbose_name="Identifiant", db_index=True)
     email = models.EmailField(unique=True, db_index=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    language = models.CharField(max_length=5, choices=LANGUAGE_CHOICES, default='fr', verbose_name="Langue")
     date_joined = models.DateTimeField(auto_now_add=True)
 
     USERNAME_FIELD = 'account_id'
@@ -47,15 +58,15 @@ class BankAccount(models.Model):
     STATUS_ACTIVE = 'active'
     STATUS_BLOCKED = 'blocked'
     STATUS_CHOICES = [
-        (STATUS_ACTIVE, 'Compte actif'),
-        (STATUS_BLOCKED, 'Compte bloqué'),
+        (STATUS_ACTIVE, _('Compte actif')),
+        (STATUS_BLOCKED, _('Compte bloqué')),
     ]
 
     TYPE_COURANT = 'courant'
     TYPE_EPARGNE = 'epargne'
     ACCOUNT_TYPE_CHOICES = [
-        (TYPE_COURANT, 'Compte courant'),
-        (TYPE_EPARGNE, 'Compte épargne'),
+        (TYPE_COURANT, _('Compte courant')),
+        (TYPE_EPARGNE, _('Compte épargne')),
     ]
 
     bank = models.ForeignKey(Bank, on_delete=models.PROTECT, related_name='accounts', verbose_name="Banque", db_index=True)

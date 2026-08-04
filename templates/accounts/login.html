@@ -1,9 +1,10 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Connexion — {{ bank.name }}</title>
+    <title>{% blocktrans with bank_name=bank.name %}Connexion — {{ bank_name }}{% endblocktrans %}</title>
 
     {% if bank.favicon %}<link rel="icon" href="{{ bank.favicon.url }}">
     <link rel="apple-touch-icon" href="{{ bank.favicon.url }}">{% endif %}
@@ -11,13 +12,13 @@
     {% if bank.meta_description %}<meta name="description" content="{{ bank.meta_description }}">{% endif %}
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Connexion — {{ bank.name }}">
+    <meta property="og:title" content="{% blocktrans with bank_name=bank.name %}Connexion — {{ bank_name }}{% endblocktrans %}">
     {% if bank.meta_description %}<meta property="og:description" content="{{ bank.meta_description }}">{% endif %}
     {% if bank.og_image %}<meta property="og:image" content="{{ bank.og_image.url }}">{% endif %}
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Connexion — {{ bank.name }}">
+    <meta name="twitter:title" content="{% blocktrans with bank_name=bank.name %}Connexion — {{ bank_name }}{% endblocktrans %}">
     {% if bank.meta_description %}<meta name="twitter:description" content="{{ bank.meta_description }}">{% endif %}
     {% if bank.og_image %}<meta name="twitter:image" content="{{ bank.og_image.url }}">{% endif %}
 
@@ -71,9 +72,44 @@
         input[type="password"], input[type="text"][data-pwd] {
             letter-spacing: .03em;
         }
+
+        .lang-card {
+            border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 14px;
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            transition: all .15s; background: #fff; width: 100%; text-align: left;
+        }
+        .lang-card:hover { border-color: var(--p); background: color-mix(in srgb, var(--p) 6%, white); }
     </style>
 </head>
 <body class="min-h-screen flex">
+
+    <!-- ═══ Bannière de choix de langue (première visite) ═══════════════════ -->
+    {% if not language_chosen %}
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="background:rgba(15,23,42,.72);backdrop-filter:blur(6px);">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7 lg:p-8 animate-up">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:color-mix(in srgb, var(--p) 12%, transparent);">
+                    <i class="bx bx-globe" style="font-size:28px;color:var(--p);"></i>
+                </div>
+                <h2 class="text-lg font-bold text-gray-900">{% trans "Choisissez votre langue" %}</h2>
+                <p class="text-gray-400 text-sm mt-1">{% trans "Vous pourrez la modifier à tout moment dans les paramètres" %}</p>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+                {% for code, flag, native in language_options %}
+                <form method="post" action="{% url 'set_language' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="language" value="{{ code }}">
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="lang-card">
+                        <span style="font-size:22px;line-height:1;">{{ flag }}</span>
+                        <span class="text-sm font-semibold text-gray-800">{{ native }}</span>
+                    </button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Panneau gauche -->
     <div class="hidden lg:flex lg:w-[45%] panel-left flex-col justify-between p-12 relative overflow-hidden">
@@ -89,10 +125,10 @@
                 <div class="text-white font-bold text-2xl mb-8">{{ bank.name }}</div>
             {% endif %}
             <h1 class="text-4xl font-bold leading-tight mb-3" style="color:var(--pt);">
-                Votre banque,<br>à portée de main.
+                {% trans "Votre banque," %}<br>{% trans "à portée de main." %}
             </h1>
             <p class="text-base opacity-65" style="color:var(--pt);">
-                {% if bank.tagline %}{{ bank.tagline }}{% else %}Gérez votre compte en toute sécurité, où que vous soyez.{% endif %}
+                {% if bank.tagline %}{{ bank.tagline }}{% else %}{% trans "Gérez votre compte en toute sécurité, où que vous soyez." %}{% endif %}
             </p>
         </div>
 
@@ -102,8 +138,8 @@
                     <svg class="w-4.5 h-4.5" style="width:18px;height:18px;" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 <div>
-                    <p class="text-white font-semibold text-sm">Connexion sécurisée</p>
-                    <p class="text-xs opacity-55" style="color:var(--pt);">Chiffrement TLS · Session protégée</p>
+                    <p class="text-white font-semibold text-sm">{% trans "Connexion sécurisée" %}</p>
+                    <p class="text-xs opacity-55" style="color:var(--pt);">{% trans "Chiffrement TLS · Session protégée" %}</p>
                 </div>
             </div>
             <div class="feature-item">
@@ -111,8 +147,8 @@
                     <svg style="width:18px;height:18px;" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div>
-                    <p class="text-white font-semibold text-sm">Établissement agréé</p>
-                    <p class="text-xs opacity-55" style="color:var(--pt);">Supervisé et certifié</p>
+                    <p class="text-white font-semibold text-sm">{% trans "Établissement agréé" %}</p>
+                    <p class="text-xs opacity-55" style="color:var(--pt);">{% trans "Supervisé et certifié" %}</p>
                 </div>
             </div>
             <div class="feature-item">
@@ -120,13 +156,13 @@
                     <svg style="width:18px;height:18px;" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
                 <div>
-                    <p class="text-white font-semibold text-sm">Virements rapides</p>
-                    <p class="text-xs opacity-55" style="color:var(--pt);">Traitement sous 48h ouvrées</p>
+                    <p class="text-white font-semibold text-sm">{% trans "Virements rapides" %}</p>
+                    <p class="text-xs opacity-55" style="color:var(--pt);">{% trans "Traitement sous 48h ouvrées" %}</p>
                 </div>
             </div>
         </div>
 
-        <p class="relative z-10 text-xs opacity-30" style="color:var(--pt);">© {{ bank.name }} · Tous droits réservés</p>
+        <p class="relative z-10 text-xs opacity-30" style="color:var(--pt);">{% blocktrans with bank_name=bank.name %}© {{ bank_name }} · Tous droits réservés{% endblocktrans %}</p>
     </div>
 
     <!-- Panneau droit (formulaire) -->
@@ -144,8 +180,8 @@
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden animate-up delay-1">
                 <!-- En-tête de la carte -->
                 <div class="px-8 pt-8 pb-6 border-b border-gray-100">
-                    <h2 class="text-2xl font-bold text-gray-900">Bienvenue</h2>
-                    <p class="text-gray-400 text-sm mt-1">Connectez-vous à votre espace bancaire</p>
+                    <h2 class="text-2xl font-bold text-gray-900">{% trans "Bienvenue" %}</h2>
+                    <p class="text-gray-400 text-sm mt-1">{% trans "Connectez-vous à votre espace bancaire" %}</p>
                 </div>
 
                 <div class="px-8 py-7">
@@ -168,12 +204,12 @@
                         {% csrf_token %}
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Identifiant</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{% trans "Identifiant" %}</label>
                             <input
                                 type="text"
                                 name="account_id"
                                 id="account_id"
-                                placeholder="Ex : FR1234567"
+                                placeholder="{% trans "Ex : FR1234567" %}"
                                 class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus-ring transition-colors bg-gray-50 focus:bg-white font-mono tracking-wide"
                                 required
                                 autocomplete="username"
@@ -183,7 +219,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mot de passe</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">{% trans "Mot de passe" %}</label>
                             <div class="relative">
                                 <input
                                     type="password"
@@ -199,7 +235,7 @@
                                     id="toggle-pwd"
                                     onclick="togglePassword()"
                                     class="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
-                                    aria-label="Afficher/masquer le mot de passe"
+                                    aria-label="{% trans "Afficher/masquer le mot de passe" %}"
                                 >
                                     <svg id="eye-open" class="w-4.5 h-4.5" style="width:18px;height:18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -220,7 +256,7 @@
                             <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
-                            <span id="btn-label">Se connecter</span>
+                            <span id="btn-label">{% trans "Se connecter" %}</span>
                         </button>
                     </form>
                 </div>
@@ -228,9 +264,12 @@
                 <!-- Pied de carte -->
                 <div class="px-8 pb-6 pt-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
                     <p class="text-xs text-gray-400 text-center leading-relaxed">
-                        Vos identifiants vous ont été communiqués par votre gestionnaire.<br>
-                        Pour toute assistance, contactez <strong class="text-gray-600">{{ bank.name }}</strong>
-                        {% if bank.phone %} au <strong class="text-gray-600">{{ bank.phone }}</strong>{% endif %}
+                        {% trans "Vos identifiants vous ont été communiqués par votre gestionnaire." %}<br>
+                        {% if bank.phone %}
+                            {% blocktrans with bank_name=bank.name bank_phone=bank.phone %}Pour toute assistance, contactez <strong class="text-gray-600">{{ bank_name }}</strong> au <strong class="text-gray-600">{{ bank_phone }}</strong>{% endblocktrans %}
+                        {% else %}
+                            {% blocktrans with bank_name=bank.name %}Pour toute assistance, contactez <strong class="text-gray-600">{{ bank_name }}</strong>{% endblocktrans %}
+                        {% endif %}
                     </p>
                 </div>
             </div>
@@ -254,7 +293,7 @@
             const label = document.getElementById('btn-label');
             const icon = document.getElementById('btn-icon');
             btn.disabled = true;
-            label.textContent = 'Connexion…';
+            label.textContent = '{% trans "Connexion…" %}';
             icon.innerHTML = '<circle cx="12" cy="12" r="10" stroke-width="3" stroke="rgba(255,255,255,.3)" fill="none"/><path d="M12 2a10 10 0 0110 10" stroke-width="3" fill="none" class="spinner"/>';
             icon.classList.add('spinner');
         });

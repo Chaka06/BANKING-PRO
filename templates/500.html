@@ -1,9 +1,10 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erreur serveur — 500</title>
+    <title>{% trans "Erreur serveur" %} — 500</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -71,14 +72,14 @@
     <div class="container">
         <div class="code">500</div>
         <div class="icon">⚙️</div>
-        <h1>Erreur interne du serveur</h1>
+        <h1>{% trans "Erreur interne du serveur" %}</h1>
         <p>
-            Une erreur inattendue s'est produite.<br>
-            Notre équipe a été notifiée et travaille à la résolution du problème.<br>
-            Veuillez réessayer dans quelques instants.
+            {% trans "Une erreur inattendue s'est produite." %}<br>
+            {% trans "Notre équipe a été notifiée et travaille à la résolution du problème." %}<br>
+            {% trans "Veuillez réessayer dans quelques instants." %}
         </p>
-        <a href="javascript:history.back()" class="btn btn-outline">Retour</a>
-        <a href="/" class="btn">Accueil</a>
+        <a href="javascript:history.back()" class="btn btn-outline">{% trans "Retour" %}</a>
+        <a href="/" class="btn">{% trans "Accueil" %}</a>
     </div>
 </body>
 </html>

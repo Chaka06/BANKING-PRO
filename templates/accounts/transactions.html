@@ -1,24 +1,25 @@
 {% extends "accounts/base.html" %}
+{% load i18n %}
 
-{% block title %}Historique — {{ bank.name }}{% endblock %}
+{% block title %}{% blocktrans with bank_name=bank.name %}Historique — {{ bank_name }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto space-y-4 lg:space-y-6">
 
     <!-- Bouton retour (mobile) -->
     <a href="{% url 'dashboard' bank_slug=bank.slug %}" class="lg:hidden inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors">
-        <i class="bx bx-arrow-back" style="font-size:18px;"></i> Retour
+        <i class="bx bx-arrow-back" style="font-size:18px;"></i> {% trans "Retour" %}
     </a>
 
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-            <h1 class="text-xl lg:text-2xl font-bold text-gray-900">Historique</h1>
+            <h1 class="text-xl lg:text-2xl font-bold text-gray-900">{% trans "Historique" %}</h1>
             <p class="text-gray-400 text-xs lg:text-sm mt-0.5">{{ account.get_account_type_display }} · {{ account.account_id }}</p>
         </div>
         <button onclick="openStatementModal()"
                 class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 whitespace-nowrap">
             <i class="bx bx-download" style="font-size:16px;"></i>
-            Télécharger un relevé
+            {% trans "Télécharger un relevé" %}
         </button>
     </div>
 
@@ -27,12 +28,12 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             <div class="lg:col-span-2">
                 <input type="text" name="q" value="{{ query }}"
-                       placeholder="Référence, libellé, bénéficiaire…"
+                       placeholder="{% trans "Référence, libellé, bénéficiaire…" %}"
                        class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50 focus:bg-white">
             </div>
             <div>
                 <select name="type" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50">
-                    <option value="">Tous les types</option>
+                    <option value="">{% trans "Tous les types" %}</option>
                     {% for val, label in type_choices %}
                         <option value="{{ val }}" {% if txn_type == val %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
@@ -40,17 +41,17 @@
             </div>
             <div>
                 <select name="status" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50">
-                    <option value="">Tous les statuts</option>
+                    <option value="">{% trans "Tous les statuts" %}</option>
                     {% for val, label in status_choices %}
                         <option value="{{ val }}" {% if txn_status == val %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="flex gap-2">
-                <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold">Filtrer</button>
+                <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold">{% trans "Filtrer" %}</button>
                 {% if query or txn_type or txn_status or date_from or date_to %}
                     <a href="{% url 'transactions' bank_slug=bank.slug %}"
-                       class="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50 flex items-center" title="Effacer">
+                       class="px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-500 hover:bg-gray-50 flex items-center" title="{% trans "Effacer" %}">
                         <i class="bx bx-x" style="font-size:18px;"></i>
                     </a>
                 {% endif %}
@@ -58,24 +59,24 @@
         </div>
         <div class="grid grid-cols-2 gap-3 mt-3">
             <div>
-                <label class="block text-xs text-gray-400 font-medium mb-1">Du <span class="text-gray-300 font-normal">jj/mm/aaaa</span></label>
+                <label class="block text-xs text-gray-400 font-medium mb-1">{% trans "Du" %} <span class="text-gray-300 font-normal">{% trans "jj/mm/aaaa" %}</span></label>
                 <input type="date" name="date_from" value="{{ date_from }}"
                        class="w-full min-w-0 px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none bg-gray-50">
             </div>
             <div>
-                <label class="block text-xs text-gray-400 font-medium mb-1">Au <span class="text-gray-300 font-normal">jj/mm/aaaa</span></label>
+                <label class="block text-xs text-gray-400 font-medium mb-1">{% trans "Au" %} <span class="text-gray-300 font-normal">{% trans "jj/mm/aaaa" %}</span></label>
                 <input type="date" name="date_to" value="{{ date_to }}"
                        class="w-full min-w-0 px-3 py-2 border border-gray-200 rounded-xl text-xs focus:outline-none bg-gray-50">
             </div>
         </div>
         {% if query or txn_type or txn_status or date_from or date_to %}
         <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
-            <span class="text-xs text-gray-400 self-center">Filtres :</span>
+            <span class="text-xs text-gray-400 self-center">{% trans "Filtres :" %}</span>
             {% if query %}<span class="badge bg-blue-50 text-blue-700">{{ query }}</span>{% endif %}
             {% if txn_type %}<span class="badge bg-purple-50 text-purple-700">{{ txn_type }}</span>{% endif %}
             {% if txn_status %}<span class="badge bg-indigo-50 text-indigo-700">{{ txn_status }}</span>{% endif %}
-            {% if date_from %}<span class="badge bg-gray-100 text-gray-600">Depuis {{ date_from }}</span>{% endif %}
-            {% if date_to %}<span class="badge bg-gray-100 text-gray-600">Jusqu'au {{ date_to }}</span>{% endif %}
+            {% if date_from %}<span class="badge bg-gray-100 text-gray-600">{% blocktrans %}Depuis {{ date_from }}{% endblocktrans %}</span>{% endif %}
+            {% if date_to %}<span class="badge bg-gray-100 text-gray-600">{% blocktrans %}Jusqu'au {{ date_to }}{% endblocktrans %}</span>{% endif %}
         </div>
         {% endif %}
     </form>
@@ -96,7 +97,7 @@
                  data-amount="{% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }} {{ txn.currency }}"
                  data-debit="{% if txn.is_debit %}1{% else %}0{% endif %}"
                  data-status="{{ txn.status }}"
-                 data-status-label="{% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}"
+                 data-status-label="{% if txn.status == 'validated' %}{% trans "Validé" %}{% elif txn.status == 'pending' %}{% trans "En cours" %}{% else %}{% trans "Rejeté" %}{% endif %}"
                  data-description="{{ txn.description|default:'—' }}"
                  data-beneficiary="{{ txn.get_beneficiary_display_name }}"
                  data-iban="{{ txn.beneficiary_iban|default:'' }}{% if txn.beneficiary %}{{ txn.beneficiary.account_number }}{% endif %}"
@@ -116,7 +117,7 @@
                         {% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }}
                     </p>
                     <span class="badge {% if txn.status == 'validated' %}badge-validated{% elif txn.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}" style="font-size:9px;padding:1px 6px;">
-                        {% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}
+                        {% if txn.status == 'validated' %}{% trans "Validé" %}{% elif txn.status == 'pending' %}{% trans "En cours" %}{% else %}{% trans "Rejeté" %}{% endif %}
                     </span>
                 </div>
             </div>
@@ -128,12 +129,12 @@
             <table class="w-full text-sm">
                 <thead>
                     <tr class="border-b border-gray-100">
-                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Date</th>
-                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Référence</th>
-                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Description</th>
-                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">Type</th>
-                        <th class="px-5 py-3.5 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">Montant</th>
-                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">Statut</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Date" %}</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Référence" %}</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Description" %}</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider hidden md:table-cell">{% trans "Type" %}</th>
+                        <th class="px-5 py-3.5 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Montant" %}</th>
+                        <th class="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{% trans "Statut" %}</th>
                         <th class="px-5 py-3.5 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider">PDF</th>
                     </tr>
                 </thead>
@@ -148,7 +149,7 @@
                         data-amount="{% if txn.is_debit %}−{% else %}+{% endif %}{{ txn.amount|floatformat:2 }} {{ txn.currency }}"
                         data-debit="{% if txn.is_debit %}1{% else %}0{% endif %}"
                         data-status="{{ txn.status }}"
-                        data-status-label="{% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours de validation{% else %}Rejeté{% endif %}"
+                        data-status-label="{% if txn.status == 'validated' %}{% trans "Validé" %}{% elif txn.status == 'pending' %}{% trans "En cours de validation" %}{% else %}{% trans "Rejeté" %}{% endif %}"
                         data-description="{{ txn.description|default:'—' }}"
                         data-beneficiary="{{ txn.get_beneficiary_display_name }}"
                         data-iban="{{ txn.beneficiary_iban|default:'' }}{% if txn.beneficiary %}{{ txn.beneficiary.account_number }}{% endif %}"
@@ -190,13 +191,13 @@
                         <td class="px-5 py-4 whitespace-nowrap">
                             <span class="badge {% if txn.status == 'validated' %}badge-validated{% elif txn.status == 'pending' %}badge-pending{% else %}badge-rejected{% endif %}">
                                 <i class="bx {% if txn.status == 'validated' %}bx-check-circle{% elif txn.status == 'pending' %}bx-time-five{% else %}bx-x-circle{% endif %}" style="font-size:12px;"></i>
-                                {% if txn.status == 'validated' %}Validé{% elif txn.status == 'pending' %}En cours{% else %}Rejeté{% endif %}
+                                {% if txn.status == 'validated' %}{% trans "Validé" %}{% elif txn.status == 'pending' %}{% trans "En cours" %}{% else %}{% trans "Rejeté" %}{% endif %}
                             </span>
                         </td>
                         <td class="px-5 py-4 text-center" onclick="event.stopPropagation()">
                             <a href="{% url 'download_slip' bank_slug=bank.slug reference=txn.reference %}"
                                class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
-                               title="Télécharger le bordereau">
+                               title="{% trans "Télécharger le bordereau" %}">
                                 <i class="bx bx-download" style="font-size:16px;"></i>
                             </a>
                         </td>
@@ -210,28 +211,28 @@
         {% if transactions.paginator.num_pages > 1 %}
         <div class="px-4 lg:px-5 py-4 border-t border-gray-100 flex items-center justify-between gap-3">
             <p class="text-xs text-gray-400 hidden sm:block">
-                Page {{ transactions.number }}/{{ transactions.paginator.num_pages }} · {{ transactions.paginator.count }} résultat{{ transactions.paginator.count|pluralize }}
+                {% blocktrans with number=transactions.number num_pages=transactions.paginator.num_pages %}Page {{ number }}/{{ num_pages }}{% endblocktrans %} · {% blocktrans count counter=transactions.paginator.count %}{{ counter }} résultat{% plural %}{{ counter }} résultats{% endblocktrans %}
             </p>
             <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
                 {% if transactions.has_previous %}
                     <a href="?{% if query %}q={{ query }}&{% endif %}{% if txn_type %}type={{ txn_type }}&{% endif %}{% if txn_status %}status={{ txn_status }}&{% endif %}{% if date_from %}date_from={{ date_from }}&{% endif %}{% if date_to %}date_to={{ date_to }}&{% endif %}page={{ transactions.previous_page_number }}"
                        class="page-btn page-btn-ghost">
-                        <i class="bx bx-arrow-back" style="font-size:15px;"></i> Précédent
+                        <i class="bx bx-arrow-back" style="font-size:15px;"></i> {% trans "Précédent" %}
                     </a>
                 {% else %}
                     <span class="page-btn page-btn-ghost opacity-40 cursor-not-allowed">
-                        <i class="bx bx-arrow-back" style="font-size:15px;"></i> Précédent
+                        <i class="bx bx-arrow-back" style="font-size:15px;"></i> {% trans "Précédent" %}
                     </span>
                 {% endif %}
                 <span class="text-xs font-semibold text-gray-500">{{ transactions.number }} / {{ transactions.paginator.num_pages }}</span>
                 {% if transactions.has_next %}
                     <a href="?{% if query %}q={{ query }}&{% endif %}{% if txn_type %}type={{ txn_type }}&{% endif %}{% if txn_status %}status={{ txn_status }}&{% endif %}{% if date_from %}date_from={{ date_from }}&{% endif %}{% if date_to %}date_to={{ date_to }}&{% endif %}page={{ transactions.next_page_number }}"
                        class="page-btn page-btn-active">
-                        Suivant <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
+                        {% trans "Suivant" %} <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
                     </a>
                 {% else %}
                     <span class="page-btn page-btn-ghost opacity-40 cursor-not-allowed">
-                        Suivant <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
+                        {% trans "Suivant" %} <i class="bx bx-right-arrow-alt" style="font-size:15px;"></i>
                     </span>
                 {% endif %}
             </div>
@@ -241,9 +242,9 @@
         {% else %}
         <div class="text-center py-16 text-gray-400">
             <i class="bx bx-receipt" style="font-size:56px;opacity:.2;"></i>
-            <p class="text-sm font-medium mt-2">Aucune transaction trouvée</p>
+            <p class="text-sm font-medium mt-2">{% trans "Aucune transaction trouvée" %}</p>
             {% if query or txn_type or txn_status or date_from or date_to %}
-                <a href="{% url 'transactions' bank_slug=bank.slug %}" class="mt-3 inline-block text-xs font-semibold hover:underline" style="color:var(--p);">Effacer les filtres</a>
+                <a href="{% url 'transactions' bank_slug=bank.slug %}" class="mt-3 inline-block text-xs font-semibold hover:underline" style="color:var(--p);">{% trans "Effacer les filtres" %}</a>
             {% endif %}
         </div>
         {% endif %}
@@ -256,7 +257,7 @@
         <!-- En-tête -->
         <div class="px-6 py-5 flex items-start justify-between border-b border-gray-100">
             <div>
-                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Détail de l'opération</p>
+                <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">{% trans "Détail de l'opération" %}</p>
                 <p class="font-mono font-bold text-gray-900" id="md-ref"></p>
             </div>
             <button onclick="document.getElementById('txn-modal').classList.add('hidden')"
@@ -276,19 +277,19 @@
             <!-- Grille infos -->
             <div class="bg-gray-50 rounded-xl divide-y divide-gray-100">
                 <div class="flex justify-between px-4 py-3">
-                    <span class="text-xs text-gray-400 font-medium">Type</span>
+                    <span class="text-xs text-gray-400 font-medium">{% trans "Type" %}</span>
                     <span class="text-xs font-semibold text-gray-800" id="md-type"></span>
                 </div>
                 <div class="flex justify-between px-4 py-3">
-                    <span class="text-xs text-gray-400 font-medium">Date d'initiation</span>
+                    <span class="text-xs text-gray-400 font-medium">{% trans "Date d'initiation" %}</span>
                     <span class="text-xs font-semibold text-gray-800" id="md-date"></span>
                 </div>
                 <div class="flex justify-between px-4 py-3" id="md-validated-row">
-                    <span class="text-xs text-gray-400 font-medium" id="md-validated-label">Date de validation</span>
+                    <span class="text-xs text-gray-400 font-medium" id="md-validated-label">{% trans "Date de validation" %}</span>
                     <span class="text-xs font-semibold text-gray-800" id="md-validated"></span>
                 </div>
                 <div class="flex justify-between px-4 py-3" id="md-desc-row">
-                    <span class="text-xs text-gray-400 font-medium">Libellé</span>
+                    <span class="text-xs text-gray-400 font-medium">{% trans "Libellé" %}</span>
                     <span class="text-xs font-semibold text-gray-800 text-right max-w-48 truncate" id="md-description"></span>
                 </div>
             </div>
@@ -296,7 +297,7 @@
             <!-- Bénéficiaire (si présent) -->
             <div id="md-bene-block" class="hidden bg-gray-50 rounded-xl divide-y divide-gray-100">
                 <div class="flex justify-between px-4 py-3">
-                    <span class="text-xs text-gray-400 font-medium">Bénéficiaire</span>
+                    <span class="text-xs text-gray-400 font-medium">{% trans "Bénéficiaire" %}</span>
                     <span class="text-xs font-semibold text-gray-800" id="md-bene"></span>
                 </div>
                 <div id="md-iban-row" class="flex justify-between px-4 py-3">
@@ -304,7 +305,7 @@
                     <span class="font-mono text-xs text-gray-700" id="md-iban"></span>
                 </div>
                 <div id="md-bank-row" class="flex justify-between px-4 py-3">
-                    <span class="text-xs text-gray-400 font-medium">Banque</span>
+                    <span class="text-xs text-gray-400 font-medium">{% trans "Banque" %}</span>
                     <span class="text-xs font-semibold text-gray-800" id="md-bank"></span>
                 </div>
             </div>
@@ -312,7 +313,7 @@
             <!-- Motif de rejet (si rejeté) -->
             <div id="md-rejection-block" class="hidden bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                 <p class="text-xs font-semibold text-red-700 mb-1 flex items-center gap-1">
-                    <i class="bx bx-x-circle" style="font-size:14px;"></i>Motif du rejet
+                    <i class="bx bx-x-circle" style="font-size:14px;"></i>{% trans "Motif du rejet" %}
                 </p>
                 <p class="text-sm text-red-600" id="md-rejection"></p>
                 <p class="text-xs text-red-400 mt-1 hidden" id="md-fee-line"></p>
@@ -323,11 +324,11 @@
         <div class="px-6 pb-5 flex gap-3">
             <a href="#" id="md-slip-btn"
                class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2">
-                <i class="bx bx-download" style="font-size:16px;"></i>Télécharger le bordereau
+                <i class="bx bx-download" style="font-size:16px;"></i>{% trans "Télécharger le bordereau" %}
             </a>
             <button onclick="document.getElementById('txn-modal').classList.add('hidden')"
                     class="px-5 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">
-                Fermer
+                {% trans "Fermer" %}
             </button>
         </div>
     </div>
@@ -338,8 +339,8 @@
     <div class="bg-white rounded-2xl shadow-2xl w-full mx-4 p-6 sm:p-8" style="max-width:400px;">
         <div class="flex items-center justify-between mb-5">
             <div>
-                <h3 class="text-lg font-bold text-gray-900">Télécharger un relevé</h3>
-                <p class="text-sm text-gray-400 mt-0.5">Sélectionnez la période</p>
+                <h3 class="text-lg font-bold text-gray-900">{% trans "Télécharger un relevé" %}</h3>
+                <p class="text-sm text-gray-400 mt-0.5">{% trans "Sélectionnez la période" %}</p>
             </div>
             <button onclick="document.getElementById('statement-modal').classList.add('hidden')" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl">
                 <i class="bx bx-x" style="font-size:22px;"></i>
@@ -348,22 +349,22 @@
         <form method="get" action="{% url 'download_statement' bank_slug=bank.slug %}" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                    Du <span class="text-xs font-normal text-gray-400">ex : 01/01/2026</span>
+                    {% trans "Du" %} <span class="text-xs font-normal text-gray-400">{% trans "ex : 01/01/2026" %}</span>
                 </label>
                 <input type="date" name="date_from" id="stmt-date-from"
                        class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50 focus:bg-white" required>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                    Au <span class="text-xs font-normal text-gray-400">ex : 31/12/2026</span>
+                    {% trans "Au" %} <span class="text-xs font-normal text-gray-400">{% trans "ex : 31/12/2026" %}</span>
                 </label>
                 <input type="date" name="date_to" id="stmt-date-to"
                        class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none bg-gray-50 focus:bg-white" required>
             </div>
             <div class="flex gap-3 pt-1">
                 <button type="button" onclick="document.getElementById('statement-modal').classList.add('hidden')"
-                        class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">Annuler</button>
-                <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold">Télécharger</button>
+                        class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50">{% trans "Annuler" %}</button>
+                <button type="submit" class="flex-1 btn-primary py-2.5 rounded-xl text-sm font-semibold">{% trans "Télécharger" %}</button>
             </div>
         </form>
     </div>
@@ -382,7 +383,7 @@ function openTxnDetail(row) {
     document.getElementById('md-date').textContent = d.date;
     document.getElementById('md-validated').textContent = d.validated;
     const validatedLabel = document.getElementById('md-validated-label');
-    validatedLabel.textContent = d.status === 'rejected' ? 'Date de rejet' : 'Date de validation';
+    validatedLabel.textContent = d.status === 'rejected' ? '{% trans "Date de rejet" %}' : '{% trans "Date de validation" %}';
     const validatedRow = document.getElementById('md-validated-row');
     validatedRow.style.display = d.validated !== '—' ? 'flex' : 'none';
     document.getElementById('md-description').textContent = d.description;
@@ -392,9 +393,9 @@ function openTxnDetail(row) {
     // Statut badge
     const badge = document.getElementById('md-status-badge');
     const statusMap = {
-        'validated': ['badge-validated', 'bx-check-circle', 'Validé'],
-        'pending':   ['badge-pending',   'bx-time-five',    'En cours de validation'],
-        'rejected':  ['badge-rejected',  'bx-x-circle',     'Rejeté'],
+        'validated': ['badge-validated', 'bx-check-circle', '{% trans "Validé" %}'],
+        'pending':   ['badge-pending',   'bx-time-five',    '{% trans "En cours de validation" %}'],
+        'rejected':  ['badge-rejected',  'bx-x-circle',     '{% trans "Rejeté" %}'],
     };
     const [cls, icon, label] = statusMap[d.status] || ['', 'bx-info-circle', d.statusLabel];
     badge.className = 'badge ' + cls;
@@ -422,7 +423,7 @@ function openTxnDetail(row) {
         document.getElementById('md-rejection').textContent = d.rejection;
         const feeLine = document.getElementById('md-fee-line');
         if (d.rejectionFee) {
-            feeLine.textContent = 'Frais de redirection : ' + d.rejectionFee;
+            feeLine.textContent = '{% trans "Frais de redirection :" %} ' + d.rejectionFee;
             feeLine.classList.remove('hidden');
         } else {
             feeLine.classList.add('hidden');
