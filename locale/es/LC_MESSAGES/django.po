@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 12:47+0200\n"
+"POT-Creation-Date: 2026-08-04 13:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +86,6 @@ msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr ""
 "Este mensaje es confidencial y está destinado únicamente a su destinatario."
 
-#| msgid "Sans frais"
 msgid "Aucuns frais"
 msgstr "Sin comisión"
 
@@ -111,7 +110,6 @@ msgstr ""
 "Su cuenta está <strong>activa y operativa</strong>. Ya puede iniciar sesión."
 
 #, python-format
-#| msgid "Bonjour, %(first_name)s"
 msgid "Bonjour %(name)s,"
 msgstr "Hola %(name)s,"
 
@@ -123,7 +121,6 @@ msgstr ""
 "Su cuenta bancaria se ha abierto correctamente en "
 "<strong>%(bank_name)s</strong>."
 
-#| msgid "Paramètres du compte"
 msgid "Détails du compte"
 msgstr "Datos de la cuenta"
 
@@ -139,7 +136,6 @@ msgstr "Moneda"
 msgid "Gestionnaire"
 msgstr "Gestor"
 
-#| msgid "Se connecter"
 msgid "Se connecter à mon espace"
 msgstr "Acceder a mi espacio"
 
@@ -152,7 +148,6 @@ msgstr ""
 "Su gestor <strong>%(manager)s</strong> le comunicará sus datos de acceso por"
 " un canal seguro. No los comparta nunca con nadie."
 
-#| msgid "Connectez-vous à votre espace bancaire"
 msgid "Ouverture de votre compte bancaire"
 msgstr "Apertura de su cuenta bancaria"
 
@@ -183,7 +178,6 @@ msgstr ""
 "Esta transferencia está siendo validada. Recibirá la confirmación definitiva"
 " en un plazo de <strong>48 horas hábiles</strong>."
 
-#| msgid "Virement entrant"
 msgid "Virement entrant en attente"
 msgstr "Transferencia entrante pendiente"
 
@@ -196,15 +190,12 @@ msgstr "Su transferencia se ha <strong>validado correctamente</strong>."
 msgid "Bénéficiaire"
 msgstr "Beneficiario"
 
-#| msgid "Bénéficiaire"
 msgid "IBAN bénéficiaire"
 msgstr "IBAN del beneficiario"
 
-#| msgid "Validé"
 msgid "Validé le"
 msgstr "Validado el"
 
-#| msgid "Virements rapides"
 msgid "Virement validé"
 msgstr "Transferencia validada"
 
@@ -214,7 +205,6 @@ msgstr "Se ha <strong>validado</strong> una transferencia a su favor."
 msgid "Émetteur"
 msgstr "Emisor"
 
-#| msgid "Virement"
 msgid "Virement reçu"
 msgstr "Transferencia recibida"
 
@@ -239,7 +229,6 @@ msgstr ""
 "Acuda a una oficina con su documento de identidad para relanzar esta "
 "transferencia. La comisión de redirección (%(fee)s) se paga en el lugar."
 
-#| msgid "Virement sortant"
 msgid "Virement rejeté"
 msgstr "Transferencia rechazada"
 
@@ -259,7 +248,6 @@ msgstr ""
 "Para cualquier consulta, contacte directamente con el emisor de la "
 "transferencia."
 
-#| msgid "Virement sortant"
 msgid "Virement annulé"
 msgstr "Transferencia cancelada"
 
@@ -271,11 +259,9 @@ msgstr ""
 "Su cuenta en <strong>%(bank_name)s</strong> ha sido <strong>bloqueada "
 "temporalmente</strong>."
 
-#| msgid "Identifiant"
 msgid "Identifiant du compte"
 msgstr "Identificador de la cuenta"
 
-#| msgid "Motif du rejet"
 msgid "Motif du blocage"
 msgstr "Motivo del bloqueo"
 
@@ -289,7 +275,6 @@ msgstr ""
 "procedimiento de desbloqueo. Si cree que se trata de un error, contáctenos "
 "de inmediato."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte a été bloqué"
 msgstr "Su cuenta ha sido bloqueada"
 
@@ -308,7 +293,6 @@ msgstr ""
 "Utilice su identificador y contraseña habituales para acceder a su área "
 "bancaria."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte est débloqué"
 msgstr "Su cuenta ha sido desbloqueada"
 
@@ -320,7 +304,6 @@ msgstr "La contraseña de su cuenta se modificó el <strong>%(date)s</strong>."
 msgid "Identifiant"
 msgstr "Identificador"
 
-#| msgid "Date de validation"
 msgid "Date de modification"
 msgstr "Fecha de modificación"
 
@@ -332,7 +315,6 @@ msgstr ""
 "¿No ha sido usted? Contacte de inmediato con su gestor "
 "<strong>%(manager)s</strong> para proteger su cuenta."
 
-#| msgid "Changer le mot de passe"
 msgid "Modification de votre mot de passe"
 msgstr "Modificación de su contraseña"
 
@@ -352,7 +334,6 @@ msgstr ""
 "firma autorizada."
 
 #, python-format
-#| msgid "Page %(number)s/%(num_pages)s"
 msgid "Page %(page)s"
 msgstr "Página %(page)s"
 
@@ -362,11 +343,9 @@ msgstr "DATOS DE IDENTIFICACIÓN BANCARIA"
 msgid "TITULAIRE"
 msgstr "TITULAR"
 
-#| msgid "Paramètres du compte"
 msgid "Titulaire du compte"
 msgstr "Titular de la cuenta"
 
-#| msgid "Établissement agréé"
 msgid "Établissement domiciliataire"
 msgstr "Entidad domiciliataria"
 
@@ -414,6 +393,10 @@ msgstr "TRANSFERENCIA RECHAZADA"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "JUSTIFICANTE DE TRANSFERENCIA"
 
+#| msgid "BORDEREAU DE VIREMENT"
+msgid "MONTANT DU VIREMENT"
+msgstr "IMPORTE DE LA TRANSFERENCIA"
+
 msgid "DONNEUR D'ORDRE"
 msgstr "ORDENANTE"
 
@@ -429,7 +412,6 @@ msgstr "DETALLES DE LA OPERACIÓN"
 msgid "Date d'initiation"
 msgstr "Fecha de inicio"
 
-#| msgid "Libellé"
 msgid "Motif / Libellé"
 msgstr "Motivo / Concepto"
 
@@ -467,11 +449,9 @@ msgstr "Fecha"
 msgid "Libellé"
 msgstr "Concepto"
 
-#| msgid "Débits"
 msgid "Débit"
 msgstr "Débito"
 
-#| msgid "Crédits"
 msgid "Crédit"
 msgstr "Crédito"
 

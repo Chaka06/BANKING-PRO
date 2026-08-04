@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 12:47+0200\n"
+"POT-Creation-Date: 2026-08-04 13:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,7 +92,6 @@ msgstr ""
 "Diese Nachricht ist vertraulich und ausschließlich für den Empfänger "
 "bestimmt."
 
-#| msgid "Sans frais"
 msgid "Aucuns frais"
 msgstr "Keine Gebühr"
 
@@ -118,7 +117,6 @@ msgstr ""
 "jetzt anmelden."
 
 #, python-format
-#| msgid "Bonjour, %(first_name)s"
 msgid "Bonjour %(name)s,"
 msgstr "Hallo %(name)s,"
 
@@ -129,7 +127,6 @@ msgid ""
 msgstr ""
 "Ihr Bankkonto wurde erfolgreich bei <strong>%(bank_name)s</strong> eröffnet."
 
-#| msgid "Paramètres du compte"
 msgid "Détails du compte"
 msgstr "Kontodetails"
 
@@ -145,7 +142,6 @@ msgstr "Währung"
 msgid "Gestionnaire"
 msgstr "Kundenbetreuer"
 
-#| msgid "Se connecter"
 msgid "Se connecter à mon espace"
 msgstr "Zu meinem Bereich anmelden"
 
@@ -158,7 +154,6 @@ msgstr ""
 "Ihr Kundenbetreuer <strong>%(manager)s</strong> teilt Ihnen Ihre "
 "Anmeldedaten auf sicherem Weg mit. Geben Sie diese niemals an Dritte weiter."
 
-#| msgid "Connectez-vous à votre espace bancaire"
 msgid "Ouverture de votre compte bancaire"
 msgstr "Eröffnung Ihres Bankkontos"
 
@@ -189,7 +184,6 @@ msgstr ""
 "Diese Überweisung wird derzeit geprüft. Sie erhalten die endgültige "
 "Bestätigung innerhalb von <strong>48 Werkstunden</strong>."
 
-#| msgid "Virement entrant"
 msgid "Virement entrant en attente"
 msgstr "Eingehende Überweisung ausstehend"
 
@@ -202,15 +196,12 @@ msgstr "Ihre Überweisung wurde <strong>erfolgreich bestätigt</strong>."
 msgid "Bénéficiaire"
 msgstr "Begünstigter"
 
-#| msgid "Bénéficiaire"
 msgid "IBAN bénéficiaire"
 msgstr "IBAN des Begünstigten"
 
-#| msgid "Validé"
 msgid "Validé le"
 msgstr "Bestätigt am"
 
-#| msgid "Virements rapides"
 msgid "Virement validé"
 msgstr "Überweisung bestätigt"
 
@@ -220,7 +211,6 @@ msgstr "Zu Ihren Gunsten wurde eine Überweisung <strong>bestätigt</strong>."
 msgid "Émetteur"
 msgstr "Absender"
 
-#| msgid "Virement"
 msgid "Virement reçu"
 msgstr "Überweisung erhalten"
 
@@ -245,7 +235,6 @@ msgstr ""
 "Besuchen Sie mit Ihrem Ausweis eine Filiale, um diese Überweisung erneut zu "
 "veranlassen. Die Weiterleitungsgebühr (%(fee)s) wird vor Ort beglichen."
 
-#| msgid "Virement sortant"
 msgid "Virement rejeté"
 msgstr "Überweisung abgelehnt"
 
@@ -264,7 +253,6 @@ msgid "Pour toute question, contactez directement l'émetteur du virement."
 msgstr ""
 "Bei Fragen wenden Sie sich bitte direkt an den Absender der Überweisung."
 
-#| msgid "Virement sortant"
 msgid "Virement annulé"
 msgstr "Überweisung storniert"
 
@@ -276,11 +264,9 @@ msgstr ""
 "Ihr Konto bei <strong>%(bank_name)s</strong> wurde <strong>vorübergehend "
 "gesperrt</strong>."
 
-#| msgid "Identifiant"
 msgid "Identifiant du compte"
 msgstr "Kontokennung"
 
-#| msgid "Motif du rejet"
 msgid "Motif du blocage"
 msgstr "Sperrgrund"
 
@@ -294,7 +280,6 @@ msgstr ""
 " Freischaltverfahren zu erhalten. Falls Sie glauben, dass es sich um einen "
 "Fehler handelt, kontaktieren Sie uns umgehend."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte a été bloqué"
 msgstr "Ihr Konto wurde gesperrt"
 
@@ -313,7 +298,6 @@ msgstr ""
 "Verwenden Sie Ihre gewohnte Kennung und Ihr Passwort, um auf Ihren "
 "Bankbereich zuzugreifen."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte est débloqué"
 msgstr "Ihr Konto wurde freigeschaltet"
 
@@ -326,7 +310,6 @@ msgstr ""
 msgid "Identifiant"
 msgstr "Kennung"
 
-#| msgid "Date de validation"
 msgid "Date de modification"
 msgstr "Änderungsdatum"
 
@@ -338,7 +321,6 @@ msgstr ""
 "Waren Sie das nicht? Wenden Sie sich sofort an Ihren Kundenbetreuer "
 "<strong>%(manager)s</strong>, um Ihr Konto zu sichern."
 
-#| msgid "Changer le mot de passe"
 msgid "Modification de votre mot de passe"
 msgstr "Änderung Ihres Passworts"
 
@@ -358,7 +340,6 @@ msgstr ""
 "autorisierte Unterschrift keinen Vertrag dar."
 
 #, python-format
-#| msgid "Page %(number)s/%(num_pages)s"
 msgid "Page %(page)s"
 msgstr "Seite %(page)s"
 
@@ -368,11 +349,9 @@ msgstr "BANKVERBINDUNGSNACHWEIS"
 msgid "TITULAIRE"
 msgstr "KONTOINHABER"
 
-#| msgid "Paramètres du compte"
 msgid "Titulaire du compte"
 msgstr "Kontoinhaber"
 
-#| msgid "Établissement agréé"
 msgid "Établissement domiciliataire"
 msgstr "Kontoführendes Institut"
 
@@ -420,6 +399,10 @@ msgstr "ÜBERWEISUNG ABGELEHNT"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "ÜBERWEISUNGSBELEG"
 
+#| msgid "BORDEREAU DE VIREMENT"
+msgid "MONTANT DU VIREMENT"
+msgstr "ÜBERWEISUNGSBETRAG"
+
 msgid "DONNEUR D'ORDRE"
 msgstr "AUFTRAGGEBER"
 
@@ -435,7 +418,6 @@ msgstr "TRANSAKTIONSDETAILS"
 msgid "Date d'initiation"
 msgstr "Einleitungsdatum"
 
-#| msgid "Libellé"
 msgid "Motif / Libellé"
 msgstr "Grund / Verwendungszweck"
 
@@ -473,11 +455,9 @@ msgstr "Datum"
 msgid "Libellé"
 msgstr "Bezeichnung"
 
-#| msgid "Débits"
 msgid "Débit"
 msgstr "Belastung"
 
-#| msgid "Crédits"
 msgid "Crédit"
 msgstr "Gutschrift"
 

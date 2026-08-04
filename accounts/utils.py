@@ -547,6 +547,16 @@ def _fetch_image_reader(url_or_field):
     return None
 
 
+def _draw_tracked_centered(canvas, cx, y, text, font_name, size, tracking):
+    """Texte centré avec espacement de caractères manuel (letter-spacing) — look en-tête officiel."""
+    canvas.setFont(font_name, size)
+    total_width = sum(canvas.stringWidth(ch, font_name, size) + tracking for ch in text) - tracking
+    x = cx - total_width / 2
+    for ch in text:
+        canvas.drawString(x, y, ch)
+        x += canvas.stringWidth(ch, font_name, size) + tracking
+
+
 def _draw_watermark(canvas, text):
     """Filigrane diagonal centré, très transparent."""
     PAGE_W, PAGE_H = A4
@@ -629,13 +639,13 @@ def _page_bg(canvas, doc, bank, doc_type, doc_ref=''):
         canvas.setFont('Helvetica', 7)
         canvas.drawRightString(PAGE_W - MR, header_top - 16*mm, _('Réf. : %(ref)s') % {'ref': doc_ref})
 
-    # ── Titre du document — centré, fond couleur primaire ───────────
+    # ── Titre du document — centré, fond couleur primaire, lettres espacées ──
     title_y = header_top - header_h
     canvas.setFillColorRGB(*primary)
-    canvas.rect(0, title_y, PAGE_W, 10*mm, stroke=0, fill=1)
+    canvas.rect(0, title_y, PAGE_W, 11*mm, stroke=0, fill=1)
     canvas.setFillColorRGB(1, 1, 1)
-    canvas.setFont('Helvetica-Bold', 11)
-    canvas.drawCentredString(PAGE_W / 2, title_y + 3.2*mm, doc_type)
+    _draw_tracked_centered(canvas, PAGE_W / 2, title_y + 3.8*mm, doc_type,
+                           'Helvetica-Bold', 12.5, 1.3)
 
     # ── Ligne de séparation sous le titre ───────────────────────────
     canvas.setStrokeColorRGB(*light)
@@ -653,13 +663,17 @@ def _page_bg(canvas, doc, bank, doc_type, doc_ref=''):
     canvas.setLineWidth(1)
     canvas.line(ML, footer_y + 0.5, PAGE_W - MR, footer_y + 0.5)
 
+    canvas.setFillColorRGB(*dark)
+    canvas.setFont('Helvetica-Bold', 7)
+    canvas.drawString(ML, footer_y - 5*mm, bank.name)
     canvas.setFillColorRGB(*gray)
     canvas.setFont('Helvetica', 6.5)
-    _parts = [p for p in [bank.name, bank.address, bank.phone, bank.email] if p]
-    canvas.drawString(ML, footer_y - 5*mm, ('  ·  '.join(_parts))[:95])
-    canvas.setFillColorRGB(0.68, 0.70, 0.74)
+    _parts = [p for p in [bank.address, bank.phone, bank.email] if p]
+    canvas.drawRightString(PAGE_W - MR, footer_y - 5*mm, (' · '.join(_parts))[:80])
+
+    canvas.setFillColorRGB(0.62, 0.65, 0.70)
     canvas.setFont('Helvetica', 6)
-    canvas.drawString(ML, footer_y - 9*mm,
+    canvas.drawString(ML, footer_y - 9.5*mm,
                       _("Document officiel — Conservez ce document. "
                         "Ne constitue pas un contrat sans signature autorisée."))
     canvas.setFillColorRGB(*gray)
@@ -697,19 +711,30 @@ def _build_info_table(data, primary, col_widths=None):
     return table
 
 
+def _pstyle(name, size, leading=None, **kw):
+    """ParagraphStyle avec leading toujours cohérent avec la taille réelle du texte
+    (évite tout débordement vertical, y compris pour les balises <font size=...> inline,
+    dont ReportLab ne tient pas compte pour calculer la hauteur de ligne)."""
+    return ParagraphStyle(name, fontSize=size, leading=leading or round(size * 1.25), **kw)
+
+
 def _section_title(text, primary_hex):
-    """Titre de section style bancaire : petits caractères, barre primaire à gauche."""
-    return Paragraph(
-        text,
-        ParagraphStyle(
-            'SecTitle',
-            fontSize=8, fontName='Helvetica-Bold',
-            textColor=colors.HexColor('#1f2937'),
-            spaceBefore=10, spaceAfter=3,
-            borderPad=(0, 0, 0, 6),
-            leftIndent=0,
-        )
+    """Titre de section style bancaire : majuscules, barre couleur pleine hauteur à gauche."""
+    bar_and_text = Table(
+        [[' ', Paragraph(text, _pstyle('SecTitle', 9, fontName='Helvetica-Bold',
+                                        textColor=colors.HexColor('#1f2937')))]],
+        colWidths=[2.2*mm, None],
     )
+    bar_and_text.setStyle(TableStyle([
+        ('BACKGROUND',     (0, 0), (0, 0), colors.HexColor(primary_hex)),
+        ('TOPPADDING',     (0, 0), (-1, -1), 0),
+        ('BOTTOMPADDING',  (0, 0), (-1, -1), 0),
+        ('LEFTPADDING',    (0, 0), (0, 0), 0),
+        ('RIGHTPADDING',   (0, 0), (0, 0), 0),
+        ('LEFTPADDING',    (1, 0), (1, 0), 5),
+        ('VALIGN',         (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    return KeepTogether([Spacer(1, 3*mm), bar_and_text, Spacer(1, 2.5*mm)])
 
 
 # ── PDF RIB ────────────────────────────────────────────────────────────────
@@ -761,7 +786,7 @@ def generate_rib_pdf(bank_account, all_accounts=None):
             iban_raw = acc.rib
             iban_fmt = ' '.join(iban_raw[i:i+4] for i in range(0, len(iban_raw), 4))
 
-            # Tableau RIB 4 colonnes (format standard français)
+            # Tableau RIB 4 colonnes (format standard français) — en-tête couleur banque
             rib_grid = Table(
                 [
                     [_('Code banque'), _('Code guichet'), _('N° de compte'), _('Clé RIB')],
@@ -773,34 +798,33 @@ def generate_rib_pdf(bank_account, all_accounts=None):
             rib_grid.setStyle(TableStyle([
                 ('BOX',        (0, 0), (-1, -1), 0.6, colors.HexColor('#c8d0d8')),
                 ('INNERGRID',  (0, 0), (-1, -1), 0.4, colors.HexColor('#dde3ea')),
-                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#f4f6f8')),
+                ('BACKGROUND', (0, 0), (-1, 0), primary),
                 ('FONTNAME',   (0, 0), (-1, 0), 'Helvetica-Bold'),
                 ('FONTSIZE',   (0, 0), (-1, 0), 8),
-                ('TEXTCOLOR',  (0, 0), (-1, 0), colors.HexColor('#374151')),
+                ('TEXTCOLOR',  (0, 0), (-1, 0), colors.white),
                 ('FONTNAME',   (0, 1), (-1, 1), 'Courier-Bold'),
-                ('FONTSIZE',   (0, 1), (-1, 1), 11),
+                ('FONTSIZE',   (0, 1), (-1, 1), 12),
                 ('TEXTCOLOR',  (0, 1), (-1, 1), colors.HexColor('#111827')),
                 ('ALIGN',      (0, 0), (-1, -1), 'CENTER'),
-                ('TOPPADDING',    (0, 0), (-1, -1), 6),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+                ('TOPPADDING',    (0, 0), (-1, -1), 6.5),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 6.5),
             ]))
             story.append(rib_grid)
             story.append(Spacer(1, 4*mm))
 
-            # IBAN dans encadré avec fond très léger
+            # IBAN — bloc plein fond couleur banque, façon carte bancaire
             iban_table = Table(
                 [[Paragraph(
-                    f'<font name="Helvetica-Bold" size="8" color="#374151">IBAN</font><br/>'
-                    f'<font name="Courier-Bold" size="13" color="{bank.color_primary}">{iban_fmt}</font>',
-                    ParagraphStyle('IBANCell', alignment=TA_CENTER, leading=18)
+                    f'<font name="Helvetica-Bold" size="8" color="{bank.color_text_on_primary}">IBAN</font><br/>'
+                    f'<font name="Courier-Bold" size="15" color="{bank.color_text_on_primary}">{iban_fmt}</font>',
+                    _pstyle('IBANCell', 15, leading=19, alignment=TA_CENTER)
                 )]],
                 colWidths=[170*mm],
             )
             iban_table.setStyle(TableStyle([
-                ('BOX',           (0, 0), (-1, -1), 1, primary),
-                ('BACKGROUND',    (0, 0), (-1, -1), colors.HexColor('#f8fafc')),
-                ('TOPPADDING',    (0, 0), (-1, -1), 10),
-                ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+                ('BACKGROUND',    (0, 0), (-1, -1), primary),
+                ('TOPPADDING',    (0, 0), (-1, -1), 11),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 11),
             ]))
             story.append(iban_table)
             story.append(Spacer(1, 4*mm))
@@ -812,16 +836,27 @@ def generate_rib_pdf(bank_account, all_accounts=None):
             story.append(Spacer(1, 8*mm))
 
         # ── Mention de certification ─────────────────────────────────────
-        story.append(Paragraph(
-            _("Je soussigné(e), <b>%(name)s</b>, certifie que les coordonnées "
-              "bancaires figurant sur ce document sont exactes et correspondent à mon compte "
-              "ouvert auprès de <b>%(bank_name)s</b>.") % {
-                'name': bank_account.get_full_name(),
-                'bank_name': bank.name,
-            },
-            ParagraphStyle('Cert', fontSize=8.5, textColor=colors.HexColor('#374151'),
-                           leading=13, spaceAfter=8, borderPad=4)
-        ))
+        cert_table = Table(
+            [[Paragraph(
+                _("Je soussigné(e), <b>%(name)s</b>, certifie que les coordonnées "
+                  "bancaires figurant sur ce document sont exactes et correspondent à mon compte "
+                  "ouvert auprès de <b>%(bank_name)s</b>.") % {
+                    'name': bank_account.get_full_name(),
+                    'bank_name': bank.name,
+                },
+                _pstyle('Cert', 8.5, leading=13, textColor=colors.HexColor('#374151'))
+            )]],
+            colWidths=[170*mm],
+        )
+        cert_table.setStyle(TableStyle([
+            ('BOX',           (0, 0), (-1, -1), 0.6, colors.HexColor('#dde3ea')),
+            ('BACKGROUND',    (0, 0), (-1, -1), colors.HexColor('#f8fafc')),
+            ('TOPPADDING',    (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('LEFTPADDING',   (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING',  (0, 0), (-1, -1), 8),
+        ]))
+        story.append(cert_table)
 
         doc.build(story, onFirstPage=page_fn, onLaterPages=page_fn)
         buffer.seek(0)
@@ -879,20 +914,21 @@ def generate_transfer_slip_pdf(transaction):
         story.append(status_tbl)
         story.append(Spacer(1, 6*mm))
 
-        # ── Montant en grand ────────────────────────────────────────────
+        # ── Montant en grand — bloc plein fond couleur banque ────────────
         amount_tbl = Table(
             [[Paragraph(
-                f'<font name="Helvetica-Bold" size="26" color="{bank.color_primary}">'
+                f'<font name="Helvetica-Bold" size="8.5" color="{bank.color_text_on_primary}">'
+                f'{_("MONTANT DU VIREMENT")}</font><br/>'
+                f'<font name="Helvetica-Bold" size="28" color="{bank.color_text_on_primary}">'
                 f'{fmt_amount(transaction.amount)} {transaction.currency}</font>',
-                ParagraphStyle('Amt', alignment=TA_CENTER, fontSize=26, leading=32)
+                _pstyle('Amt', 28, leading=36, alignment=TA_CENTER)
             )]],
             colWidths=[170*mm],
         )
         amount_tbl.setStyle(TableStyle([
-            ('BACKGROUND',    (0, 0), (-1, -1), colors.HexColor('#f8fafc')),
-            ('BOX',           (0, 0), (-1, -1), 0.5, colors.HexColor('#e2e8f0')),
-            ('TOPPADDING',    (0, 0), (-1, -1), 10),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+            ('BACKGROUND',    (0, 0), (-1, -1), primary),
+            ('TOPPADDING',    (0, 0), (-1, -1), 11),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 11),
         ]))
         story.append(amount_tbl)
         story.append(Spacer(1, 7*mm))
@@ -1031,36 +1067,40 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
         solde_final  = float(bank_account.balance)
         solde_initial = solde_final - total_credit + total_debit
 
-        # ── Encadré récapitulatif (comme les vraies banques) ─────────────
+        # ── Encadré récapitulatif — barres d'accent colorées comme un vrai relevé ──
+        sum_style = _pstyle('SumCell', 12, leading=17, alignment=TA_CENTER)
         summary = Table(
             [[
                 Paragraph(
                     f'<font name="Helvetica-Bold" size="7.5" color="#374151">{_("SOLDE INITIAL")}</font><br/>'
-                    f'<font name="Helvetica-Bold" size="11" color="#111827">{fmt_amount(solde_initial)} {bank_account.currency}</font>',
-                    ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
+                    f'<font name="Helvetica-Bold" size="12" color="#111827">{fmt_amount(solde_initial)} {bank_account.currency}</font>',
+                    sum_style
                 ),
                 Paragraph(
                     f'<font name="Helvetica-Bold" size="7.5" color="#166534">{_("TOTAL CRÉDITS")}</font><br/>'
-                    f'<font name="Helvetica-Bold" size="11" color="#16a34a">+ {fmt_amount(total_credit)} {bank_account.currency}</font>',
-                    ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
+                    f'<font name="Helvetica-Bold" size="12" color="#16a34a">+ {fmt_amount(total_credit)} {bank_account.currency}</font>',
+                    sum_style
                 ),
                 Paragraph(
                     f'<font name="Helvetica-Bold" size="7.5" color="#991b1b">{_("TOTAL DÉBITS")}</font><br/>'
-                    f'<font name="Helvetica-Bold" size="11" color="#dc2626">- {fmt_amount(total_debit)} {bank_account.currency}</font>',
-                    ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
+                    f'<font name="Helvetica-Bold" size="12" color="#dc2626">- {fmt_amount(total_debit)} {bank_account.currency}</font>',
+                    sum_style
                 ),
                 Paragraph(
-                    f'<font name="Helvetica-Bold" size="7.5" color="#1e3a5f">{_("SOLDE FINAL")}</font><br/>'
-                    f'<font name="Helvetica-Bold" size="13" color="{bank.color_primary}">{fmt_amount(solde_final)} {bank_account.currency}</font>',
-                    ParagraphStyle('SumCell', alignment=TA_CENTER, leading=16)
+                    f'<font name="Helvetica-Bold" size="7.5" color="{bank.color_text_on_primary}">{_("SOLDE FINAL")}</font><br/>'
+                    f'<font name="Helvetica-Bold" size="13" color="{bank.color_text_on_primary}">{fmt_amount(solde_final)} {bank_account.currency}</font>',
+                    _pstyle('SumCellFinal', 13, leading=18, alignment=TA_CENTER)
                 ),
             ]],
             colWidths=[43*mm, 43*mm, 43*mm, 43*mm],
         )
         summary.setStyle(TableStyle([
-            ('BOX',           (0, 0), (-1, -1), 0.6, colors.HexColor('#c8d0d8')),
-            ('LINEBEFORE',    (1, 0), (-1, -1), 0.4, colors.HexColor('#dde3ea')),
-            ('BACKGROUND',    (3, 0), (3, 0), colors.HexColor('#f0f7ff')),
+            ('BOX',           (0, 0), (2, -1), 0.6, colors.HexColor('#c8d0d8')),
+            ('LINEBEFORE',    (1, 0), (2, -1), 0.4, colors.HexColor('#dde3ea')),
+            ('LINEABOVE',     (0, 0), (0, 0), 2.5, colors.HexColor('#9ca3af')),
+            ('LINEABOVE',     (1, 0), (1, 0), 2.5, colors.HexColor('#16a34a')),
+            ('LINEABOVE',     (2, 0), (2, 0), 2.5, colors.HexColor('#dc2626')),
+            ('BACKGROUND',    (3, 0), (3, 0), primary),
             ('TOPPADDING',    (0, 0), (-1, -1), 8),
             ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
             ('LEFTPADDING',   (0, 0), (-1, -1), 4),

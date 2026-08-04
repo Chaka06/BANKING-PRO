@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 12:47+0200\n"
+"POT-Creation-Date: 2026-08-04 13:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -90,7 +90,6 @@ msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr ""
 "Dit bericht is vertrouwelijk en uitsluitend bestemd voor de geadresseerde."
 
-#| msgid "Sans frais"
 msgid "Aucuns frais"
 msgstr "Geen kosten"
 
@@ -115,7 +114,6 @@ msgstr ""
 "inloggen."
 
 #, python-format
-#| msgid "Bonjour, %(first_name)s"
 msgid "Bonjour %(name)s,"
 msgstr "Hallo %(name)s,"
 
@@ -126,7 +124,6 @@ msgid ""
 msgstr ""
 "Uw bankrekening is succesvol geopend bij <strong>%(bank_name)s</strong>."
 
-#| msgid "Paramètres du compte"
 msgid "Détails du compte"
 msgstr "Rekeninggegevens"
 
@@ -142,7 +139,6 @@ msgstr "Valuta"
 msgid "Gestionnaire"
 msgstr "Accountbeheerder"
 
-#| msgid "Se connecter"
 msgid "Se connecter à mon espace"
 msgstr "Inloggen op mijn omgeving"
 
@@ -155,7 +151,6 @@ msgstr ""
 "Uw accountbeheerder <strong>%(manager)s</strong> deelt uw inloggegevens via "
 "een beveiligd kanaal met u. Deel ze nooit met iemand."
 
-#| msgid "Connectez-vous à votre espace bancaire"
 msgid "Ouverture de votre compte bancaire"
 msgstr "Opening van uw bankrekening"
 
@@ -186,7 +181,6 @@ msgstr ""
 "Deze overschrijving wordt gevalideerd. U ontvangt de definitieve bevestiging"
 " binnen <strong>48 werkuren</strong>."
 
-#| msgid "Virement entrant"
 msgid "Virement entrant en attente"
 msgstr "Inkomende overschrijving in behandeling"
 
@@ -199,15 +193,12 @@ msgstr "Uw overschrijving is <strong>succesvol gevalideerd</strong>."
 msgid "Bénéficiaire"
 msgstr "Begunstigde"
 
-#| msgid "Bénéficiaire"
 msgid "IBAN bénéficiaire"
 msgstr "IBAN van de begunstigde"
 
-#| msgid "Validé"
 msgid "Validé le"
 msgstr "Gevalideerd op"
 
-#| msgid "Virements rapides"
 msgid "Virement validé"
 msgstr "Overschrijving gevalideerd"
 
@@ -218,7 +209,6 @@ msgstr ""
 msgid "Émetteur"
 msgstr "Afzender"
 
-#| msgid "Virement"
 msgid "Virement reçu"
 msgstr "Overschrijving ontvangen"
 
@@ -243,7 +233,6 @@ msgstr ""
 "Ga met uw identiteitsbewijs naar een kantoor om deze overschrijving opnieuw "
 "te starten. De doorstuurkosten (%(fee)s) worden ter plaatse voldaan."
 
-#| msgid "Virement sortant"
 msgid "Virement rejeté"
 msgstr "Overschrijving afgewezen"
 
@@ -263,7 +252,6 @@ msgstr ""
 "Neem voor vragen rechtstreeks contact op met de afzender van de "
 "overschrijving."
 
-#| msgid "Virement sortant"
 msgid "Virement annulé"
 msgstr "Overschrijving geannuleerd"
 
@@ -275,11 +263,9 @@ msgstr ""
 "Uw rekening bij <strong>%(bank_name)s</strong> is <strong>tijdelijk "
 "geblokkeerd</strong>."
 
-#| msgid "Identifiant"
 msgid "Identifiant du compte"
 msgstr "Rekeningidentificatie"
 
-#| msgid "Motif du rejet"
 msgid "Motif du blocage"
 msgstr "Blokkeringsreden"
 
@@ -293,7 +279,6 @@ msgstr ""
 " deblokkeringsprocedure. Als u denkt dat dit een fout is, neem dan "
 "onmiddellijk contact met ons op."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte a été bloqué"
 msgstr "Uw rekening is geblokkeerd"
 
@@ -312,7 +297,6 @@ msgstr ""
 "Gebruik uw gebruikelijke gebruikersnaam en wachtwoord om toegang te krijgen "
 "tot uw bankomgeving."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte est débloqué"
 msgstr "Uw rekening is gedeblokkeerd"
 
@@ -325,7 +309,6 @@ msgstr ""
 msgid "Identifiant"
 msgstr "Gebruikersnaam"
 
-#| msgid "Date de validation"
 msgid "Date de modification"
 msgstr "Wijzigingsdatum"
 
@@ -337,7 +320,6 @@ msgstr ""
 "Was u dit niet? Neem onmiddellijk contact op met uw accountbeheerder "
 "<strong>%(manager)s</strong> om uw rekening te beveiligen."
 
-#| msgid "Changer le mot de passe"
 msgid "Modification de votre mot de passe"
 msgstr "Wijziging van uw wachtwoord"
 
@@ -357,7 +339,6 @@ msgstr ""
 "handtekening geen contract."
 
 #, python-format
-#| msgid "Page %(number)s/%(num_pages)s"
 msgid "Page %(page)s"
 msgstr "Pagina %(page)s"
 
@@ -367,11 +348,9 @@ msgstr "BANKIDENTIFICATIEBEWIJS"
 msgid "TITULAIRE"
 msgstr "REKENINGHOUDER"
 
-#| msgid "Paramètres du compte"
 msgid "Titulaire du compte"
 msgstr "Rekeninghouder"
 
-#| msgid "Établissement agréé"
 msgid "Établissement domiciliataire"
 msgstr "Rekeninghoudende instelling"
 
@@ -419,6 +398,10 @@ msgstr "OVERSCHRIJVING AFGEWEZEN"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "OVERSCHRIJVINGSBEWIJS"
 
+#| msgid "BORDEREAU DE VIREMENT"
+msgid "MONTANT DU VIREMENT"
+msgstr "OVERSCHRIJVINGSBEDRAG"
+
 msgid "DONNEUR D'ORDRE"
 msgstr "OPDRACHTGEVER"
 
@@ -434,7 +417,6 @@ msgstr "TRANSACTIEDETAILS"
 msgid "Date d'initiation"
 msgstr "Startdatum"
 
-#| msgid "Libellé"
 msgid "Motif / Libellé"
 msgstr "Reden / Omschrijving"
 
@@ -472,11 +454,9 @@ msgstr "Datum"
 msgid "Libellé"
 msgstr "Omschrijving"
 
-#| msgid "Débits"
 msgid "Débit"
 msgstr "Afschrijving"
 
-#| msgid "Crédits"
 msgid "Crédit"
 msgstr "Bijschrijving"
 

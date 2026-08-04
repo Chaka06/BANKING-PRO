@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 12:47+0200\n"
+"POT-Creation-Date: 2026-08-04 13:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,6 @@ msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr ""
 "Questo messaggio è riservato e destinato esclusivamente al suo destinatario."
 
-#| msgid "Sans frais"
 msgid "Aucuns frais"
 msgstr "Nessuna commissione"
 
@@ -111,7 +110,6 @@ msgstr ""
 "ora."
 
 #, python-format
-#| msgid "Bonjour, %(first_name)s"
 msgid "Bonjour %(name)s,"
 msgstr "Ciao %(name)s,"
 
@@ -123,7 +121,6 @@ msgstr ""
 "Il tuo conto bancario è stato aperto con successo presso "
 "<strong>%(bank_name)s</strong>."
 
-#| msgid "Paramètres du compte"
 msgid "Détails du compte"
 msgstr "Dettagli del conto"
 
@@ -139,7 +136,6 @@ msgstr "Valuta"
 msgid "Gestionnaire"
 msgstr "Gestore"
 
-#| msgid "Se connecter"
 msgid "Se connecter à mon espace"
 msgstr "Accedi alla mia area"
 
@@ -153,7 +149,6 @@ msgstr ""
 "credenziali di accesso tramite un canale sicuro. Non condividerle mai con "
 "nessuno."
 
-#| msgid "Connectez-vous à votre espace bancaire"
 msgid "Ouverture de votre compte bancaire"
 msgstr "Apertura del tuo conto bancario"
 
@@ -183,7 +178,6 @@ msgstr ""
 "Questo bonifico è in fase di convalida. Riceverai la conferma definitiva "
 "entro <strong>48 ore lavorative</strong>."
 
-#| msgid "Virement entrant"
 msgid "Virement entrant en attente"
 msgstr "Bonifico in entrata in sospeso"
 
@@ -196,15 +190,12 @@ msgstr "Il tuo bonifico è stato <strong>convalidato con successo</strong>."
 msgid "Bénéficiaire"
 msgstr "Beneficiario"
 
-#| msgid "Bénéficiaire"
 msgid "IBAN bénéficiaire"
 msgstr "IBAN del beneficiario"
 
-#| msgid "Validé"
 msgid "Validé le"
 msgstr "Convalidato il"
 
-#| msgid "Virements rapides"
 msgid "Virement validé"
 msgstr "Bonifico convalidato"
 
@@ -214,7 +205,6 @@ msgstr "È stato <strong>convalidato</strong> un bonifico a tuo favore."
 msgid "Émetteur"
 msgstr "Mittente"
 
-#| msgid "Virement"
 msgid "Virement reçu"
 msgstr "Bonifico ricevuto"
 
@@ -240,7 +230,6 @@ msgstr ""
 "bonifico. La commissione di reindirizzamento (%(fee)s) viene pagata sul "
 "posto."
 
-#| msgid "Virement sortant"
 msgid "Virement rejeté"
 msgstr "Bonifico rifiutato"
 
@@ -259,7 +248,6 @@ msgid "Pour toute question, contactez directement l'émetteur du virement."
 msgstr ""
 "Per qualsiasi domanda, contatta direttamente il mittente del bonifico."
 
-#| msgid "Virement sortant"
 msgid "Virement annulé"
 msgstr "Bonifico annullato"
 
@@ -271,11 +259,9 @@ msgstr ""
 "Il tuo conto presso <strong>%(bank_name)s</strong> è stato "
 "<strong>temporaneamente bloccato</strong>."
 
-#| msgid "Identifiant"
 msgid "Identifiant du compte"
 msgstr "Identificativo del conto"
 
-#| msgid "Motif du rejet"
 msgid "Motif du blocage"
 msgstr "Motivo del blocco"
 
@@ -289,7 +275,6 @@ msgstr ""
 "procedura di sblocco. Se pensi che si tratti di un errore, contattaci "
 "immediatamente."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte a été bloqué"
 msgstr "Il tuo conto è stato bloccato"
 
@@ -308,7 +293,6 @@ msgstr ""
 "Utilizza il tuo identificativo e la password abituali per accedere alla tua "
 "area bancaria."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte est débloqué"
 msgstr "Il tuo conto è stato sbloccato"
 
@@ -321,7 +305,6 @@ msgstr ""
 msgid "Identifiant"
 msgstr "Identificativo"
 
-#| msgid "Date de validation"
 msgid "Date de modification"
 msgstr "Data di modifica"
 
@@ -333,7 +316,6 @@ msgstr ""
 "Non sei stato tu? Contatta immediatamente il tuo gestore "
 "<strong>%(manager)s</strong> per proteggere il tuo conto."
 
-#| msgid "Changer le mot de passe"
 msgid "Modification de votre mot de passe"
 msgstr "Modifica della tua password"
 
@@ -353,7 +335,6 @@ msgstr ""
 "contratto senza firma autorizzata."
 
 #, python-format
-#| msgid "Page %(number)s/%(num_pages)s"
 msgid "Page %(page)s"
 msgstr "Pagina %(page)s"
 
@@ -363,11 +344,9 @@ msgstr "ESTRATTO DI IDENTITÀ BANCARIA"
 msgid "TITULAIRE"
 msgstr "TITOLARE"
 
-#| msgid "Paramètres du compte"
 msgid "Titulaire du compte"
 msgstr "Titolare del conto"
 
-#| msgid "Établissement agréé"
 msgid "Établissement domiciliataire"
 msgstr "Istituto domiciliatario"
 
@@ -415,6 +394,10 @@ msgstr "BONIFICO RIFIUTATO"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "DISTINTA DI BONIFICO"
 
+#| msgid "BORDEREAU DE VIREMENT"
+msgid "MONTANT DU VIREMENT"
+msgstr "IMPORTO DEL BONIFICO"
+
 msgid "DONNEUR D'ORDRE"
 msgstr "ORDINANTE"
 
@@ -430,7 +413,6 @@ msgstr "DETTAGLI DELL'OPERAZIONE"
 msgid "Date d'initiation"
 msgstr "Data di avvio"
 
-#| msgid "Libellé"
 msgid "Motif / Libellé"
 msgstr "Motivo / Descrizione"
 
@@ -468,11 +450,9 @@ msgstr "Data"
 msgid "Libellé"
 msgstr "Descrizione"
 
-#| msgid "Débits"
 msgid "Débit"
 msgstr "Addebito"
 
-#| msgid "Crédits"
 msgid "Crédit"
 msgstr "Accredito"
 

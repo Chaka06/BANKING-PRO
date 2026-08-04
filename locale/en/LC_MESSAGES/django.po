@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 12:47+0200\n"
+"POT-Creation-Date: 2026-08-04 13:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,7 +84,6 @@ msgstr "Tel"
 msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
 msgstr "This message is confidential and intended solely for its recipient."
 
-#| msgid "Sans frais"
 msgid "Aucuns frais"
 msgstr "No fees"
 
@@ -109,7 +108,6 @@ msgstr ""
 "right away."
 
 #, python-format
-#| msgid "Bonjour, %(first_name)s"
 msgid "Bonjour %(name)s,"
 msgstr "Hello %(name)s,"
 
@@ -121,7 +119,6 @@ msgstr ""
 "Your bank account has been successfully opened with "
 "<strong>%(bank_name)s</strong>."
 
-#| msgid "Paramètres du compte"
 msgid "Détails du compte"
 msgstr "Account details"
 
@@ -137,7 +134,6 @@ msgstr "Currency"
 msgid "Gestionnaire"
 msgstr "Account manager"
 
-#| msgid "Se connecter"
 msgid "Se connecter à mon espace"
 msgstr "Sign in to my account"
 
@@ -150,7 +146,6 @@ msgstr ""
 "Your account manager <strong>%(manager)s</strong> will send you your login "
 "credentials through a secure channel. Never share them with anyone."
 
-#| msgid "Connectez-vous à votre espace bancaire"
 msgid "Ouverture de votre compte bancaire"
 msgstr "Opening of your bank account"
 
@@ -181,7 +176,6 @@ msgstr ""
 "This transfer is being validated. You will receive final confirmation within"
 " <strong>48 business hours</strong>."
 
-#| msgid "Virement entrant"
 msgid "Virement entrant en attente"
 msgstr "Incoming transfer pending"
 
@@ -194,15 +188,12 @@ msgstr "Your transfer has been <strong>successfully validated</strong>."
 msgid "Bénéficiaire"
 msgstr "Beneficiary"
 
-#| msgid "Bénéficiaire"
 msgid "IBAN bénéficiaire"
 msgstr "Beneficiary IBAN"
 
-#| msgid "Validé"
 msgid "Validé le"
 msgstr "Validated on"
 
-#| msgid "Virements rapides"
 msgid "Virement validé"
 msgstr "Transfer validated"
 
@@ -212,7 +203,6 @@ msgstr "A transfer has been <strong>validated</strong> in your favor."
 msgid "Émetteur"
 msgstr "Sender"
 
-#| msgid "Virement"
 msgid "Virement reçu"
 msgstr "Transfer received"
 
@@ -237,7 +227,6 @@ msgstr ""
 "Visit a branch with your ID to resubmit this transfer. The redirection fee "
 "(%(fee)s) is paid on site."
 
-#| msgid "Virement sortant"
 msgid "Virement rejeté"
 msgstr "Transfer rejected"
 
@@ -255,7 +244,6 @@ msgstr "Amount concerned"
 msgid "Pour toute question, contactez directement l'émetteur du virement."
 msgstr "For any questions, please contact the transfer's sender directly."
 
-#| msgid "Virement sortant"
 msgid "Virement annulé"
 msgstr "Transfer cancelled"
 
@@ -267,11 +255,9 @@ msgstr ""
 "Your account with <strong>%(bank_name)s</strong> has been "
 "<strong>temporarily blocked</strong>."
 
-#| msgid "Identifiant"
 msgid "Identifiant du compte"
 msgstr "Account identifier"
 
-#| msgid "Motif du rejet"
 msgid "Motif du blocage"
 msgstr "Block reason"
 
@@ -285,7 +271,6 @@ msgstr ""
 "unblocking procedure. If you believe this is an error, contact us "
 "immediately."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte a été bloqué"
 msgstr "Your account has been blocked"
 
@@ -302,7 +287,6 @@ msgid ""
 "espace bancaire."
 msgstr "Use your usual username and password to access your banking area."
 
-#| msgid "Votre compte est bloqué."
 msgid "Votre compte est débloqué"
 msgstr "Your account has been unblocked"
 
@@ -314,7 +298,6 @@ msgstr "Your account password was changed on <strong>%(date)s</strong>."
 msgid "Identifiant"
 msgstr "Username"
 
-#| msgid "Date de validation"
 msgid "Date de modification"
 msgstr "Modification date"
 
@@ -326,7 +309,6 @@ msgstr ""
 "Wasn't this you? Contact your account manager <strong>%(manager)s</strong> "
 "immediately to secure your account."
 
-#| msgid "Changer le mot de passe"
 msgid "Modification de votre mot de passe"
 msgstr "Change of your password"
 
@@ -346,7 +328,6 @@ msgstr ""
 "without an authorized signature."
 
 #, python-format
-#| msgid "Page %(number)s/%(num_pages)s"
 msgid "Page %(page)s"
 msgstr "Page %(page)s"
 
@@ -356,11 +337,9 @@ msgstr "BANK IDENTITY STATEMENT"
 msgid "TITULAIRE"
 msgstr "ACCOUNT HOLDER"
 
-#| msgid "Paramètres du compte"
 msgid "Titulaire du compte"
 msgstr "Account holder"
 
-#| msgid "Établissement agréé"
 msgid "Établissement domiciliataire"
 msgstr "Account-holding institution"
 
@@ -408,6 +387,10 @@ msgstr "TRANSFER REJECTED"
 msgid "BORDEREAU DE VIREMENT"
 msgstr "TRANSFER SLIP"
 
+#| msgid "BORDEREAU DE VIREMENT"
+msgid "MONTANT DU VIREMENT"
+msgstr "TRANSFER AMOUNT"
+
 msgid "DONNEUR D'ORDRE"
 msgstr "ORDERING PARTY"
 
@@ -423,7 +406,6 @@ msgstr "TRANSACTION DETAILS"
 msgid "Date d'initiation"
 msgstr "Initiation date"
 
-#| msgid "Libellé"
 msgid "Motif / Libellé"
 msgstr "Reason / Description"
 
@@ -461,11 +443,9 @@ msgstr "Date"
 msgid "Libellé"
 msgstr "Description"
 
-#| msgid "Débits"
 msgid "Débit"
 msgstr "Debit"
 
-#| msgid "Crédits"
 msgid "Crédit"
 msgstr "Credit"
 
