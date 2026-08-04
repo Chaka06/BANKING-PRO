@@ -884,7 +884,7 @@ def generate_transfer_slip_pdf(transaction):
             [[Paragraph(
                 f'<font name="Helvetica-Bold" size="26" color="{bank.color_primary}">'
                 f'{fmt_amount(transaction.amount)} {transaction.currency}</font>',
-                ParagraphStyle('Amt', alignment=TA_CENTER)
+                ParagraphStyle('Amt', alignment=TA_CENTER, fontSize=26, leading=32)
             )]],
             colWidths=[170*mm],
         )
