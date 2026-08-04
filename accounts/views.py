@@ -32,22 +32,39 @@ def get_bank_or_404(bank_slug: str) -> Bank:
     return get_object_or_404(Bank, slug=bank_slug, is_active=True)
 
 
-def sync_session_language(request, user):
+def set_language_cookie(response, lang):
+    """Pose le cookie de langue Django (settings.LANGUAGE_COOKIE_*)."""
+    response.set_cookie(
+        settings.LANGUAGE_COOKIE_NAME, lang,
+        max_age=settings.LANGUAGE_COOKIE_AGE,
+        path=settings.LANGUAGE_COOKIE_PATH,
+        domain=settings.LANGUAGE_COOKIE_DOMAIN,
+        secure=settings.LANGUAGE_COOKIE_SECURE,
+        httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+        samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+    )
+    return response
+
+
+def sync_language_on_login(request, user):
     """
-    Synchronise la langue à la connexion :
-    - si l'utilisateur a explicitement choisi une langue pendant cette session
-      (bannière de connexion), elle devient sa préférence enregistrée ;
-    - sinon, sa préférence enregistrée est appliquée à la session.
+    Synchronise la langue à la connexion (Django 6+ : la langue vit dans un
+    cookie, pas en session) :
+    - si l'utilisateur a explicitement choisi une langue avant de se
+      connecter (cookie posé par la bannière), elle devient sa préférence
+      enregistrée sur le compte ;
+    - sinon, sa préférence enregistrée est renvoyée pour être posée en cookie
+      sur la réponse.
+    Retourne le code langue à écrire dans le cookie, ou None si rien à faire.
     """
-    session_key = translation.LANGUAGE_SESSION_KEY
-    if request.session.get('language_chosen'):
-        chosen = request.session.get(session_key)
-        if chosen and chosen != user.language:
+    chosen = request.COOKIES.get(settings.LANGUAGE_COOKIE_NAME)
+    valid_codes = {code for code, _label in settings.LANGUAGES}
+    if chosen and chosen in valid_codes:
+        if chosen != user.language:
             user.language = chosen
             user.save(update_fields=['language'])
-    else:
-        request.session[session_key] = user.language
-        request.session['language_chosen'] = True
+        return None
+    return user.language
 
 
 def get_all_accounts_for_user(request, bank):
@@ -122,7 +139,7 @@ def login_context(request, bank):
     return {
         'bank': bank,
         'language_options': LANGUAGE_OPTIONS,
-        'language_chosen': request.session.get('language_chosen', False),
+        'language_chosen': settings.LANGUAGE_COOKIE_NAME in request.COOKIES,
     }
 
 
@@ -158,7 +175,7 @@ def login_view(request, bank_slug):
             login(request, user)
             record_attempt(account_id, ip, bank_slug, success=True)
 
-            sync_session_language(request, user)
+            lang_to_set = sync_language_on_login(request, user)
 
             # Activer le compte principal par défaut
             primary = accounts.filter(is_primary=True).first() or accounts.first()
@@ -174,7 +191,10 @@ def login_view(request, bank_slug):
             )
             request.session['blocked_modal_shown'] = primary.is_blocked
             logger.info(f"Connexion: {account_id} | Banque: {bank_slug} | IP: {ip}")
-            return redirect('dashboard', bank_slug=bank_slug)
+            response = redirect('dashboard', bank_slug=bank_slug)
+            if lang_to_set:
+                set_language_cookie(response, lang_to_set)
+            return response
         else:
             record_attempt(account_id, ip, bank_slug, success=False)
             messages.error(request, _("Identifiant ou mot de passe incorrect."))
@@ -196,15 +216,16 @@ def set_language_view(request):
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
     valid_codes = {code for code, _label in settings.LANGUAGES}
 
+    response = redirect(next_url)
+
     if lang in valid_codes:
         translation.activate(lang)
-        request.session[translation.LANGUAGE_SESSION_KEY] = lang
-        request.session['language_chosen'] = True
+        set_language_cookie(response, lang)
         if request.user.is_authenticated and request.user.language != lang:
             request.user.language = lang
             request.user.save(update_fields=['language'])
 
-    return redirect(next_url)
+    return response
 
 
 @require_POST
