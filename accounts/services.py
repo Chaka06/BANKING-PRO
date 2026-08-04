@@ -245,6 +245,7 @@ class AccountService:
                 title="Compte créé — En attente de déblocage",
                 message=f"Votre compte a été créé mais est actuellement bloqué. Motif : {block_reason}",
                 notification_type=Notification.TYPE_WARNING,
+                created_at=account.created_at,
             )
         else:
             Notification.objects.create(
@@ -252,6 +253,7 @@ class AccountService:
                 title=f"Bienvenue chez {bank.name}",
                 message=f"Votre {account.get_account_type_display().lower()} est ouvert et opérationnel.",
                 notification_type=Notification.TYPE_SUCCESS,
+                created_at=account.created_at,
             )
 
         logger.info(f"Compte créé: {account_id} ({account_type}) | Banque: {bank.name} | Acteur: {actor}")

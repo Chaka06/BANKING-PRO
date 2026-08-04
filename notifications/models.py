@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from accounts.models import BankAccount
 
@@ -21,7 +22,10 @@ class Notification(models.Model):
     message = models.TextField(verbose_name="Message")
     notification_type = models.CharField(max_length=10, choices=TYPE_CHOICES, default=TYPE_INFO, verbose_name="Type")
     is_read = models.BooleanField(default=False, verbose_name="Lu")
-    created_at = models.DateTimeField(auto_now_add=True)
+    # default=timezone.now (et non auto_now_add) : permet à AccountService.create_account
+    # de faire correspondre la date de la notification de bienvenue à la date de création
+    # du compte choisie par l'admin, au lieu de toujours prendre l'heure réelle d'envoi.
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         verbose_name = "Notification"
