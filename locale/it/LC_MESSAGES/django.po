@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 11:52+0200\n"
+"POT-Creation-Date: 2026-08-04 12:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,6 +76,408 @@ msgid ""
 msgstr ""
 "Saldo insufficiente per questo movimento. Disponibile: %(balance)s "
 "%(currency)s."
+
+msgid "Ce message nécessite un client email compatible HTML."
+msgstr "Questo messaggio richiede un client email compatibile con HTML."
+
+msgid "Tél"
+msgstr "Tel"
+
+msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
+msgstr ""
+"Questo messaggio è riservato e destinato esclusivamente al suo destinatario."
+
+#| msgid "Sans frais"
+msgid "Aucuns frais"
+msgstr "Nessuna commissione"
+
+msgid "Compte temporairement bloqué"
+msgstr "Conto temporaneamente bloccato"
+
+msgid "Motif"
+msgstr "Motivo"
+
+msgid "Frais de déblocage"
+msgstr "Commissione di sblocco"
+
+msgid "Votre gestionnaire vous contactera pour la procédure de déblocage."
+msgstr "Il tuo gestore ti contatterà per la procedura di sblocco."
+
+msgid ""
+"Votre compte est <strong>actif et opérationnel</strong>. Vous pouvez vous "
+"connecter dès maintenant."
+msgstr ""
+"Il tuo conto è <strong>attivo e operativo</strong>. Puoi accedere fin da "
+"ora."
+
+#, python-format
+#| msgid "Bonjour, %(first_name)s"
+msgid "Bonjour %(name)s,"
+msgstr "Ciao %(name)s,"
+
+#, python-format
+msgid ""
+"Votre compte bancaire a été ouvert avec succès auprès de "
+"<strong>%(bank_name)s</strong>."
+msgstr ""
+"Il tuo conto bancario è stato aperto con successo presso "
+"<strong>%(bank_name)s</strong>."
+
+#| msgid "Paramètres du compte"
+msgid "Détails du compte"
+msgstr "Dettagli del conto"
+
+msgid "Titulaire"
+msgstr "Titolare"
+
+msgid "Banque"
+msgstr "Banca"
+
+msgid "Devise"
+msgstr "Valuta"
+
+msgid "Gestionnaire"
+msgstr "Gestore"
+
+#| msgid "Se connecter"
+msgid "Se connecter à mon espace"
+msgstr "Accedi alla mia area"
+
+#, python-format
+msgid ""
+"Votre gestionnaire <strong>%(manager)s</strong> vous communiquera vos "
+"identifiants de connexion par voie sécurisée. Ne les partagez jamais avec "
+"quiconque."
+msgstr ""
+"Il tuo gestore <strong>%(manager)s</strong> ti comunicherà le tue "
+"credenziali di accesso tramite un canale sicuro. Non condividerle mai con "
+"nessuno."
+
+#| msgid "Connectez-vous à votre espace bancaire"
+msgid "Ouverture de votre compte bancaire"
+msgstr "Apertura del tuo conto bancario"
+
+msgid "Bonjour,"
+msgstr "Ciao,"
+
+#, python-format
+msgid ""
+"Un virement a été initié en votre faveur depuis "
+"<strong>%(bank_name)s</strong>."
+msgstr ""
+"È stato avviato un bonifico a tuo favore da <strong>%(bank_name)s</strong>."
+
+msgid "Référence"
+msgstr "Riferimento"
+
+msgid "Donneur d'ordre"
+msgstr "Ordinante"
+
+msgid "Banque émettrice"
+msgstr "Banca emittente"
+
+msgid ""
+"Ce virement est en cours de validation. Vous recevrez la confirmation "
+"définitive sous <strong>48 heures ouvrées</strong>."
+msgstr ""
+"Questo bonifico è in fase di convalida. Riceverai la conferma definitiva "
+"entro <strong>48 ore lavorative</strong>."
+
+#| msgid "Virement entrant"
+msgid "Virement entrant en attente"
+msgstr "Bonifico in entrata in sospeso"
+
+msgid "Réf."
+msgstr "Rif."
+
+msgid "Votre virement a été <strong>validé avec succès</strong>."
+msgstr "Il tuo bonifico è stato <strong>convalidato con successo</strong>."
+
+msgid "Bénéficiaire"
+msgstr "Beneficiario"
+
+#| msgid "Bénéficiaire"
+msgid "IBAN bénéficiaire"
+msgstr "IBAN del beneficiario"
+
+#| msgid "Validé"
+msgid "Validé le"
+msgstr "Convalidato il"
+
+#| msgid "Virements rapides"
+msgid "Virement validé"
+msgstr "Bonifico convalidato"
+
+msgid "Un virement a été <strong>validé</strong> en votre faveur."
+msgstr "È stato <strong>convalidato</strong> un bonifico a tuo favore."
+
+msgid "Émetteur"
+msgstr "Mittente"
+
+#| msgid "Virement"
+msgid "Virement reçu"
+msgstr "Bonifico ricevuto"
+
+msgid ""
+"Votre virement a été <strong>rejeté</strong>. Le montant a été recrédité sur"
+" votre compte."
+msgstr ""
+"Il tuo bonifico è stato <strong>rifiutato</strong>. L'importo è stato "
+"riaccreditato sul tuo conto."
+
+msgid "Motif du rejet"
+msgstr "Motivo del rifiuto"
+
+msgid "Frais de redirection"
+msgstr "Commissione di reindirizzamento"
+
+#, python-format
+msgid ""
+"Rendez-vous en agence muni de votre pièce d'identité pour relancer ce "
+"virement. Les frais de redirection (%(fee)s) sont réglés sur place."
+msgstr ""
+"Recati in filiale con un documento d'identità per rilanciare questo "
+"bonifico. La commissione di reindirizzamento (%(fee)s) viene pagata sul "
+"posto."
+
+#| msgid "Virement sortant"
+msgid "Virement rejeté"
+msgstr "Bonifico rifiutato"
+
+#, python-format
+msgid ""
+"Le virement initié en votre faveur (réf. <strong>%(reference)s</strong>) a "
+"été annulé."
+msgstr ""
+"Il bonifico avviato a tuo favore (rif. <strong>%(reference)s</strong>) è "
+"stato annullato."
+
+msgid "Montant concerné"
+msgstr "Importo interessato"
+
+msgid "Pour toute question, contactez directement l'émetteur du virement."
+msgstr ""
+"Per qualsiasi domanda, contatta direttamente il mittente del bonifico."
+
+#| msgid "Virement sortant"
+msgid "Virement annulé"
+msgstr "Bonifico annullato"
+
+#, python-format
+msgid ""
+"Votre compte auprès de <strong>%(bank_name)s</strong> a été "
+"<strong>temporairement bloqué</strong>."
+msgstr ""
+"Il tuo conto presso <strong>%(bank_name)s</strong> è stato "
+"<strong>temporaneamente bloccato</strong>."
+
+#| msgid "Identifiant"
+msgid "Identifiant du compte"
+msgstr "Identificativo del conto"
+
+#| msgid "Motif du rejet"
+msgid "Motif du blocage"
+msgstr "Motivo del blocco"
+
+#, python-format
+msgid ""
+"Contactez votre gestionnaire <strong>%(manager)s</strong> pour obtenir la "
+"procédure de déblocage. Si vous pensez qu'il s'agit d'une erreur, contactez-"
+"nous immédiatement."
+msgstr ""
+"Contatta il tuo gestore <strong>%(manager)s</strong> per ottenere la "
+"procedura di sblocco. Se pensi che si tratti di un errore, contattaci "
+"immediatamente."
+
+#| msgid "Votre compte est bloqué."
+msgid "Votre compte a été bloqué"
+msgstr "Il tuo conto è stato bloccato"
+
+#, python-format
+msgid ""
+"Votre compte auprès de <strong>%(bank_name)s</strong> est à nouveau "
+"<strong>actif et pleinement opérationnel</strong>."
+msgstr ""
+"Il tuo conto presso <strong>%(bank_name)s</strong> è di nuovo <strong>attivo"
+" e pienamente operativo</strong>."
+
+msgid ""
+"Utilisez votre identifiant et mot de passe habituels pour accéder à votre "
+"espace bancaire."
+msgstr ""
+"Utilizza il tuo identificativo e la password abituali per accedere alla tua "
+"area bancaria."
+
+#| msgid "Votre compte est bloqué."
+msgid "Votre compte est débloqué"
+msgstr "Il tuo conto è stato sbloccato"
+
+#, python-format
+msgid ""
+"Le mot de passe de votre compte a été modifié le <strong>%(date)s</strong>."
+msgstr ""
+"La password del tuo conto è stata modificata il <strong>%(date)s</strong>."
+
+msgid "Identifiant"
+msgstr "Identificativo"
+
+#| msgid "Date de validation"
+msgid "Date de modification"
+msgstr "Data di modifica"
+
+#, python-format
+msgid ""
+"Ce n'était pas vous&nbsp;? Contactez immédiatement votre gestionnaire "
+"<strong>%(manager)s</strong> pour sécuriser votre compte."
+msgstr ""
+"Non sei stato tu? Contatta immediatamente il tuo gestore "
+"<strong>%(manager)s</strong> per proteggere il tuo conto."
+
+#| msgid "Changer le mot de passe"
+msgid "Modification de votre mot de passe"
+msgstr "Modifica della tua password"
+
+#, python-format
+msgid "Édité le %(date)s"
+msgstr "Emesso il %(date)s"
+
+#, python-format
+msgid "Réf. : %(ref)s"
+msgstr "Rif.: %(ref)s"
+
+msgid ""
+"Document officiel — Conservez ce document. Ne constitue pas un contrat sans "
+"signature autorisée."
+msgstr ""
+"Documento ufficiale — Conserva questo documento. Non costituisce un "
+"contratto senza firma autorizzata."
+
+#, python-format
+#| msgid "Page %(number)s/%(num_pages)s"
+msgid "Page %(page)s"
+msgstr "Pagina %(page)s"
+
+msgid "RELEVÉ D'IDENTITÉ BANCAIRE"
+msgstr "ESTRATTO DI IDENTITÀ BANCARIA"
+
+msgid "TITULAIRE"
+msgstr "TITOLARE"
+
+#| msgid "Paramètres du compte"
+msgid "Titulaire du compte"
+msgstr "Titolare del conto"
+
+#| msgid "Établissement agréé"
+msgid "Établissement domiciliataire"
+msgstr "Istituto domiciliatario"
+
+msgid "Adresse de l'établissement"
+msgstr "Indirizzo dell'istituto"
+
+msgid "Pays"
+msgstr "Paese"
+
+#, python-format
+msgid "COORDONNÉES BANCAIRES — %(type)s"
+msgstr "COORDINATE BANCARIE — %(type)s"
+
+msgid "Code banque"
+msgstr "Codice banca"
+
+msgid "Code guichet"
+msgstr "Codice filiale"
+
+msgid "N° de compte"
+msgstr "Numero di conto"
+
+msgid "Clé RIB"
+msgstr "Codice di controllo"
+
+#, python-format
+msgid ""
+"Je soussigné(e), <b>%(name)s</b>, certifie que les coordonnées bancaires "
+"figurant sur ce document sont exactes et correspondent à mon compte ouvert "
+"auprès de <b>%(bank_name)s</b>."
+msgstr ""
+"Il sottoscritto/La sottoscritta, <b>%(name)s</b>, certifica che le "
+"coordinate bancarie riportate in questo documento sono esatte e "
+"corrispondono al proprio conto aperto presso <b>%(bank_name)s</b>."
+
+msgid "EN COURS DE VALIDATION"
+msgstr "IN FASE DI CONVALIDA"
+
+msgid "VIREMENT VALIDÉ"
+msgstr "BONIFICO CONVALIDATO"
+
+msgid "VIREMENT REJETÉ"
+msgstr "BONIFICO RIFIUTATO"
+
+msgid "BORDEREAU DE VIREMENT"
+msgstr "DISTINTA DI BONIFICO"
+
+msgid "DONNEUR D'ORDRE"
+msgstr "ORDINANTE"
+
+msgid "Nom"
+msgstr "Cognome"
+
+msgid "BÉNÉFICIAIRE"
+msgstr "BENEFICIARIO"
+
+msgid "DÉTAILS DE L'OPÉRATION"
+msgstr "DETTAGLI DELL'OPERAZIONE"
+
+msgid "Date d'initiation"
+msgstr "Data di avvio"
+
+#| msgid "Libellé"
+msgid "Motif / Libellé"
+msgstr "Motivo / Descrizione"
+
+msgid "Date de validation"
+msgstr "Data di convalida"
+
+msgid "Date de rejet"
+msgstr "Data di rifiuto"
+
+#, python-format
+msgid "Du %(from)s au %(to)s"
+msgstr "Dal %(from)s al %(to)s"
+
+msgid "RELEVÉ DE COMPTE"
+msgstr "ESTRATTO CONTO"
+
+msgid "SOLDE INITIAL"
+msgstr "SALDO INIZIALE"
+
+msgid "TOTAL CRÉDITS"
+msgstr "TOTALE ACCREDITI"
+
+msgid "TOTAL DÉBITS"
+msgstr "TOTALE ADDEBITI"
+
+msgid "SOLDE FINAL"
+msgstr "SALDO FINALE"
+
+msgid "MOUVEMENTS"
+msgstr "MOVIMENTI"
+
+msgid "Date"
+msgstr "Data"
+
+msgid "Libellé"
+msgstr "Descrizione"
+
+#| msgid "Débits"
+msgid "Débit"
+msgstr "Addebito"
+
+#| msgid "Crédits"
+msgid "Crédit"
+msgstr "Accredito"
+
+msgid "Solde"
+msgstr "Saldo"
 
 msgid ""
 "Trop de tentatives. Votre accès est temporairement suspendu. Réessayez dans "
@@ -170,24 +572,6 @@ msgstr "La nuova password deve essere diversa dalla precedente."
 msgid "Mot de passe modifié. Veuillez vous reconnecter."
 msgstr "Password modificata. Effettua nuovamente l'accesso."
 
-msgid "Français"
-msgstr "Francese"
-
-msgid "Anglais"
-msgstr "Inglese"
-
-msgid "Espagnol"
-msgstr "Spagnolo"
-
-msgid "Allemand"
-msgstr "Tedesco"
-
-msgid "Italien"
-msgstr "Italiano"
-
-msgid "Néerlandais"
-msgstr "Olandese"
-
 msgid "Information"
 msgstr "Informazione"
 
@@ -264,17 +648,8 @@ msgstr "Avvisi"
 msgid "Plus"
 msgstr "Altro"
 
-msgid "Compte temporairement bloqué"
-msgstr "Conto temporaneamente bloccato"
-
 msgid "Certaines opérations sont restreintes"
 msgstr "Alcune operazioni sono limitate"
-
-msgid "Motif"
-msgstr "Motivo"
-
-msgid "Frais de déblocage"
-msgstr "Commissione di sblocco"
 
 msgid "Aucuns frais de déblocage"
 msgstr "Nessuna commissione di sblocco"
@@ -330,9 +705,6 @@ msgstr "Inserisci i dati bancari"
 
 msgid "Prénom"
 msgstr "Nome"
-
-msgid "Nom"
-msgstr "Cognome"
 
 msgid "IBAN / Numéro de compte"
 msgstr "IBAN / Numero di conto"
@@ -511,24 +883,6 @@ msgstr "Nessuna transazione"
 msgid "Coordonnées bancaires"
 msgstr "Coordinate bancarie"
 
-msgid "Titulaire"
-msgstr "Titolare"
-
-msgid "Code banque"
-msgstr "Codice banca"
-
-msgid "Code guichet"
-msgstr "Codice filiale"
-
-msgid "N° de compte"
-msgstr "Numero di conto"
-
-msgid "Clé RIB"
-msgstr "Codice di controllo"
-
-msgid "Devise"
-msgstr "Valuta"
-
 msgid "Relevé PDF"
 msgstr "Estratto conto PDF"
 
@@ -596,9 +950,6 @@ msgstr "Benvenuto"
 
 msgid "Connectez-vous à votre espace bancaire"
 msgstr "Accedi alla tua area bancaria"
-
-msgid "Identifiant"
-msgstr "Identificativo"
 
 msgid "Ex : FR1234567"
 msgstr "Es.: FR1234567"
@@ -696,9 +1047,6 @@ msgstr "Motivo dell'annullamento"
 msgid "Ex : Erreur de saisie, changement d'avis…"
 msgstr "Es.: Errore di digitazione, cambio idea…"
 
-msgid "Frais de redirection"
-msgstr "Commissione di reindirizzamento"
-
 msgid "Sans frais"
 msgstr "Senza commissione"
 
@@ -744,12 +1092,6 @@ msgstr "Dal %(date_from)s"
 msgid "Jusqu'au %(date_to)s"
 msgstr "Fino al %(date_to)s"
 
-msgid "Date"
-msgstr "Data"
-
-msgid "Référence"
-msgstr "Riferimento"
-
 msgid "Description"
 msgstr "Descrizione"
 
@@ -783,32 +1125,11 @@ msgstr "Cancella filtri"
 msgid "Détail de l'opération"
 msgstr "Dettaglio dell'operazione"
 
-msgid "Date d'initiation"
-msgstr "Data di avvio"
-
-msgid "Date de validation"
-msgstr "Data di convalida"
-
-msgid "Libellé"
-msgstr "Descrizione"
-
-msgid "Bénéficiaire"
-msgstr "Beneficiario"
-
-msgid "Banque"
-msgstr "Banca"
-
-msgid "Motif du rejet"
-msgstr "Motivo del rifiuto"
-
 msgid "Fermer"
 msgstr "Chiudi"
 
 msgid "Sélectionnez la période"
 msgstr "Seleziona il periodo"
-
-msgid "Date de rejet"
-msgstr "Data di rifiuto"
 
 msgid "Frais de redirection :"
 msgstr "Commissione di reindirizzamento:"
@@ -889,3 +1210,21 @@ msgstr "Deposito bancario"
 
 msgid "Paiement de facture"
 msgstr "Pagamento fattura"
+
+#~ msgid "Français"
+#~ msgstr "Francese"
+
+#~ msgid "Anglais"
+#~ msgstr "Inglese"
+
+#~ msgid "Espagnol"
+#~ msgstr "Spagnolo"
+
+#~ msgid "Allemand"
+#~ msgstr "Tedesco"
+
+#~ msgid "Italien"
+#~ msgstr "Italiano"
+
+#~ msgid "Néerlandais"
+#~ msgstr "Olandese"
