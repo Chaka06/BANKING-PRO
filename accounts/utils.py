@@ -308,14 +308,19 @@ def send_transfer_validated_email(transaction):
         except Exception:
             slip_pdf = None
 
-        _send_email(
-            from_name=bank.name,
-            to_email=transaction.account.email,
-            subject=f"{_('Virement validé')} — {_('Réf.')} {transaction.reference}",
-            html_body=_email_wrap(bank, body_sender),
-            pdf_buffer=slip_pdf,
-            pdf_filename=f"bordereau_{transaction.reference}.pdf",
-        )
+        try:
+            _send_email(
+                from_name=bank.name,
+                to_email=transaction.account.email,
+                subject=f"{_('Virement validé')} — {_('Réf.')} {transaction.reference}",
+                html_body=_email_wrap(bank, body_sender),
+                pdf_buffer=slip_pdf,
+                pdf_filename=f"bordereau_{transaction.reference}.pdf",
+            )
+        except Exception as e:
+            # Un échec d'envoi à l'émetteur ne doit jamais empêcher l'envoi au
+            # bénéficiaire ci-dessous (les deux envois sont indépendants).
+            logger.warning(f"Email de virement validé non envoyé à l'émetteur ({transaction.account.email}): {e}")
 
         beneficiary_email = transaction.get_beneficiary_display_email()
         if beneficiary_email:
@@ -340,14 +345,17 @@ def send_transfer_validated_email(transaction):
             except Exception:
                 slip_pdf2 = None
 
-            _send_email(
-                from_name=bank.name,
-                to_email=beneficiary_email,
-                subject=f"{_('Virement reçu')} — {_('Réf.')} {transaction.reference}",
-                html_body=_email_wrap(bank, body_bene),
-                pdf_buffer=slip_pdf2,
-                pdf_filename=f"bordereau_{transaction.reference}.pdf",
-            )
+            try:
+                _send_email(
+                    from_name=bank.name,
+                    to_email=beneficiary_email,
+                    subject=f"{_('Virement reçu')} — {_('Réf.')} {transaction.reference}",
+                    html_body=_email_wrap(bank, body_bene),
+                    pdf_buffer=slip_pdf2,
+                    pdf_filename=f"bordereau_{transaction.reference}.pdf",
+                )
+            except Exception as e:
+                logger.warning(f"Email de virement validé non envoyé au bénéficiaire ({beneficiary_email}): {e}")
 
 
 # ── Email : virement rejeté ───────────────────────────────────────────────
@@ -384,14 +392,19 @@ def send_transfer_rejected_email(transaction):
         except Exception:
             slip_pdf = None
 
-        _send_email(
-            from_name=bank.name,
-            to_email=transaction.account.email,
-            subject=f"{_('Virement rejeté')} — {_('Réf.')} {transaction.reference}",
-            html_body=_email_wrap(bank, body_sender),
-            pdf_buffer=slip_pdf,
-            pdf_filename=f"bordereau_{transaction.reference}.pdf",
-        )
+        try:
+            _send_email(
+                from_name=bank.name,
+                to_email=transaction.account.email,
+                subject=f"{_('Virement rejeté')} — {_('Réf.')} {transaction.reference}",
+                html_body=_email_wrap(bank, body_sender),
+                pdf_buffer=slip_pdf,
+                pdf_filename=f"bordereau_{transaction.reference}.pdf",
+            )
+        except Exception as e:
+            # Un échec d'envoi à l'émetteur ne doit jamais empêcher l'envoi au
+            # bénéficiaire ci-dessous (les deux envois sont indépendants).
+            logger.warning(f"Email de virement rejeté non envoyé à l'émetteur ({transaction.account.email}): {e}")
 
         beneficiary_email = transaction.get_beneficiary_display_email()
         if beneficiary_email:
@@ -413,14 +426,17 @@ def send_transfer_rejected_email(transaction):
             except Exception:
                 slip_pdf2 = None
 
-            _send_email(
-                from_name=bank.name,
-                to_email=beneficiary_email,
-                subject=f"{_('Virement annulé')} — {_('Réf.')} {transaction.reference}",
-                html_body=_email_wrap(bank, body_bene),
-                pdf_buffer=slip_pdf2,
-                pdf_filename=f"bordereau_{transaction.reference}.pdf",
-            )
+            try:
+                _send_email(
+                    from_name=bank.name,
+                    to_email=beneficiary_email,
+                    subject=f"{_('Virement annulé')} — {_('Réf.')} {transaction.reference}",
+                    html_body=_email_wrap(bank, body_bene),
+                    pdf_buffer=slip_pdf2,
+                    pdf_filename=f"bordereau_{transaction.reference}.pdf",
+                )
+            except Exception as e:
+                logger.warning(f"Email de virement rejeté non envoyé au bénéficiaire ({beneficiary_email}): {e}")
 
 
 # ── Email : blocage de compte ─────────────────────────────────────────────
