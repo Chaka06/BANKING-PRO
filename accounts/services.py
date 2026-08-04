@@ -590,6 +590,7 @@ class TransferService:
             title=f"Nouveau mouvement — {txn.get_transaction_type_display()}",
             message=f"{'Débit' if is_debit else 'Crédit'} de {amount} {locked_account.currency} sur votre compte.",
             notification_type=Notification.TYPE_INFO,
+            created_at=movement_created_at,
         )
 
         logger.info(f"Mouvement manuel: {txn.reference} | {movement_type} | {amount} | Acteur: {actor}")

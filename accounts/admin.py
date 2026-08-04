@@ -152,9 +152,15 @@ class BankAccountAdmin(BankScopedAdmin):
     def get_readonly_fields(self, request, obj=None):
         if obj is None:
             return []
+        # 'balance' en lecture seule à la modification : le formulaire soumet
+        # toujours la valeur affichée à l'ouverture de la page, donc l'éditer
+        # ici écraserait silencieusement un solde modifié entretemps par une
+        # opération réelle (virement, dépôt...). Pour corriger un solde,
+        # passer par "Ajouter une transaction" (mouvement manuel), qui verrouille
+        # la ligne et journalise la correction.
         return ['account_id', 'rib', 'plain_password',
                 'credentials_display', 'login_url_display',
-                'updated_at']
+                'balance', 'updated_at']
 
     def get_form(self, request, obj=None, **kwargs):
         from .constants import COUNTRY_LIST, CURRENCY_LIST

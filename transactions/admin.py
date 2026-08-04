@@ -27,6 +27,19 @@ class TransactionAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
     date_hierarchy = 'created_at'
 
+    def get_readonly_fields(self, request, obj=None):
+        fields = list(self.readonly_fields)
+        if obj is not None:
+            # Le montant d'une transaction existante ne doit jamais être modifié
+            # directement : le solde du compte a déjà été impacté sur la base du
+            # montant d'origine lors de la validation, et ce champ n'est pas
+            # recalculé lors d'une simple édition (seul un changement de statut
+            # passe par TransferService). L'éditer désynchronise silencieusement
+            # le montant affiché du solde réel. Pour corriger, créer un nouveau
+            # mouvement manuel compensatoire plutôt que d'éditer celui-ci.
+            fields = fields + ['amount', 'account', 'transaction_type', 'currency']
+        return fields
+
     fieldsets = (
         ('Identification', {
             'fields': ('reference', 'account', 'account_balance_info', 'account_iban_display', 'created_at', 'validated_at')
