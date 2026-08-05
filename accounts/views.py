@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone, translation
 from django.utils.translation import gettext as _
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.db.models import Q, Sum
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_POST
@@ -214,6 +215,10 @@ def set_language_view(request):
     """Change la langue active (bannière de connexion ou paramètres du compte)."""
     lang = request.POST.get('language', '')
     next_url = request.POST.get('next') or request.META.get('HTTP_REFERER') or '/'
+    if not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        next_url = '/'
     valid_codes = {code for code, _label in settings.LANGUAGES}
 
     response = redirect(next_url)
