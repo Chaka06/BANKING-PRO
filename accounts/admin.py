@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import transaction as db_transaction
 
-from .models import BankUser, BankAccount, Beneficiary, AuditLog, LoginAttempt
+from .models import BankUser, BankAccount, RibRecord, Beneficiary, AuditLog, LoginAttempt
 from .services import AccountService, DEMO_TRANSACTION_TEMPLATES
 from .utils import fmt_amount
 
@@ -417,6 +417,141 @@ class BankAccountAdmin(BankScopedAdmin):
                 return
 
             super().save_model(request, obj, form, change)
+
+
+# ── RIB / IBAN (section dédiée, tous comptes confondus) ────────────────────
+
+class RibRecordForm(forms.ModelForm):
+    """Décompose le RIB (rib = IBAN 27 caractères) en 4 champs éditables
+    séparément, dans le même format que le PDF de RIB (code banque /
+    code guichet / n° de compte / clé RIB), et le recompose à l'enregistrement."""
+
+    code_banque = forms.CharField(label='Code banque', min_length=5, max_length=5)
+    code_guichet = forms.CharField(label='Code guichet', min_length=5, max_length=5)
+    numero_compte = forms.CharField(label='N° de compte', min_length=11, max_length=11)
+    cle_rib = forms.CharField(label='Clé RIB', min_length=2, max_length=2)
+
+    class Meta:
+        model = RibRecord
+        fields = [
+            'bank', 'first_name', 'last_name', 'address', 'country', 'currency',
+            'code_banque', 'code_guichet', 'numero_compte', 'cle_rib',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        rib = self.instance.rib if self.instance and self.instance.pk else ''
+        self.fields['code_banque'].initial = rib[4:9]
+        self.fields['code_guichet'].initial = rib[9:14]
+        self.fields['numero_compte'].initial = rib[14:25]
+        self.fields['cle_rib'].initial = rib[25:27]
+
+    def clean(self):
+        cleaned = super().clean()
+        for field in ('code_banque', 'code_guichet', 'numero_compte', 'cle_rib'):
+            value = cleaned.get(field, '')
+            if value and not value.isdigit():
+                self.add_error(field, 'Chiffres uniquement.')
+        if self.errors:
+            return cleaned
+
+        old_rib = self.instance.rib or ''
+        prefix = old_rib[:2] or 'FR'
+        check_digits = old_rib[2:4] or '00'
+        new_rib = (
+            f"{prefix}{check_digits}{cleaned['code_banque']}{cleaned['code_guichet']}"
+            f"{cleaned['numero_compte']}{cleaned['cle_rib']}"
+        )
+        if BankAccount.objects.filter(rib=new_rib).exclude(pk=self.instance.pk).exists():
+            raise ValidationError("Cet IBAN (code banque/guichet/compte/clé) est déjà utilisé par un autre compte.")
+        cleaned['_computed_rib'] = new_rib
+        return cleaned
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.rib = self.cleaned_data['_computed_rib']
+        if commit:
+            instance.save()
+        return instance
+
+
+@admin.register(RibRecord)
+class RibRecordAdmin(BankScopedAdmin):
+    """Section dédiée : liste tous les RIB (tous comptes/banques confondus)
+    et permet de corriger n'importe quel élément affiché sur le PDF de RIB
+    (titulaire, adresse, pays, devise, code banque/guichet/compte/clé)."""
+
+    form = RibRecordForm
+    list_display = ['get_full_name', 'account_id', 'bank_badge', 'iban_display', 'country', 'currency', 'updated_at']
+    list_filter = ['bank', 'country', 'currency']
+    list_select_related = ['bank']
+    search_fields = ['first_name', 'last_name', 'account_id', 'rib', 'email']
+    ordering = ['-updated_at']
+
+    fieldsets = (
+        ('Compte concerné', {
+            'fields': ('account_id', 'bank', 'rib_pdf_link'),
+        }),
+        ('Titulaire', {
+            'fields': ('first_name', 'last_name', 'address', 'country', 'currency'),
+        }),
+        ('Coordonnées bancaires (IBAN)', {
+            'fields': ('code_banque', 'code_guichet', 'numero_compte', 'cle_rib', 'iban_preview'),
+            'description': "Ces 4 éléments composent l'IBAN affiché sur le RIB téléchargeable par le client.",
+        }),
+    )
+    readonly_fields = ['account_id', 'rib_pdf_link', 'iban_preview']
+
+    def get_form(self, request, obj=None, **kwargs):
+        from .constants import COUNTRY_LIST, CURRENCY_LIST
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['country'] = forms.ChoiceField(
+            choices=[(c, c) for c in COUNTRY_LIST], label='Pays',
+        )
+        form.base_fields['currency'] = forms.ChoiceField(
+            choices=[(c, c) for c in CURRENCY_LIST], label='Devise',
+        )
+        return form
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_full_name(self, obj):
+        return obj.get_full_name()
+    get_full_name.short_description = 'Titulaire'
+    get_full_name.admin_order_field = 'last_name'
+
+    def bank_badge(self, obj):
+        return format_html(
+            '<span style="background:{};color:{};padding:3px 10px;border-radius:10px;'
+            'font-size:11px;font-weight:600;">{}</span>',
+            obj.bank.color_primary, obj.bank.color_text_on_primary, obj.bank.name
+        )
+    bank_badge.short_description = 'Banque'
+    bank_badge.admin_order_field = 'bank__name'
+
+    def iban_display(self, obj):
+        return format_html('<span style="font-family:monospace;font-size:12px;">{}</span>', obj.iban_formatted)
+    iban_display.short_description = 'IBAN'
+
+    def iban_preview(self, obj):
+        if not obj.pk:
+            return '—'
+        return format_html('<span style="font-family:monospace;font-size:14px;font-weight:600;">{}</span>', obj.iban_formatted)
+    iban_preview.short_description = 'IBAN complet (aperçu)'
+
+    def rib_pdf_link(self, obj):
+        if not obj.pk:
+            return '—'
+        return mark_safe(
+            '<em style="color:#6b7280;">Le PDF du RIB est généré à la demande à partir de ces valeurs : '
+            'toute correction ci-dessous apparaît immédiatement sur le prochain téléchargement, '
+            'depuis l\'espace client du titulaire.</em>'
+        )
+    rib_pdf_link.short_description = 'PDF du RIB'
 
 
 # ── Beneficiary ───────────────────────────────────────────────────────────

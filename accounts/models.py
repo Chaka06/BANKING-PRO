@@ -165,6 +165,17 @@ class BankAccount(models.Model):
         return self.rib[25:27] if len(self.rib) >= 27 else ''
 
 
+class RibRecord(BankAccount):
+    """Vue admin dédiée : mêmes lignes que BankAccount, focalisée sur les
+    éléments du RIB (titulaire, IBAN, adresse...) plutôt que sur la gestion
+    du compte (solde, statut, blocage)."""
+
+    class Meta:
+        proxy = True
+        verbose_name = "RIB / IBAN"
+        verbose_name_plural = "RIB / IBAN (tous les comptes)"
+
+
 class Beneficiary(models.Model):
     account = models.ForeignKey(BankAccount, on_delete=models.CASCADE, related_name='beneficiaries', verbose_name="Compte source")
     first_name = models.CharField(max_length=100, verbose_name="Prénom")
