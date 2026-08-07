@@ -202,6 +202,7 @@ class AccountService:
         block_reason = data.get('block_reason', '')
         unblock_fee = data.get('unblock_fee')
         unblock_fee_paid = data.get('unblock_fee_paid') or Decimal('0.00')
+        transfers_enabled = data.get('transfers_enabled', True)
 
         if status == BankAccount.STATUS_BLOCKED and not block_reason:
             raise ValidationError(_("Un motif de blocage est obligatoire pour un compte bloqué."))
@@ -228,6 +229,7 @@ class AccountService:
             block_reason=block_reason,
             unblock_fee=unblock_fee,
             unblock_fee_paid=unblock_fee_paid,
+            transfers_enabled=transfers_enabled,
             manager_name=data['manager_name'],
             created_at=data.get('created_at') or timezone.now(),
         )
@@ -383,6 +385,9 @@ class TransferService:
 
         if locked_account.is_blocked:
             raise ValidationError(_("Ce compte est bloqué. Impossible d'initier un virement."))
+
+        if not locked_account.transfers_enabled:
+            raise ValidationError(_("Les virements ne sont pas autorisés sur ce compte."))
 
         if locked_account.balance < amount:
             raise ValidationError(

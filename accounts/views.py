@@ -361,6 +361,10 @@ def transfer(request, bank_slug, bank=None, account=None, all_accounts=None):
         messages.error(request, _("Votre compte est bloqué. Les virements sont désactivés."))
         return redirect('dashboard', bank_slug=bank_slug)
 
+    if not account.transfers_enabled:
+        messages.error(request, _("Les virements ne sont pas autorisés sur ce compte. Contactez votre conseiller pour plus d'informations."))
+        return redirect('dashboard', bank_slug=bank_slug)
+
     beneficiaries = account.beneficiaries.all().order_by('last_name', 'first_name')
 
     if request.method == 'POST':

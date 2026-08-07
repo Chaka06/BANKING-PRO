@@ -264,9 +264,11 @@
             <i class="bx bx-receipt"></i>{% trans "Historique" %}
         </a>
         {% if not account.is_blocked %}
+        {% if account.transfers_enabled %}
         <a href="{% url 'transfer' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'transfer' %}active{% endif %}">
             <i class="bx bx-transfer-alt"></i>{% trans "Virement" %}
         </a>
+        {% endif %}
         <a href="{% url 'beneficiaries' bank_slug=bank.slug %}" class="nav-link {% if request.resolver_match.url_name == 'beneficiaries' %}active{% endif %}">
             <i class="bx bx-group"></i>{% trans "Bénéficiaires" %}
         </a>
@@ -367,8 +369,8 @@
             <span>{% trans "Historique" %}</span>
         </a>
 
-        <a href="{% if not account.is_blocked %}{% url 'transfer' bank_slug=bank.slug %}{% else %}#{% endif %}"
-           class="mob-tab-fab {% if account.is_blocked %}opacity-40 pointer-events-none{% endif %}">
+        <a href="{% if not account.is_blocked and account.transfers_enabled %}{% url 'transfer' bank_slug=bank.slug %}{% else %}#{% endif %}"
+           class="mob-tab-fab {% if account.is_blocked or not account.transfers_enabled %}opacity-40 pointer-events-none{% endif %}">
             <div class="fab-btn"><i class="bx bx-transfer-alt"></i></div>
             <span>{% trans "Virement" %}</span>
         </a>

@@ -51,11 +51,13 @@
 
             <!-- Actions -->
             <div class="flex items-center gap-2 flex-shrink-0">
+                {% if account.transfers_enabled and not account.is_blocked %}
                 <a href="{% url 'transfer' bank_slug=bank.slug %}?beneficiary={{ b.pk }}"
                    class="btn-primary px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                     {% trans "Virer" %}
                 </a>
+                {% endif %}
                 <form method="post" action="{% url 'delete_beneficiary' bank_slug=bank.slug pk=b.pk %}"
                       onsubmit="return confirm('{% blocktrans with full_name=b.get_full_name %}Supprimer {{ full_name }} de vos bénéficiaires ?{% endblocktrans %}')">
                     {% csrf_token %}

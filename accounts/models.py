@@ -99,6 +99,8 @@ class BankAccount(models.Model):
     unblock_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Frais de déblocage (total à payer)")
     unblock_fee_paid = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'), verbose_name="Frais de déblocage déjà payés")
 
+    transfers_enabled = models.BooleanField(default=True, verbose_name="Virements autorisés")
+
     manager_name = models.CharField(max_length=200, verbose_name="Nom du gestionnaire")
 
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Date de création")

@@ -82,10 +82,10 @@ class BankUserAdmin(UserAdmin):
 class BankAccountAdmin(BankScopedAdmin):
     list_display = [
         'get_full_name', 'account_id_display', 'bank_badge', 'account_type', 'country',
-        'currency', 'balance_display', 'status_badge',
+        'currency', 'balance_display', 'status_badge', 'transfers_badge',
         'manager_name', 'created_at',
     ]
-    list_filter = ['bank', 'account_type', 'status', 'country', 'currency']
+    list_filter = ['bank', 'account_type', 'status', 'transfers_enabled', 'country', 'currency']
     list_select_related = ['bank', 'user']
     search_fields = ['first_name', 'last_name', 'account_id', 'rib', 'email', 'phone']
     ordering = ['-created_at']
@@ -105,6 +105,10 @@ class BankAccountAdmin(BankScopedAdmin):
         ('Compte', {
             'fields': ('currency', 'balance', 'status', 'created_at'),
             'description': 'Laissez "Auto" pour déterminer la devise à partir du pays sélectionné, ou choisissez-en une manuellement. La date de création est pré-remplie avec la date/heure actuelle — modifiez-la si besoin.',
+        }),
+        ('Virements', {
+            'fields': ('transfers_enabled',),
+            'description': "Si « Ne pas autoriser » est choisi, le client ne pourra pas accéder à la page de virement ni en initier un, même s'il a enregistré des bénéficiaires.",
         }),
         ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee', 'unblock_fee_paid'),
@@ -135,6 +139,10 @@ class BankAccountAdmin(BankScopedAdmin):
         }),
         ('Compte', {
             'fields': ('currency', 'balance', 'status'),
+        }),
+        ('Virements', {
+            'fields': ('transfers_enabled',),
+            'description': "Si « Ne pas autoriser » est choisi, le client ne pourra pas accéder à la page de virement ni en initier un, même s'il a enregistré des bénéficiaires.",
         }),
         ('Blocage du compte', {
             'fields': ('block_reason', 'unblock_fee', 'unblock_fee_paid', 'unblock_fee_remaining_display'),
@@ -182,6 +190,13 @@ class BankAccountAdmin(BankScopedAdmin):
                 label='Devise',
                 help_text="Laissez sur « Auto » pour utiliser la devise du pays, ou imposez-en une différente.",
             )
+        form.base_fields['transfers_enabled'] = forms.TypedChoiceField(
+            choices=[(True, 'Autoriser les virements'), (False, 'Ne pas autoriser')],
+            coerce=lambda v: v in (True, 'True'),
+            widget=forms.RadioSelect,
+            label='Virements',
+            initial=True,
+        )
         return form
 
     # ── Display helpers ───────────────────────────────────────────────────
@@ -245,6 +260,18 @@ class BankAccountAdmin(BankScopedAdmin):
             'border-radius:12px;font-size:11px;font-weight:600;">🔒 Bloqué</span>'
         )
     status_badge.short_description = 'Statut'
+
+    def transfers_badge(self, obj):
+        if obj.transfers_enabled:
+            return mark_safe(
+                '<span style="background:#dcfce7;color:#166534;padding:3px 10px;'
+                'border-radius:12px;font-size:11px;font-weight:600;">✓ Autorisés</span>'
+            )
+        return mark_safe(
+            '<span style="background:#fee2e2;color:#991b1b;padding:3px 10px;'
+            'border-radius:12px;font-size:11px;font-weight:600;">✕ Non autorisés</span>'
+        )
+    transfers_badge.short_description = 'Virements'
 
     def credentials_display(self, obj):
         if not obj.pk:
@@ -321,6 +348,7 @@ class BankAccountAdmin(BankScopedAdmin):
                 'block_reason': obj.block_reason,
                 'unblock_fee':  obj.unblock_fee,
                 'unblock_fee_paid': obj.unblock_fee_paid,
+                'transfers_enabled': obj.transfers_enabled,
                 'manager_name': obj.manager_name,
                 'account_type': BankAccount.TYPE_COURANT,
                 'created_at':   obj.created_at,
