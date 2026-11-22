@@ -40,38 +40,42 @@ def generate_base_id(country: str) -> str:
 
 def generate_rib(country: str, bank_code: str) -> str:
     """
-    Génère un IBAN de 27 caractères (format France) :
-    FR (2) + check (2) + code banque (5) + code guichet (5) + n° compte (11) + clé RIB (2) = 27
+    Génère un RIB / IBAN au format du pays (longueur et structure propres à
+    chaque pays, chiffres de contrôle IBAN valides). Voir accounts/rib_formats.py.
     """
     from .models import BankAccount
-    prefix = get_country_prefix(country)
+    from . import rib_formats
+    iso = get_country_prefix(country)
     for _ in range(100):
-        code_banque  = bank_code.zfill(5)
-        code_guichet = ''.join(secrets.choice(string.digits) for _ in range(5))
-        num_compte   = ''.join(secrets.choice(string.digits) for _ in range(11))
-        cle_rib      = ''.join(secrets.choice(string.digits) for _ in range(2))
-        check_digits = ''.join(secrets.choice(string.digits) for _ in range(2))
-        iban = f"{prefix}{check_digits}{code_banque}{code_guichet}{num_compte}{cle_rib}"
+        iban = rib_formats.generate(iso, bank_code)
         if not BankAccount.objects.filter(rib=iban).exists():
             return iban
     raise RuntimeError("Impossible de générer un IBAN unique après 100 tentatives.")
 
 
-def generate_rib_for_secondary(primary_rib: str) -> str:
+def generate_rib_for_secondary(primary_rib: str, country: str = None) -> str:
     """
-    Génère un IBAN pour un compte secondaire (épargne) en conservant tous les composants
-    du compte primaire (prefix, check, code banque, code guichet, clé RIB) et en générant
-    uniquement un nouveau numéro de compte (positions 14–25).
+    Génère un RIB pour un compte secondaire (épargne) : mêmes code banque et
+    code guichet que le compte primaire, nouveau n° de compte, clé et chiffres
+    de contrôle recalculés.
     """
     from .models import BankAccount
-    prefix  = primary_rib[:2]    # ex: FR
-    check   = primary_rib[2:4]   # check digits
-    banque  = primary_rib[4:9]   # code banque
-    guichet = primary_rib[9:14]  # code guichet
-    cle     = primary_rib[25:27] # clé RIB
+    from . import rib_formats
+    iso = get_country_prefix(country) if country else primary_rib[:2]
+    fields = rib_formats.split(iso, primary_rib)
+    if fields is None:
+        # Ancien format (27 caractères à la française) : comportement historique
+        prefix, check = primary_rib[:2], primary_rib[2:4]
+        banque, guichet, cle = primary_rib[4:9], primary_rib[9:14], primary_rib[25:27]
+        for _ in range(100):
+            num_compte = ''.join(secrets.choice(string.digits) for _ in range(11))
+            iban = f"{prefix}{check}{banque}{guichet}{num_compte}{cle}"
+            if not BankAccount.objects.filter(rib=iban).exists():
+                return iban
+        raise RuntimeError("Impossible de générer un IBAN unique pour le compte secondaire.")
+    keep = {f: v for f, v in fields.items() if f != 'c'}
     for _ in range(100):
-        num_compte = ''.join(secrets.choice(string.digits) for _ in range(11))
-        iban = f"{prefix}{check}{banque}{guichet}{num_compte}{cle}"
+        iban = rib_formats.generate(iso, '', keep=keep)
         if not BankAccount.objects.filter(rib=iban).exists():
             return iban
     raise RuntimeError("Impossible de générer un IBAN unique pour le compte secondaire.")
@@ -175,7 +179,7 @@ class AccountService:
                 primary = user.bank_accounts.filter(bank=bank, account_type=BankAccount.TYPE_COURANT).first()
                 if primary:
                     base = primary.account_id[:-2]
-                    rib = generate_rib_for_secondary(primary.rib)
+                    rib = generate_rib_for_secondary(primary.rib, primary.country)
                 else:
                     base = generate_base_id(country)
                     rib = generate_rib(country, bank.bank_code)

@@ -816,14 +816,16 @@ def generate_rib_pdf(bank_account, all_accounts=None):
             iban_raw = acc.rib
             iban_fmt = ' '.join(iban_raw[i:i+4] for i in range(0, len(iban_raw), 4))
 
-            # Tableau RIB 4 colonnes (format standard français) — en-tête couleur banque
+            # Tableau RIB — colonnes selon le format du pays — en-tête couleur banque
+            comps = acc.rib_components
+            weights = [max(len(v), 6) for _f, _l, v in comps] or [1]
+            total_w = sum(weights)
             rib_grid = Table(
                 [
-                    [_('Code banque'), _('Code guichet'), _('N° de compte'), _('Clé RIB')],
-                    [acc.rib_code_banque, acc.rib_code_guichet,
-                     acc.rib_numero_compte, acc.rib_cle],
+                    [str(label) for _f, label, _v in comps],
+                    [value for _f, _l, value in comps],
                 ],
-                colWidths=[40*mm, 40*mm, 55*mm, 25*mm],
+                colWidths=[160*mm * w / total_w for w in weights],
             )
             rib_grid.setStyle(TableStyle([
                 ('BOX',        (0, 0), (-1, -1), 0.6, colors.HexColor('#c8d0d8')),
@@ -845,7 +847,7 @@ def generate_rib_pdf(bank_account, all_accounts=None):
             # IBAN — bloc plein fond couleur banque, façon carte bancaire
             iban_table = Table(
                 [[Paragraph(
-                    f'<font name="Helvetica-Bold" size="8" color="{bank.color_text_on_primary}">IBAN</font><br/>'
+                    f'<font name="Helvetica-Bold" size="8" color="{bank.color_text_on_primary}">{"IBAN" if acc.uses_iban else _("IDENTIFIANT INTERNATIONAL DU COMPTE")}</font><br/>'
                     f'<font name="Courier-Bold" size="15" color="{bank.color_text_on_primary}">{iban_fmt}</font>',
                     _pstyle('IBANCell', 15, leading=19, alignment=TA_CENTER)
                 )]],
@@ -974,7 +976,7 @@ def generate_transfer_slip_pdf(transaction):
                        ParagraphStyle('H', fontSize=8, textColor=colors.white,
                                       fontName='Helvetica-Bold'))],
             [_('Nom'),  transaction.account.get_full_name()],
-            ['IBAN', transaction.account.rib],
+            ['IBAN' if transaction.account.uses_iban else _('N° de compte'), transaction.account.rib],
             [_('Banque'), bank.name],
         ]
         right_data = [
@@ -1084,7 +1086,7 @@ def generate_statement_pdf(bank_account, transactions, date_from, date_to):
         iban_fmt = ' '.join(bank_account.rib[i:i+4] for i in range(0, len(bank_account.rib), 4))
         story.append(_build_info_table([
             [_('Titulaire'), bank_account.get_full_name()],
-            ['IBAN',        iban_fmt],
+            ['IBAN' if bank_account.uses_iban else _('Identifiant du compte'), iban_fmt],
             ['BIC / SWIFT', bank.swift or '—'],
             [_('Devise'),   bank_account.currency],
         ], primary, col_widths=[40*mm, 132*mm]))

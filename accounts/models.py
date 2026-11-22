@@ -142,7 +142,7 @@ class BankAccount(models.Model):
         return COUNTRY_PREFIXES.get(self.country, 'XX')
 
     # ── Composants RIB / IBAN ───────────────────────────────────────────────
-    # Structure IBAN 27 chars : FR(2) + check(2) + banque(5) + guichet(5) + compte(11) + clé(2)
+    # Structure propre à chaque pays : voir accounts/rib_formats.py
 
     @property
     def iban_formatted(self):
@@ -151,20 +151,37 @@ class BankAccount(models.Model):
         return ' '.join(iban[i:i+4] for i in range(0, len(iban), 4))
 
     @property
+    def uses_iban(self):
+        from . import rib_formats
+        return rib_formats.uses_iban(self.get_country_prefix())
+
+    @property
+    def rib_components(self):
+        """[(champ, libellé, valeur)] dans l'ordre banque / guichet / compte / clé."""
+        from . import rib_formats
+        return rib_formats.components(self.get_country_prefix(), self.rib)
+
+    def _rib_field(self, field):
+        for f, _label, value in self.rib_components:
+            if f == field:
+                return value
+        return ''
+
+    @property
     def rib_code_banque(self):
-        return self.rib[4:9] if len(self.rib) >= 9 else ''
+        return self._rib_field('b')
 
     @property
     def rib_code_guichet(self):
-        return self.rib[9:14] if len(self.rib) >= 14 else ''
+        return self._rib_field('g')
 
     @property
     def rib_numero_compte(self):
-        return self.rib[14:25] if len(self.rib) >= 25 else ''
+        return self._rib_field('c')
 
     @property
     def rib_cle(self):
-        return self.rib[25:27] if len(self.rib) >= 27 else ''
+        return self._rib_field('k')
 
 
 class RibRecord(BankAccount):

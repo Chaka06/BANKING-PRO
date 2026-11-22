@@ -450,14 +450,16 @@ class BankAccountAdmin(BankScopedAdmin):
 # ── RIB / IBAN (section dédiée, tous comptes confondus) ────────────────────
 
 class RibRecordForm(forms.ModelForm):
-    """Décompose le RIB (rib = IBAN 27 caractères) en 4 champs éditables
-    séparément, dans le même format que le PDF de RIB (code banque /
-    code guichet / n° de compte / clé RIB), et le recompose à l'enregistrement."""
+    """Décompose le RIB en champs éditables (code banque / code guichet /
+    n° de compte / clé) selon le format du pays du compte, et le recompose à
+    l'enregistrement avec des chiffres de contrôle IBAN recalculés."""
 
-    code_banque = forms.CharField(label='Code banque', min_length=5, max_length=5)
-    code_guichet = forms.CharField(label='Code guichet', min_length=5, max_length=5)
-    numero_compte = forms.CharField(label='N° de compte', min_length=11, max_length=11)
-    cle_rib = forms.CharField(label='Clé RIB', min_length=2, max_length=2)
+    code_banque = forms.CharField(label='Code banque', required=False)
+    code_guichet = forms.CharField(label='Code guichet', required=False)
+    numero_compte = forms.CharField(label='N° de compte', required=False)
+    cle_rib = forms.CharField(label='Clé RIB', required=False)
+
+    FIELD_MAP = {'b': 'code_banque', 'g': 'code_guichet', 'c': 'numero_compte', 'k': 'cle_rib'}
 
     class Meta:
         model = RibRecord
@@ -468,30 +470,54 @@ class RibRecordForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        rib = self.instance.rib if self.instance and self.instance.pk else ''
-        self.fields['code_banque'].initial = rib[4:9]
-        self.fields['code_guichet'].initial = rib[9:14]
-        self.fields['numero_compte'].initial = rib[14:25]
-        self.fields['cle_rib'].initial = rib[25:27]
+        from . import rib_formats
+        from .constants import COUNTRY_PREFIXES
+        inst = self.instance if self.instance and self.instance.pk else None
+        iso = COUNTRY_PREFIXES.get(inst.country, 'XX') if inst else 'FR'
+        lengths = rib_formats.field_lengths(iso)
+        current = {f: v for f, _l, v in rib_formats.components(iso, inst.rib if inst else '')}
+        for f, name in self.FIELD_MAP.items():
+            field = self.fields[name]
+            field.initial = current.get(f, '')
+            if f in lengths:
+                field.label = rib_formats.field_label(iso, f)
+                field.help_text = f"{lengths[f]} caractère(s) — format {iso}"
+            else:
+                field.help_text = f"Non utilisé pour {iso} (laisser vide)"
+        if 'k' in lengths and rib_formats.compute_key(iso, {'b': '0', 'g': '0', 'c': '0'}) is not None:
+            self.fields['cle_rib'].help_text += ' — recalculée automatiquement'
 
     def clean(self):
         cleaned = super().clean()
-        for field in ('code_banque', 'code_guichet', 'numero_compte', 'cle_rib'):
-            value = cleaned.get(field, '')
-            if value and not value.isdigit():
-                self.add_error(field, 'Chiffres uniquement.')
+        if self.errors:
+            return cleaned
+        from . import rib_formats
+        from .constants import COUNTRY_PREFIXES
+        iso = COUNTRY_PREFIXES.get(cleaned.get('country') or self.instance.country, 'XX')
+        lengths = rib_formats.field_lengths(iso)
+        fields = {}
+        for f, name in self.FIELD_MAP.items():
+            value = (cleaned.get(name) or '').replace(' ', '').upper()
+            if f not in lengths:
+                if value:
+                    self.add_error(name, f"Ce champ n'existe pas dans le format {iso}.")
+                continue
+            if f == 'k' and not value:
+                value = '0' * lengths[f]  # sera recalculée si l'algorithme est connu
+            if len(value) != lengths[f]:
+                self.add_error(name, f"{lengths[f]} caractère(s) attendus pour {iso} (reçu : {len(value)}).")
+            elif not value.isalnum():
+                self.add_error(name, 'Lettres et chiffres uniquement.')
+            fields[f] = value
         if self.errors:
             return cleaned
 
-        old_rib = self.instance.rib or ''
-        prefix = old_rib[:2] or 'FR'
-        check_digits = old_rib[2:4] or '00'
-        new_rib = (
-            f"{prefix}{check_digits}{cleaned['code_banque']}{cleaned['code_guichet']}"
-            f"{cleaned['numero_compte']}{cleaned['cle_rib']}"
-        )
+        key = rib_formats.compute_key(iso, fields)
+        if key is not None:
+            fields['k'] = key
+        new_rib = rib_formats.assemble(iso, fields)
         if BankAccount.objects.filter(rib=new_rib).exclude(pk=self.instance.pk).exists():
-            raise ValidationError("Cet IBAN (code banque/guichet/compte/clé) est déjà utilisé par un autre compte.")
+            raise ValidationError("Cet IBAN est déjà utilisé par un autre compte.")
         cleaned['_computed_rib'] = new_rib
         return cleaned
 
@@ -525,7 +551,9 @@ class RibRecordAdmin(BankScopedAdmin):
         }),
         ('Coordonnées bancaires (IBAN)', {
             'fields': ('code_banque', 'code_guichet', 'numero_compte', 'cle_rib', 'iban_preview'),
-            'description': "Ces 4 éléments composent l'IBAN affiché sur le RIB téléchargeable par le client.",
+            'description': "Ces éléments composent l'IBAN affiché sur le RIB téléchargeable par le client. "
+                           "Leur longueur dépend du pays du compte ; les chiffres de contrôle IBAN sont recalculés "
+                           "à l'enregistrement. Si vous changez de pays, ressaisissez les éléments au format du nouveau pays.",
         }),
     )
     readonly_fields = ['account_id', 'rib_pdf_link', 'iban_preview']
