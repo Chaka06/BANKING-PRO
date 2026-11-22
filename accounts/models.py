@@ -32,6 +32,7 @@ class BankUser(AbstractBaseUser, PermissionsMixin):
         ('de', 'Deutsch'),
         ('it', 'Italiano'),
         ('nl', 'Nederlands'),
+        ('hr', 'Hrvatski'),
     ]
 
     account_id = models.CharField(max_length=20, unique=True, verbose_name="Identifiant", db_index=True)

@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -12,170 +11,178 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 msgid "Compte actif"
-msgstr ""
+msgstr "Aktivan račun"
 
 msgid "Compte bloqué"
-msgstr ""
+msgstr "Blokiran račun"
 
 msgid "Compte courant"
-msgstr ""
+msgstr "Tekući račun"
 
 msgid "Compte épargne"
-msgstr ""
+msgstr "Štedni račun"
 
 msgid "Code banque"
-msgstr ""
+msgstr "Šifra banke"
 
 msgid "Code guichet"
-msgstr ""
+msgstr "Šifra poslovnice"
 
 msgid "N° de compte"
-msgstr ""
+msgstr "Broj računa"
 
 msgid "Clé de contrôle"
-msgstr ""
+msgstr "Kontrolni broj"
 
 msgid "Routing number (ABA)"
-msgstr ""
+msgstr "Routing broj (ABA)"
 
 msgid "Account number"
-msgstr ""
+msgstr "Broj računa"
 
 msgid "Institution"
-msgstr ""
+msgstr "Institucija"
 
 msgid "Transit"
-msgstr ""
+msgstr "Tranzitni broj"
 
 msgid "Sort code"
-msgstr ""
+msgstr "Sort code"
 
 msgid "Branch code"
-msgstr ""
+msgstr "Šifra poslovnice"
 
 msgid "Code agence"
-msgstr ""
+msgstr "Šifra poslovnice"
 
 msgid "N° de compte (CLABE)"
-msgstr ""
+msgstr "Broj računa (CLABE)"
 
 msgid "N° de compte (CBU)"
-msgstr ""
+msgstr "Broj računa (CBU)"
 
 msgid "Clé RIB"
-msgstr ""
+msgstr "Kontrolni ključ"
 
 #, python-format
 msgid ""
 "L'identifiant %(account_id)s est déjà utilisé par un autre compte actif. "
 "Supprimez d'abord l'ancien compte avant d'en créer un nouveau."
 msgstr ""
+"Identifikator %(account_id)s već koristi drugi aktivni račun. Najprije "
+"izbrišite stari račun prije otvaranja novog."
 
 msgid "Un motif de blocage est obligatoire pour un compte bloqué."
-msgstr ""
+msgstr "Razlog blokade obavezan je za blokirani račun."
 
 msgid "Un motif de blocage est obligatoire."
-msgstr ""
+msgstr "Razlog blokade je obavezan."
 
 msgid "Le montant doit être strictement positif."
-msgstr ""
+msgstr "Iznos mora biti strogo pozitivan."
 
 msgid "Ce compte est bloqué. Impossible d'initier un virement."
-msgstr ""
+msgstr "Ovaj račun je blokiran. Nije moguće pokrenuti prijenos."
 
 msgid "Les virements ne sont pas autorisés sur ce compte."
-msgstr ""
+msgstr "Prijenosi nisu dopušteni na ovom računu."
 
 #, python-format
 msgid ""
 "Solde insuffisant. Disponible : %(balance)s %(currency)s, demandé : "
 "%(amount)s %(currency)s."
 msgstr ""
+"Nedovoljno sredstava. Raspoloživo: %(balance)s %(currency)s, zatraženo: "
+"%(amount)s %(currency)s."
 
 #, python-format
 msgid "Ce virement ne peut pas être validé (statut actuel : %(status)s)."
-msgstr ""
+msgstr "Ovaj prijenos nije moguće potvrditi (trenutni status: %(status)s)."
 
 msgid "Un motif de rejet est obligatoire."
-msgstr ""
+msgstr "Razlog odbijanja je obavezan."
 
 #, python-format
 msgid "Ce virement ne peut pas être rejeté (statut actuel : %(status)s)."
-msgstr ""
+msgstr "Ovaj prijenos nije moguće odbiti (trenutni status: %(status)s)."
 
 #, python-format
 msgid ""
 "Solde insuffisant pour ce mouvement. Disponible : %(balance)s %(currency)s."
 msgstr ""
+"Nedovoljno sredstava za ovu transakciju. Raspoloživo: %(balance)s "
+"%(currency)s."
 
 msgid "Aucuns frais"
-msgstr ""
+msgstr "Bez naknada"
 
 #, python-format
 msgid "%(total)s au total — %(paid)s déjà payé, %(remaining)s restant"
-msgstr ""
+msgstr "Ukupno %(total)s — %(paid)s već plaćeno, preostalo %(remaining)s"
 
 msgid "Ce message nécessite un client email compatible HTML."
-msgstr ""
+msgstr "Za prikaz ove poruke potreban je klijent e-pošte koji podržava HTML."
 
 msgid "Tél"
-msgstr ""
+msgstr "Tel."
 
 msgid "Ce message est confidentiel et destiné uniquement à son destinataire."
-msgstr ""
+msgstr "Ova je poruka povjerljiva i namijenjena isključivo primatelju."
 
 msgid "Compte temporairement bloqué"
-msgstr ""
+msgstr "Račun privremeno blokiran"
 
 msgid "Motif"
-msgstr ""
+msgstr "Razlog"
 
 msgid "Frais de déblocage"
-msgstr ""
+msgstr "Naknada za deblokadu"
 
 msgid "Votre gestionnaire vous contactera pour la procédure de déblocage."
-msgstr ""
+msgstr "Vaš savjetnik kontaktirat će Vas u vezi s postupkom deblokade."
 
 msgid ""
 "Votre compte est <strong>actif et opérationnel</strong>. Vous pouvez vous "
 "connecter dès maintenant."
 msgstr ""
+"Vaš račun je <strong>aktivan i operativan</strong>. Možete se odmah "
+"prijaviti."
 
 #, python-format
 msgid "Bonjour %(name)s,"
-msgstr ""
+msgstr "Poštovani/a %(name)s,"
 
 #, python-format
 msgid ""
 "Votre compte bancaire a été ouvert avec succès auprès de "
 "<strong>%(bank_name)s</strong>."
 msgstr ""
+"Vaš bankovni račun uspješno je otvoren u <strong>%(bank_name)s</strong>."
 
 msgid "Détails du compte"
-msgstr ""
+msgstr "Podaci o računu"
 
 msgid "Titulaire"
-msgstr ""
+msgstr "Vlasnik računa"
 
 msgid "Banque"
-msgstr ""
+msgstr "Banka"
 
 msgid "Devise"
-msgstr ""
+msgstr "Valuta"
 
 msgid "Gestionnaire"
-msgstr ""
+msgstr "Savjetnik"
 
 msgid "Se connecter à mon espace"
-msgstr ""
+msgstr "Prijava u moj prostor"
 
 #, python-format
 msgid ""
@@ -183,109 +190,120 @@ msgid ""
 "identifiants de connexion par voie sécurisée. Ne les partagez jamais avec "
 "quiconque."
 msgstr ""
+"Vaš savjetnik <strong>%(manager)s</strong> dostavit će Vam pristupne podatke"
+" sigurnim putem. Nikada ih ni s kim ne dijelite."
 
 msgid "Ouverture de votre compte bancaire"
-msgstr ""
+msgstr "Otvaranje Vašeg bankovnog računa"
 
 msgid "Bonjour,"
-msgstr ""
+msgstr "Poštovani,"
 
 #, python-format
 msgid ""
-"Un virement a été initié en votre faveur depuis <strong>%(bank_name)s</"
-"strong>."
-msgstr ""
+"Un virement a été initié en votre faveur depuis "
+"<strong>%(bank_name)s</strong>."
+msgstr "Pokrenut je prijenos u Vašu korist iz <strong>%(bank_name)s</strong>."
 
 msgid "Référence"
-msgstr ""
+msgstr "Referenca"
 
 msgid "Donneur d'ordre"
-msgstr ""
+msgstr "Nalogodavac"
 
 msgid "Banque émettrice"
-msgstr ""
+msgstr "Banka pošiljatelja"
 
 msgid ""
 "Ce virement est en cours de validation. Vous recevrez la confirmation "
 "définitive sous <strong>48 heures ouvrées</strong>."
 msgstr ""
+"Ovaj prijenos je u postupku potvrde. Konačnu potvrdu primit ćete u roku od "
+"<strong>48 radnih sati</strong>."
 
 msgid "Virement entrant en attente"
-msgstr ""
+msgstr "Dolazni prijenos na čekanju"
 
 msgid "Réf."
-msgstr ""
+msgstr "Ref."
 
 msgid "Votre virement a été <strong>validé avec succès</strong>."
-msgstr ""
+msgstr "Vaš prijenos je <strong>uspješno potvrđen</strong>."
 
 msgid "Bénéficiaire"
-msgstr ""
+msgstr "Primatelj"
 
 msgid "IBAN bénéficiaire"
-msgstr ""
+msgstr "IBAN primatelja"
 
 msgid "Validé le"
-msgstr ""
+msgstr "Potvrđeno"
 
 msgid "Virement validé"
-msgstr ""
+msgstr "Prijenos potvrđen"
 
 msgid "Un virement a été <strong>validé</strong> en votre faveur."
-msgstr ""
+msgstr "Prijenos u Vašu korist je <strong>potvrđen</strong>."
 
 msgid "Émetteur"
-msgstr ""
+msgstr "Pošiljatelj"
 
 msgid "Virement reçu"
-msgstr ""
+msgstr "Prijenos primljen"
 
 msgid ""
-"Votre virement a été <strong>rejeté</strong>. Le montant a été recrédité sur "
-"votre compte."
+"Votre virement a été <strong>rejeté</strong>. Le montant a été recrédité sur"
+" votre compte."
 msgstr ""
+"Vaš prijenos je <strong>odbijen</strong>. Iznos je vraćen na Vaš račun."
 
 msgid "Motif du rejet"
-msgstr ""
+msgstr "Razlog odbijanja"
 
 msgid "Frais de redirection"
-msgstr ""
+msgstr "Naknada za preusmjeravanje"
 
 #, python-format
 msgid ""
 "Rendez-vous en agence muni de votre pièce d'identité pour relancer ce "
 "virement. Les frais de redirection (%(fee)s) sont réglés sur place."
 msgstr ""
+"Posjetite poslovnicu s osobnom iskaznicom kako biste ponovno pokrenuli ovaj "
+"prijenos. Naknada za preusmjeravanje (%(fee)s) plaća se na licu mjesta."
 
 msgid "Virement rejeté"
-msgstr ""
+msgstr "Prijenos odbijen"
 
 #, python-format
 msgid ""
 "Le virement initié en votre faveur (réf. <strong>%(reference)s</strong>) a "
 "été annulé."
 msgstr ""
+"Prijenos pokrenut u Vašu korist (ref. <strong>%(reference)s</strong>) je "
+"otkazan."
 
 msgid "Montant concerné"
-msgstr ""
+msgstr "Predmetni iznos"
 
 msgid "Pour toute question, contactez directement l'émetteur du virement."
-msgstr ""
+msgstr "Za sva pitanja obratite se izravno pošiljatelju prijenosa."
 
 msgid "Virement annulé"
-msgstr ""
+msgstr "Prijenos otkazan"
 
 #, python-format
 msgid ""
 "Votre compte auprès de <strong>%(bank_name)s</strong> a été "
 "<strong>temporairement bloqué</strong>."
 msgstr ""
+"Vaš račun u <strong>%(bank_name)s</strong> je <strong>privremeno "
+"blokiran</strong>."
 
 msgid "Identifiant du compte"
-msgstr ""
+msgstr "Identifikator računa"
 
 msgid "Motif du blocage"
-msgstr ""
+msgstr "Razlog blokade"
 
 #, python-format
 msgid ""
@@ -293,85 +311,95 @@ msgid ""
 "procédure de déblocage. Si vous pensez qu'il s'agit d'une erreur, contactez-"
 "nous immédiatement."
 msgstr ""
+"Obratite se svom savjetniku <strong>%(manager)s</strong> za postupak "
+"deblokade. Ako smatrate da je riječ o pogrešci, odmah nas kontaktirajte."
 
 msgid "Votre compte a été bloqué"
-msgstr ""
+msgstr "Vaš račun je blokiran"
 
 #, python-format
 msgid ""
 "Votre compte auprès de <strong>%(bank_name)s</strong> est à nouveau "
 "<strong>actif et pleinement opérationnel</strong>."
 msgstr ""
+"Vaš račun u <strong>%(bank_name)s</strong> ponovno je <strong>aktivan i "
+"potpuno operativan</strong>."
 
 msgid ""
 "Utilisez votre identifiant et mot de passe habituels pour accéder à votre "
 "espace bancaire."
 msgstr ""
+"Upotrijebite svoje uobičajeno korisničko ime i lozinku za pristup svom "
+"bankovnom prostoru."
 
 msgid "Votre compte est débloqué"
-msgstr ""
+msgstr "Vaš račun je deblokiran"
 
 #, python-format
 msgid ""
 "Le mot de passe de votre compte a été modifié le <strong>%(date)s</strong>."
-msgstr ""
+msgstr "Lozinka Vašeg računa promijenjena je <strong>%(date)s</strong>."
 
 msgid "Identifiant"
-msgstr ""
+msgstr "Korisničko ime"
 
 msgid "Date de modification"
-msgstr ""
+msgstr "Datum promjene"
 
 #, python-format
 msgid ""
 "Ce n'était pas vous&nbsp;? Contactez immédiatement votre gestionnaire "
 "<strong>%(manager)s</strong> pour sécuriser votre compte."
 msgstr ""
+"Niste to bili Vi? Odmah se obratite svom savjetniku "
+"<strong>%(manager)s</strong> kako biste zaštitili svoj račun."
 
 msgid "Modification de votre mot de passe"
-msgstr ""
+msgstr "Promjena Vaše lozinke"
 
 #, python-format
 msgid "Édité le %(date)s"
-msgstr ""
+msgstr "Izdano %(date)s"
 
 #, python-format
 msgid "Réf. : %(ref)s"
-msgstr ""
+msgstr "Ref.: %(ref)s"
 
 msgid ""
 "Document officiel — Conservez ce document. Ne constitue pas un contrat sans "
 "signature autorisée."
 msgstr ""
+"Službeni dokument — Sačuvajte ovaj dokument. Ne predstavlja ugovor bez "
+"ovlaštenog potpisa."
 
 #, python-format
 msgid "Page %(page)s"
-msgstr ""
+msgstr "Stranica %(page)s"
 
 msgid "RELEVÉ D'IDENTITÉ BANCAIRE"
-msgstr ""
+msgstr "POTVRDA O BANKOVNOM RAČUNU"
 
 msgid "TITULAIRE"
-msgstr ""
+msgstr "VLASNIK RAČUNA"
 
 msgid "Titulaire du compte"
-msgstr ""
+msgstr "Vlasnik računa"
 
 msgid "Établissement domiciliataire"
-msgstr ""
+msgstr "Banka u kojoj se vodi račun"
 
 msgid "Adresse de l'établissement"
-msgstr ""
+msgstr "Adresa banke"
 
 msgid "Pays"
-msgstr ""
+msgstr "Država"
 
 #, python-format
 msgid "COORDONNÉES BANCAIRES — %(type)s"
-msgstr ""
+msgstr "BANKOVNI PODACI — %(type)s"
 
 msgid "IDENTIFIANT INTERNATIONAL DU COMPTE"
-msgstr ""
+msgstr "MEĐUNARODNI IDENTIFIKATOR RAČUNA"
 
 #, python-format
 msgid ""
@@ -379,568 +407,592 @@ msgid ""
 "figurant sur ce document sont exactes et correspondent à mon compte ouvert "
 "auprès de <b>%(bank_name)s</b>."
 msgstr ""
+"Ja, niže potpisani/a, <b>%(name)s</b>, potvrđujem da su bankovni podaci "
+"navedeni u ovom dokumentu točni i odgovaraju mojem računu otvorenom u "
+"<b>%(bank_name)s</b>."
 
 msgid "EN COURS DE VALIDATION"
-msgstr ""
+msgstr "U POSTUPKU POTVRDE"
 
 msgid "VIREMENT VALIDÉ"
-msgstr ""
+msgstr "PRIJENOS POTVRĐEN"
 
 msgid "VIREMENT REJETÉ"
-msgstr ""
+msgstr "PRIJENOS ODBIJEN"
 
 msgid "BORDEREAU DE VIREMENT"
-msgstr ""
+msgstr "NALOG ZA PRIJENOS"
 
 msgid "MONTANT DU VIREMENT"
-msgstr ""
+msgstr "IZNOS PRIJENOSA"
 
 msgid "DONNEUR D'ORDRE"
-msgstr ""
+msgstr "NALOGODAVAC"
 
 msgid "Nom"
-msgstr ""
+msgstr "Prezime"
 
 msgid "BÉNÉFICIAIRE"
-msgstr ""
+msgstr "PRIMATELJ"
 
 msgid "DÉTAILS DE L'OPÉRATION"
-msgstr ""
+msgstr "DETALJI TRANSAKCIJE"
 
 msgid "Date d'initiation"
-msgstr ""
+msgstr "Datum pokretanja"
 
 msgid "Motif / Libellé"
-msgstr ""
+msgstr "Svrha / Opis"
 
 msgid "Date de validation"
-msgstr ""
+msgstr "Datum potvrde"
 
 msgid "Date de rejet"
-msgstr ""
+msgstr "Datum odbijanja"
 
 #, python-format
 msgid "Du %(from)s au %(to)s"
-msgstr ""
+msgstr "Od %(from)s do %(to)s"
 
 msgid "RELEVÉ DE COMPTE"
-msgstr ""
+msgstr "IZVOD S RAČUNA"
 
 msgid "SOLDE INITIAL"
-msgstr ""
+msgstr "POČETNO STANJE"
 
 msgid "TOTAL CRÉDITS"
-msgstr ""
+msgstr "UKUPNO UPLATE"
 
 msgid "TOTAL DÉBITS"
-msgstr ""
+msgstr "UKUPNO ISPLATE"
 
 msgid "SOLDE FINAL"
-msgstr ""
+msgstr "ZAVRŠNO STANJE"
 
 msgid "MOUVEMENTS"
-msgstr ""
+msgstr "PROMETI"
 
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 msgid "Libellé"
-msgstr ""
+msgstr "Opis"
 
 msgid "Débit"
-msgstr ""
+msgstr "Isplata"
 
 msgid "Crédit"
-msgstr ""
+msgstr "Uplata"
 
 msgid "Solde"
-msgstr ""
+msgstr "Stanje"
 
 msgid ""
 "Trop de tentatives. Votre accès est temporairement suspendu. Réessayez dans "
 "15 minutes."
 msgstr ""
+"Previše pokušaja. Vaš pristup je privremeno onemogućen. Pokušajte ponovno za"
+" 15 minuta."
 
 msgid "Identifiants incorrects."
-msgstr ""
+msgstr "Neispravni pristupni podaci."
 
 msgid "Identifiant ou mot de passe incorrect."
-msgstr ""
+msgstr "Neispravno korisničko ime ili lozinka."
 
 msgid "Votre compte est bloqué. Les virements sont désactivés."
-msgstr ""
+msgstr "Vaš račun je blokiran. Prijenosi su onemogućeni."
 
 msgid ""
 "Les virements ne sont pas autorisés sur ce compte. Contactez votre "
 "conseiller pour plus d'informations."
 msgstr ""
+"Prijenosi nisu dopušteni na ovom računu. Za više informacija obratite se "
+"svom savjetniku."
 
 msgid "Le montant doit être supérieur à zéro."
-msgstr ""
+msgstr "Iznos mora biti veći od nule."
 
 msgid "Montant invalide."
-msgstr ""
+msgstr "Neispravan iznos."
 
 msgid "Bénéficiaire invalide."
-msgstr ""
+msgstr "Neispravan primatelj."
 
 #, python-format
 msgid ""
 "Virement initié. Référence : %(reference)s. Traitement sous 48h ouvrées."
 msgstr ""
+"Prijenos pokrenut. Referenca: %(reference)s. Obrada u roku od 48 radnih "
+"sati."
 
 #, python-format
 msgid "Virement %(reference)s confirmé."
-msgstr ""
+msgstr "Prijenos %(reference)s potvrđen."
 
 msgid "Montant des frais invalide."
-msgstr ""
+msgstr "Neispravan iznos naknade."
 
 #, python-format
 msgid "Virement %(reference)s annulé et solde recrédité."
-msgstr ""
+msgstr "Prijenos %(reference)s otkazan, a iznos vraćen na račun."
 
 msgid "Votre compte est bloqué."
-msgstr ""
+msgstr "Vaš račun je blokiran."
 
 msgid "Le prénom est obligatoire."
-msgstr ""
+msgstr "Ime je obavezno."
 
 msgid "Le nom est obligatoire."
-msgstr ""
+msgstr "Prezime je obavezno."
 
 msgid "Le numéro de compte IBAN est obligatoire."
-msgstr ""
+msgstr "Broj računa IBAN je obavezan."
 
 msgid "Le nom de la banque est obligatoire."
-msgstr ""
+msgstr "Naziv banke je obavezan."
 
 msgid "Ce numéro de compte est déjà enregistré comme bénéficiaire."
-msgstr ""
+msgstr "Ovaj broj računa već je spremljen kao primatelj."
 
 #, python-format
 msgid "Bénéficiaire %(name)s ajouté."
-msgstr ""
+msgstr "Primatelj %(name)s dodan."
 
 #, python-format
 msgid "Bénéficiaire %(name)s supprimé."
-msgstr ""
+msgstr "Primatelj %(name)s uklonjen."
 
 msgid "Dates invalides."
-msgstr ""
+msgstr "Neispravni datumi."
 
 msgid "La date de début doit être antérieure à la date de fin."
-msgstr ""
+msgstr "Datum početka mora biti prije datuma završetka."
 
 msgid "Aucune transaction validée sur cette période."
-msgstr ""
+msgstr "Nema potvrđenih transakcija u ovom razdoblju."
 
 msgid "Mot de passe actuel incorrect."
-msgstr ""
+msgstr "Trenutna lozinka nije ispravna."
 
 msgid "Les mots de passe ne correspondent pas."
-msgstr ""
+msgstr "Lozinke se ne podudaraju."
 
 msgid "Le mot de passe doit contenir au moins 8 caractères."
-msgstr ""
+msgstr "Lozinka mora sadržavati najmanje 8 znakova."
 
 msgid "Le nouveau mot de passe doit être différent de l'ancien."
-msgstr ""
+msgstr "Nova lozinka mora se razlikovati od stare."
 
 msgid "Mot de passe modifié. Veuillez vous reconnecter."
-msgstr ""
+msgstr "Lozinka je promijenjena. Molimo prijavite se ponovno."
 
 msgid "Information"
-msgstr ""
+msgstr "Informacija"
 
 msgid "Succès"
-msgstr ""
+msgstr "Uspjeh"
 
 msgid "Avertissement"
-msgstr ""
+msgstr "Upozorenje"
 
 msgid "Alerte"
-msgstr ""
+msgstr "Uzbuna"
 
 msgid "Page introuvable"
-msgstr ""
+msgstr "Stranica nije pronađena"
 
 msgid "La page que vous cherchez n'existe pas ou a été déplacée."
-msgstr ""
+msgstr "Stranica koju tražite ne postoji ili je premještena."
 
 msgid "Vérifiez l'adresse ou revenez à la page précédente."
-msgstr ""
+msgstr "Provjerite adresu ili se vratite na prethodnu stranicu."
 
 msgid "Retour"
-msgstr ""
+msgstr "Natrag"
 
 msgid "Erreur serveur"
-msgstr ""
+msgstr "Pogreška poslužitelja"
 
 msgid "Erreur interne du serveur"
-msgstr ""
+msgstr "Interna pogreška poslužitelja"
 
 msgid "Une erreur inattendue s'est produite."
-msgstr ""
+msgstr "Došlo je do neočekivane pogreške."
 
 msgid "Notre équipe a été notifiée et travaille à la résolution du problème."
-msgstr ""
+msgstr "Naš tim je obaviješten i radi na rješavanju problema."
 
 msgid "Veuillez réessayer dans quelques instants."
-msgstr ""
+msgstr "Pokušajte ponovno za nekoliko trenutaka."
 
 msgid "Accueil"
-msgstr ""
+msgstr "Početna"
 
 msgid "Mes comptes"
-msgstr ""
+msgstr "Moji računi"
 
 msgid "Actif"
-msgstr ""
+msgstr "Aktivan"
 
 msgid "Tableau de bord"
-msgstr ""
+msgstr "Nadzorna ploča"
 
 msgid "Historique"
-msgstr ""
+msgstr "Povijest"
 
 msgid "Virement"
-msgstr ""
+msgstr "Prijenos"
 
 msgid "Bénéficiaires"
-msgstr ""
+msgstr "Primatelji"
 
 msgid "Notifications"
-msgstr ""
+msgstr "Obavijesti"
 
 msgid "Sécurité"
-msgstr ""
+msgstr "Sigurnost"
 
 msgid "Déconnexion"
-msgstr ""
+msgstr "Odjava"
 
 msgid "Alertes"
-msgstr ""
+msgstr "Upozorenja"
 
 msgid "Plus"
-msgstr ""
+msgstr "Više"
 
 msgid "Certaines opérations sont restreintes"
-msgstr ""
+msgstr "Neke su operacije ograničene"
 
 msgid "Total à payer"
-msgstr ""
+msgstr "Ukupno za platiti"
 
 msgid "Déjà payé"
-msgstr ""
+msgstr "Već plaćeno"
 
 msgid "Restant à payer"
-msgstr ""
+msgstr "Preostalo za platiti"
 
 msgid "Aucuns frais de déblocage"
-msgstr ""
+msgstr "Bez naknade za deblokadu"
 
 #, python-format
 msgid ""
 "Contactez <strong class=\"text-gray-600\">%(manager)s</strong> pour "
 "débloquer votre compte."
 msgstr ""
+"Obratite se <strong class=\"text-gray-600\">%(manager)s</strong> za "
+"deblokadu svog računa."
 
 msgid "J'ai compris"
-msgstr ""
+msgstr "Razumijem"
 
 #, python-format
 msgid "Bénéficiaires — %(bank_name)s"
-msgstr ""
+msgstr "Primatelji — %(bank_name)s"
 
 msgid "Mes bénéficiaires"
-msgstr ""
+msgstr "Moji primatelji"
 
 msgid "Gérez vos comptes de destination"
-msgstr ""
+msgstr "Upravljajte računima primatelja"
 
 msgid "Ajouter"
-msgstr ""
+msgstr "Dodaj"
 
 msgid "Virer"
-msgstr ""
+msgstr "Prenesi"
 
 #, python-format
 msgid "Supprimer %(full_name)s de vos bénéficiaires ?"
-msgstr ""
+msgstr "Ukloniti %(full_name)s s popisa primatelja?"
 
 msgid "Supprimer"
-msgstr ""
+msgstr "Ukloni"
 
 msgid "Aucun bénéficiaire enregistré"
-msgstr ""
+msgstr "Nema spremljenih primatelja"
 
 msgid "Ajoutez un bénéficiaire pour commencer à effectuer des virements"
-msgstr ""
+msgstr "Dodajte primatelja kako biste počeli s prijenosima"
 
 msgid "Ajouter mon premier bénéficiaire"
-msgstr ""
+msgstr "Dodaj prvog primatelja"
 
 msgid "Ajouter un bénéficiaire"
-msgstr ""
+msgstr "Dodaj primatelja"
 
 msgid "Renseignez les coordonnées bancaires"
-msgstr ""
+msgstr "Unesite bankovne podatke"
 
 msgid "Prénom"
-msgstr ""
+msgstr "Ime"
 
 msgid "IBAN / Numéro de compte"
-msgstr ""
+msgstr "IBAN / Broj računa"
 
 msgid "Banque du bénéficiaire"
-msgstr ""
+msgstr "Banka primatelja"
 
 msgid "Email du bénéficiaire"
-msgstr ""
+msgstr "E-pošta primatelja"
 
 msgid "Utilisé pour envoyer les confirmations de virement"
-msgstr ""
+msgstr "Koristi se za slanje potvrda o prijenosu"
 
 msgid "Annuler"
-msgstr ""
+msgstr "Odustani"
 
 msgid "Enregistrer"
-msgstr ""
+msgstr "Spremi"
 
 #, python-format
 msgid "Sécurité — %(bank_name)s"
-msgstr ""
+msgstr "Sigurnost — %(bank_name)s"
 
 msgid "Paramètres du compte"
-msgstr ""
+msgstr "Postavke računa"
 
 msgid "Langue, mot de passe et sécurité de connexion"
-msgstr ""
+msgstr "Jezik, lozinka i sigurnost prijave"
 
 msgid "Langue"
-msgstr ""
+msgstr "Jezik"
 
 msgid "Change la langue de tout le contenu de votre espace"
-msgstr ""
+msgstr "Mijenja jezik cjelokupnog sadržaja Vašeg prostora"
 
 msgid "Mot de passe actuel"
-msgstr ""
+msgstr "Trenutna lozinka"
 
 msgid "Nouveau mot de passe"
-msgstr ""
+msgstr "Nova lozinka"
 
 msgid "Minimum 8 caractères"
-msgstr ""
+msgstr "Najmanje 8 znakova"
 
 msgid "Confirmer le nouveau mot de passe"
-msgstr ""
+msgstr "Potvrdite novu lozinku"
 
 msgid "Les mots de passe ne correspondent pas"
-msgstr ""
+msgstr "Lozinke se ne podudaraju"
 
 msgid "Les mots de passe correspondent ✓"
-msgstr ""
+msgstr "Lozinke se podudaraju ✓"
 
 msgid "Changer le mot de passe"
-msgstr ""
+msgstr "Promijeni lozinku"
 
 msgid "Conseils de sécurité"
-msgstr ""
+msgstr "Sigurnosni savjeti"
 
 msgid ""
-"Utilisez un mot de passe <strong class=\"text-gray-700\">unique</strong> que "
-"vous n'utilisez nulle part ailleurs."
+"Utilisez un mot de passe <strong class=\"text-gray-700\">unique</strong> que"
+" vous n'utilisez nulle part ailleurs."
 msgstr ""
+"Koristite <strong class=\"text-gray-700\">jedinstvenu</strong> lozinku koju "
+"ne koristite nigdje drugdje."
 
 msgid ""
-"Mélangez <strong class=\"text-gray-700\">majuscules, minuscules, chiffres et "
-"caractères spéciaux</strong>."
+"Mélangez <strong class=\"text-gray-700\">majuscules, minuscules, chiffres et"
+" caractères spéciaux</strong>."
 msgstr ""
+"Kombinirajte <strong class=\"text-gray-700\">velika i mala slova, brojeve i "
+"posebne znakove</strong>."
 
 msgid ""
 "Ne partagez jamais votre mot de passe, <strong class=\"text-gray-700\">même "
 "avec votre gestionnaire</strong>."
 msgstr ""
+"Nikada ne dijelite svoju lozinku, <strong class=\"text-gray-700\">čak ni sa "
+"svojim savjetnikom</strong>."
 
 msgid ""
 "Après le changement, vous serez automatiquement <strong class=\"text-"
 "gray-700\">déconnecté</strong>."
 msgstr ""
+"Nakon promjene bit ćete automatski <strong class=\"text-"
+"gray-700\">odjavljeni</strong>."
 
 #, python-format
 msgid ""
-"Votre identifiant de connexion (<strong class=\"font-mono\">%(account_id)s</"
-"strong>) ne peut pas être modifié. Contactez votre gestionnaire pour toute "
-"question."
+"Votre identifiant de connexion (<strong class=\"font-"
+"mono\">%(account_id)s</strong>) ne peut pas être modifié. Contactez votre "
+"gestionnaire pour toute question."
 msgstr ""
+"Vaš identifikator za prijavu (<strong class=\"font-"
+"mono\">%(account_id)s</strong>) ne može se promijeniti. Za sva pitanja "
+"obratite se svom savjetniku."
 
 msgid "Faible"
-msgstr ""
+msgstr "Slaba"
 
 msgid "Passable"
-msgstr ""
+msgstr "Prihvatljiva"
 
 msgid "Bon"
-msgstr ""
+msgstr "Dobra"
 
 msgid "Excellent"
-msgstr ""
+msgstr "Izvrsna"
 
 msgid "Mise à jour…"
-msgstr ""
+msgstr "Ažuriranje…"
 
 #, python-format
 msgid "Tableau de bord — %(bank_name)s"
-msgstr ""
+msgstr "Nadzorna ploča — %(bank_name)s"
 
 #, python-format
 msgid "Bonjour, %(first_name)s"
-msgstr ""
+msgstr "Dobar dan, %(first_name)s"
 
 #, python-format
 msgid ""
 "Gestionnaire : <span class=\"text-gray-600 font-medium\">%(manager)s</span>"
-msgstr ""
+msgstr "Savjetnik: <span class=\"text-gray-600 font-medium\">%(manager)s</span>"
 
 msgid "Bloqué"
-msgstr ""
+msgstr "Blokiran"
 
 msgid "Activer"
-msgstr ""
+msgstr "Aktiviraj"
 
 msgid "Solde disponible"
-msgstr ""
+msgstr "Raspoloživo stanje"
 
 #, python-format
 msgid "%(counter)s en attente"
 msgid_plural "%(counter)s en attente"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(counter)s na čekanju"
+msgstr[1] "%(counter)s na čekanju"
+msgstr[2] "%(counter)s na čekanju"
 
 msgid "Télécharger"
-msgstr ""
+msgstr "Preuzmi"
 
 msgid "Crédits"
-msgstr ""
+msgstr "Uplate"
 
 msgid "Débits"
-msgstr ""
+msgstr "Isplate"
 
 msgid "En attente"
-msgstr ""
+msgstr "Na čekanju"
 
 msgid "opération"
 msgid_plural "opérations"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "operacija"
+msgstr[1] "operacije"
+msgstr[2] "operacija"
 
 msgid "Transactions récentes"
-msgstr ""
+msgstr "Nedavne transakcije"
 
 msgid "Tout voir"
-msgstr ""
+msgstr "Prikaži sve"
 
 msgid "Validé"
-msgstr ""
+msgstr "Potvrđeno"
 
 msgid "En cours"
-msgstr ""
+msgstr "U obradi"
 
 msgid "Rejeté"
-msgstr ""
+msgstr "Odbijeno"
 
 msgid "Aucune transaction"
-msgstr ""
+msgstr "Nema transakcija"
 
 msgid "Coordonnées bancaires"
-msgstr ""
+msgstr "Bankovni podaci"
 
 msgid "Identifiant international du compte"
-msgstr ""
+msgstr "Međunarodni identifikator računa"
 
 msgid "Relevé PDF"
-msgstr ""
+msgstr "PDF izvod"
 
 msgid "Téléchargez vos opérations"
-msgstr ""
+msgstr "Preuzmite svoje transakcije"
 
 msgid "Du"
-msgstr ""
+msgstr "Od"
 
 msgid "ex : 01/01/2026"
-msgstr ""
+msgstr "npr. 01.01.2026."
 
 msgid "Au"
-msgstr ""
+msgstr "Do"
 
 msgid "ex : 31/12/2026"
-msgstr ""
+msgstr "npr. 31.12.2026."
 
 msgid "Voir tout"
-msgstr ""
+msgstr "Prikaži sve"
 
 #, python-format
 msgid "Connexion — %(bank_name)s"
-msgstr ""
+msgstr "Prijava — %(bank_name)s"
 
 msgid "Choisissez votre langue"
-msgstr ""
+msgstr "Odaberite svoj jezik"
 
 msgid "Vous pourrez la modifier à tout moment dans les paramètres"
-msgstr ""
+msgstr "Možete ga promijeniti u bilo kojem trenutku u postavkama"
 
 msgid "Votre banque,"
-msgstr ""
+msgstr "Vaša banka,"
 
 msgid "à portée de main."
-msgstr ""
+msgstr "uvijek pri ruci."
 
 msgid "Gérez votre compte en toute sécurité, où que vous soyez."
-msgstr ""
+msgstr "Upravljajte svojim računom sigurno, gdje god se nalazili."
 
 msgid "Connexion sécurisée"
-msgstr ""
+msgstr "Sigurna prijava"
 
 msgid "Chiffrement TLS · Session protégée"
-msgstr ""
+msgstr "TLS enkripcija · Zaštićena sesija"
 
 msgid "Établissement agréé"
-msgstr ""
+msgstr "Ovlaštena institucija"
 
 msgid "Supervisé et certifié"
-msgstr ""
+msgstr "Nadzirana i certificirana"
 
 msgid "Virements rapides"
-msgstr ""
+msgstr "Brzi prijenosi"
 
 msgid "Traitement sous 48h ouvrées"
-msgstr ""
+msgstr "Obrada u roku od 48 radnih sati"
 
 #, python-format
 msgid "© %(bank_name)s · Tous droits réservés"
-msgstr ""
+msgstr "© %(bank_name)s · Sva prava pridržana"
 
 msgid "Bienvenue"
-msgstr ""
+msgstr "Dobro došli"
 
 msgid "Connectez-vous à votre espace bancaire"
-msgstr ""
+msgstr "Prijavite se u svoj bankovni prostor"
 
 msgid "Ex : FR1234567"
-msgstr ""
+msgstr "Npr.: FR1234567"
 
 msgid "Mot de passe"
-msgstr ""
+msgstr "Lozinka"
 
 msgid "Afficher/masquer le mot de passe"
-msgstr ""
+msgstr "Prikaži/sakrij lozinku"
 
 msgid "Se connecter"
-msgstr ""
+msgstr "Prijava"
 
 msgid "Vos identifiants vous ont été communiqués par votre gestionnaire."
-msgstr ""
+msgstr "Pristupne podatke dostavio Vam je Vaš savjetnik."
 
 #, python-format
 msgid ""
@@ -948,228 +1000,243 @@ msgid ""
 "gray-600\">%(bank_name)s</strong> au <strong class=\"text-"
 "gray-600\">%(bank_phone)s</strong>"
 msgstr ""
+"Za svaku pomoć obratite se <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong> na <strong class=\"text-"
+"gray-600\">%(bank_phone)s</strong>"
 
 #, python-format
 msgid ""
 "Pour toute assistance, contactez <strong class=\"text-"
 "gray-600\">%(bank_name)s</strong>"
 msgstr ""
+"Za svaku pomoć obratite se <strong class=\"text-"
+"gray-600\">%(bank_name)s</strong>"
 
 msgid "Connexion…"
-msgstr ""
+msgstr "Prijava…"
 
 #, python-format
 msgid "Notifications — %(bank_name)s"
-msgstr ""
+msgstr "Obavijesti — %(bank_name)s"
 
 msgid "Toutes vos alertes et messages"
-msgstr ""
+msgstr "Sva Vaša upozorenja i poruke"
 
 #, python-format
 msgid "%(counter)s message"
 msgid_plural "%(counter)s messages"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(counter)s poruka"
+msgstr[1] "%(counter)s poruke"
+msgstr[2] "%(counter)s poruka"
 
 #, python-format
 msgid "Page %(number)s/%(num_pages)s"
-msgstr ""
+msgstr "Stranica %(number)s/%(num_pages)s"
 
 msgid "Précédent"
-msgstr ""
+msgstr "Prethodna"
 
 msgid "Suivant"
-msgstr ""
+msgstr "Sljedeća"
 
 msgid "Aucune notification"
-msgstr ""
+msgstr "Nema obavijesti"
 
 msgid "Vous serez notifié ici des activités importantes sur votre compte"
-msgstr ""
+msgstr "Ovdje ćete biti obaviješteni o važnim aktivnostima na svom računu"
 
 #, python-format
 msgid "Centre de sécurité — %(bank_name)s"
-msgstr ""
+msgstr "Sigurnosni centar — %(bank_name)s"
 
 msgid "Centre de sécurité"
-msgstr ""
+msgstr "Sigurnosni centar"
 
 msgid "Confirmation ou annulation des virements en attente de votre compte."
-msgstr ""
+msgstr "Potvrda ili otkazivanje prijenosa na čekanju na Vašem računu."
 
 msgid "Aucun virement en attente"
-msgstr ""
+msgstr "Nema prijenosa na čekanju"
 
 msgid "Vous n'avez aucun virement en attente pour le moment."
-msgstr ""
+msgstr "Trenutno nemate prijenosa na čekanju."
 
 msgid "Confirmer ce virement ? Il sera immédiatement validé."
-msgstr ""
+msgstr "Potvrditi ovaj prijenos? Bit će odmah potvrđen."
 
 msgid "Confirmer ce virement"
-msgstr ""
+msgstr "Potvrdi ovaj prijenos"
 
 msgid "Annuler ce virement et recréditer le montant sur votre compte ?"
-msgstr ""
+msgstr "Otkazati ovaj prijenos i vratiti iznos na Vaš račun?"
 
 msgid "Motif de l'annulation"
-msgstr ""
+msgstr "Razlog otkazivanja"
 
 msgid "Ex : Erreur de saisie, changement d'avis…"
-msgstr ""
+msgstr "Npr.: Pogreška pri unosu, predomislio/la sam se…"
 
 msgid "Sans frais"
-msgstr ""
+msgstr "Bez naknade"
 
 msgid "Avec frais"
-msgstr ""
+msgstr "Uz naknadu"
 
 msgid "Annuler ce virement"
-msgstr ""
+msgstr "Otkaži ovaj prijenos"
 
 #, python-format
 msgid "Historique — %(bank_name)s"
-msgstr ""
+msgstr "Povijest — %(bank_name)s"
 
 msgid "Télécharger un relevé"
-msgstr ""
+msgstr "Preuzmi izvod"
 
 msgid "Référence, libellé, bénéficiaire…"
-msgstr ""
+msgstr "Referenca, opis, primatelj…"
 
 msgid "Tous les types"
-msgstr ""
+msgstr "Sve vrste"
 
 msgid "Tous les statuts"
-msgstr ""
+msgstr "Svi statusi"
 
 msgid "Filtrer"
-msgstr ""
+msgstr "Filtriraj"
 
 msgid "Effacer"
-msgstr ""
+msgstr "Očisti"
 
 msgid "jj/mm/aaaa"
-msgstr ""
+msgstr "dd.mm.gggg."
 
 msgid "Filtres :"
-msgstr ""
+msgstr "Filtri:"
 
 #, python-format
 msgid "Depuis %(date_from)s"
-msgstr ""
+msgstr "Od %(date_from)s"
 
 #, python-format
 msgid "Jusqu'au %(date_to)s"
-msgstr ""
+msgstr "Do %(date_to)s"
 
 msgid "Description"
-msgstr ""
+msgstr "Opis"
 
 msgid "Type"
-msgstr ""
+msgstr "Vrsta"
 
 msgid "Montant"
-msgstr ""
+msgstr "Iznos"
 
 msgid "Statut"
-msgstr ""
+msgstr "Status"
 
 msgid "En cours de validation"
-msgstr ""
+msgstr "U postupku potvrde"
 
 msgid "Télécharger le bordereau"
-msgstr ""
+msgstr "Preuzmi nalog"
 
 #, python-format
 msgid "%(counter)s résultat"
 msgid_plural "%(counter)s résultats"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(counter)s rezultat"
+msgstr[1] "%(counter)s rezultata"
+msgstr[2] "%(counter)s rezultata"
 
 msgid "Aucune transaction trouvée"
-msgstr ""
+msgstr "Nije pronađena nijedna transakcija"
 
 msgid "Effacer les filtres"
-msgstr ""
+msgstr "Očisti filtre"
 
 msgid "Détail de l'opération"
-msgstr ""
+msgstr "Detalji transakcije"
 
 msgid "Fermer"
-msgstr ""
+msgstr "Zatvori"
 
 msgid "Sélectionnez la période"
-msgstr ""
+msgstr "Odaberite razdoblje"
 
 msgid "Frais de redirection :"
-msgstr ""
+msgstr "Naknada za preusmjeravanje:"
 
 #, python-format
 msgid "Virement — %(bank_name)s"
-msgstr ""
+msgstr "Prijenos — %(bank_name)s"
 
 msgid "Effectuer un virement"
-msgstr ""
+msgstr "Izvršite prijenos"
 
 msgid "Solde disponible :"
-msgstr ""
+msgstr "Raspoloživo stanje:"
 
 msgid "Délai de traitement : 48h ouvrées"
-msgstr ""
+msgstr "Rok obrade: 48 radnih sati"
 
 msgid ""
-"Le montant est immédiatement réservé sur votre compte à l'initiation. En cas "
-"de rejet, il est intégralement recrédité."
+"Le montant est immédiatement réservé sur votre compte à l'initiation. En cas"
+" de rejet, il est intégralement recrédité."
 msgstr ""
+"Iznos se odmah rezervira na Vašem računu pri pokretanju. U slučaju "
+"odbijanja, u cijelosti se vraća."
 
 msgid "Vous devez ajouter un bénéficiaire avant d'effectuer un virement."
-msgstr ""
+msgstr "Morate dodati primatelja prije izvršenja prijenosa."
 
 msgid "Sélectionner un bénéficiaire…"
-msgstr ""
+msgstr "Odaberite primatelja…"
 
 msgid "Solde restant après virement :"
-msgstr ""
+msgstr "Preostalo stanje nakon prijenosa:"
 
 msgid "Motif du virement"
-msgstr ""
+msgstr "Svrha prijenosa"
 
 msgid "Ex : Remboursement, loyer, facture…"
-msgstr ""
+msgstr "Npr.: Povrat novca, najamnina, račun…"
 
 msgid ""
-"Le montant est immédiatement <strong class=\"text-gray-700\">réservé</"
-"strong> sur votre compte à l'initiation."
+"Le montant est immédiatement <strong class=\"text-"
+"gray-700\">réservé</strong> sur votre compte à l'initiation."
 msgstr ""
+"Iznos se odmah <strong class=\"text-gray-700\">rezervira</strong> na Vašem "
+"računu pri pokretanju."
 
 msgid ""
 "Le virement sera <strong class=\"text-gray-700\">validé ou rejeté</strong> "
 "par notre équipe sous 48h ouvrées."
 msgstr ""
+"Prijenos će naš tim <strong class=\"text-gray-700\">potvrditi ili "
+"odbiti</strong> u roku od 48 radnih sati."
 
 msgid ""
 "En cas de rejet, le montant sera <strong class=\"text-"
 "gray-700\">intégralement recrédité</strong> sur votre compte."
 msgstr ""
+"U slučaju odbijanja, iznos će biti <strong class=\"text-gray-700\">u "
+"cijelosti vraćen</strong> na Vaš račun."
 
 msgid "Initier le virement"
-msgstr ""
+msgstr "Pokreni prijenos"
 
 msgid "Envoi en cours…"
-msgstr ""
+msgstr "Slanje…"
 
 msgid "Virement sortant"
-msgstr ""
+msgstr "Odlazni prijenos"
 
 msgid "Virement entrant"
-msgstr ""
+msgstr "Dolazni prijenos"
 
 msgid "Retrait au guichet"
-msgstr ""
+msgstr "Isplata na šalteru"
 
 msgid "Dépôt en banque"
-msgstr ""
+msgstr "Uplata u banci"
 
 msgid "Paiement de facture"
-msgstr ""
+msgstr "Plaćanje računa"

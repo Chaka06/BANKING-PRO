@@ -96,7 +96,7 @@
             </div>
             <div class="grid grid-cols-2 gap-2.5">
                 {% for code, flag, native in language_options %}
-                <form method="post" action="{% url 'set_language' %}">
+                <form method="post" action="{% url 'set_language' %}"{% if forloop.last and not forloop.counter|divisibleby:2 %} class="col-span-2"{% endif %}>
                     {% csrf_token %}
                     <input type="hidden" name="language" value="{{ code }}">
                     <input type="hidden" name="next" value="{{ request.get_full_path }}">

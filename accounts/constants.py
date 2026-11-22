@@ -7,6 +7,7 @@ LANGUAGE_OPTIONS = [
     ('de', '🇩🇪', 'Deutsch'),
     ('it', '🇮🇹', 'Italiano'),
     ('nl', '🇳🇱', 'Nederlands'),
+    ('hr', '🇭🇷', 'Hrvatski'),
 ]
 
 # Tous les pays du monde (195 États + quelques territoires bancaires).

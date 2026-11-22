@@ -108,6 +108,7 @@ LANGUAGES = [
     ('de', 'Allemand'),
     ('it', 'Italien'),
     ('nl', 'Néerlandais'),
+    ('hr', 'Croate'),
 ]
 LOCALE_PATHS = [BASE_DIR / 'locale']
 
