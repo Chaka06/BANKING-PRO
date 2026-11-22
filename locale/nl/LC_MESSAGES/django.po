@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-04 16:16+0200\n"
+"POT-Creation-Date: 2026-11-22 14:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,6 +29,54 @@ msgstr "Betaalrekening"
 
 msgid "Compte épargne"
 msgstr "Spaarrekening"
+
+msgid "Code banque"
+msgstr "Bankcode"
+
+msgid "Code guichet"
+msgstr "Kantoorcode"
+
+msgid "N° de compte"
+msgstr "Rekeningnummer"
+
+msgid "Clé de contrôle"
+msgstr ""
+
+msgid "Routing number (ABA)"
+msgstr ""
+
+msgid "Account number"
+msgstr ""
+
+msgid "Institution"
+msgstr ""
+
+msgid "Transit"
+msgstr ""
+
+msgid "Sort code"
+msgstr ""
+
+msgid "Branch code"
+msgstr ""
+
+#, fuzzy
+#| msgid "Code banque"
+msgid "Code agence"
+msgstr "Bankcode"
+
+#, fuzzy
+#| msgid "N° de compte"
+msgid "N° de compte (CLABE)"
+msgstr "Rekeningnummer"
+
+#, fuzzy
+#| msgid "N° de compte"
+msgid "N° de compte (CBU)"
+msgstr "Rekeningnummer"
+
+msgid "Clé RIB"
+msgstr "Controlecijfer"
 
 #, python-format
 msgid ""
@@ -52,6 +100,9 @@ msgstr ""
 "Deze rekening is geblokkeerd. Het is niet mogelijk een overschrijving te "
 "starten."
 
+msgid "Les virements ne sont pas autorisés sur ce compte."
+msgstr ""
+
 #, python-format
 msgid ""
 "Solde insuffisant. Disponible : %(balance)s %(currency)s, demandé : "
@@ -63,8 +114,7 @@ msgstr ""
 #, python-format
 msgid "Ce virement ne peut pas être validé (statut actuel : %(status)s)."
 msgstr ""
-"Deze overschrijving kan niet worden gevalideerd (huidige status: "
-"%(status)s)."
+"Deze overschrijving kan niet worden gevalideerd (huidige status: %(status)s)."
 
 msgid "Un motif de rejet est obligatoire."
 msgstr "Een reden voor afwijzing is verplicht."
@@ -163,8 +213,8 @@ msgstr "Hallo,"
 
 #, python-format
 msgid ""
-"Un virement a été initié en votre faveur depuis "
-"<strong>%(bank_name)s</strong>."
+"Un virement a été initié en votre faveur depuis <strong>%(bank_name)s</"
+"strong>."
 msgstr ""
 "Er is een overschrijving ten gunste van u gestart vanuit "
 "<strong>%(bank_name)s</strong>."
@@ -182,8 +232,8 @@ msgid ""
 "Ce virement est en cours de validation. Vous recevrez la confirmation "
 "définitive sous <strong>48 heures ouvrées</strong>."
 msgstr ""
-"Deze overschrijving wordt gevalideerd. U ontvangt de definitieve bevestiging"
-" binnen <strong>48 werkuren</strong>."
+"Deze overschrijving wordt gevalideerd. U ontvangt de definitieve bevestiging "
+"binnen <strong>48 werkuren</strong>."
 
 msgid "Virement entrant en attente"
 msgstr "Inkomende overschrijving in behandeling"
@@ -217,8 +267,8 @@ msgid "Virement reçu"
 msgstr "Overschrijving ontvangen"
 
 msgid ""
-"Votre virement a été <strong>rejeté</strong>. Le montant a été recrédité sur"
-" votre compte."
+"Votre virement a été <strong>rejeté</strong>. Le montant a été recrédité sur "
+"votre compte."
 msgstr ""
 "Uw overschrijving is <strong>afgewezen</strong>. Het bedrag is teruggestort "
 "op uw rekening."
@@ -279,8 +329,8 @@ msgid ""
 "procédure de déblocage. Si vous pensez qu'il s'agit d'une erreur, contactez-"
 "nous immédiatement."
 msgstr ""
-"Neem contact op met uw accountbeheerder <strong>%(manager)s</strong> voor de"
-" deblokkeringsprocedure. Als u denkt dat dit een fout is, neem dan "
+"Neem contact op met uw accountbeheerder <strong>%(manager)s</strong> voor de "
+"deblokkeringsprocedure. Als u denkt dat dit een fout is, neem dan "
 "onmiddellijk contact met ons op."
 
 msgid "Votre compte a été bloqué"
@@ -368,17 +418,8 @@ msgstr "Land"
 msgid "COORDONNÉES BANCAIRES — %(type)s"
 msgstr "BANKGEGEVENS — %(type)s"
 
-msgid "Code banque"
-msgstr "Bankcode"
-
-msgid "Code guichet"
-msgstr "Kantoorcode"
-
-msgid "N° de compte"
-msgstr "Rekeningnummer"
-
-msgid "Clé RIB"
-msgstr "Controlecijfer"
+msgid "IDENTIFIANT INTERNATIONAL DU COMPTE"
+msgstr ""
 
 #, python-format
 msgid ""
@@ -387,8 +428,8 @@ msgid ""
 "auprès de <b>%(bank_name)s</b>."
 msgstr ""
 "Ondergetekende, <b>%(name)s</b>, verklaart dat de bankgegevens op dit "
-"document juist zijn en overeenkomen met mijn rekening bij "
-"<b>%(bank_name)s</b>."
+"document juist zijn en overeenkomen met mijn rekening bij <b>%(bank_name)s</"
+"b>."
 
 msgid "EN COURS DE VALIDATION"
 msgstr "WORDT GEVALIDEERD"
@@ -481,6 +522,11 @@ msgstr "Onjuiste gebruikersnaam of wachtwoord."
 
 msgid "Votre compte est bloqué. Les virements sont désactivés."
 msgstr "Uw rekening is geblokkeerd. Overschrijvingen zijn uitgeschakeld."
+
+msgid ""
+"Les virements ne sont pas autorisés sur ce compte. Contactez votre "
+"conseiller pour plus d'informations."
+msgstr ""
 
 msgid "Le montant doit être supérieur à zéro."
 msgstr "Het bedrag moet groter zijn dan nul."
@@ -760,15 +806,15 @@ msgid "Conseils de sécurité"
 msgstr "Beveiligingstips"
 
 msgid ""
-"Utilisez un mot de passe <strong class=\"text-gray-700\">unique</strong> que"
-" vous n'utilisez nulle part ailleurs."
+"Utilisez un mot de passe <strong class=\"text-gray-700\">unique</strong> que "
+"vous n'utilisez nulle part ailleurs."
 msgstr ""
 "Gebruik een <strong class=\"text-gray-700\">uniek</strong> wachtwoord dat u "
 "nergens anders gebruikt."
 
 msgid ""
-"Mélangez <strong class=\"text-gray-700\">majuscules, minuscules, chiffres et"
-" caractères spéciaux</strong>."
+"Mélangez <strong class=\"text-gray-700\">majuscules, minuscules, chiffres et "
+"caractères spéciaux</strong>."
 msgstr ""
 "Combineer <strong class=\"text-gray-700\">hoofdletters, kleine letters, "
 "cijfers en speciale tekens</strong>."
@@ -789,9 +835,9 @@ msgstr ""
 
 #, python-format
 msgid ""
-"Votre identifiant de connexion (<strong class=\"font-"
-"mono\">%(account_id)s</strong>) ne peut pas être modifié. Contactez votre "
-"gestionnaire pour toute question."
+"Votre identifiant de connexion (<strong class=\"font-mono\">%(account_id)s</"
+"strong>) ne peut pas être modifié. Contactez votre gestionnaire pour toute "
+"question."
 msgstr ""
 "Uw inlogidentificatie (<strong class=\"font-mono\">%(account_id)s</strong>) "
 "kan niet worden gewijzigd. Neem bij vragen contact op met uw "
@@ -824,8 +870,8 @@ msgstr "Hallo, %(first_name)s"
 msgid ""
 "Gestionnaire : <span class=\"text-gray-600 font-medium\">%(manager)s</span>"
 msgstr ""
-"Accountbeheerder: <span class=\"text-gray-600 font-"
-"medium\">%(manager)s</span>"
+"Accountbeheerder: <span class=\"text-gray-600 font-medium\">%(manager)s</"
+"span>"
 
 msgid "Bloqué"
 msgstr "Geblokkeerd"
@@ -879,6 +925,11 @@ msgstr "Geen transacties"
 
 msgid "Coordonnées bancaires"
 msgstr "Bankgegevens"
+
+#, fuzzy
+#| msgid "Identifiant du compte"
+msgid "Identifiant international du compte"
+msgstr "Rekeningidentificatie"
 
 msgid "Relevé PDF"
 msgstr "PDF-afschrift"
@@ -969,17 +1020,16 @@ msgid ""
 "gray-600\">%(bank_name)s</strong> au <strong class=\"text-"
 "gray-600\">%(bank_phone)s</strong>"
 msgstr ""
-"Neem voor hulp contact op met <strong class=\"text-"
-"gray-600\">%(bank_name)s</strong> op <strong class=\"text-"
-"gray-600\">%(bank_phone)s</strong>"
+"Neem voor hulp contact op met <strong class=\"text-gray-600\">%(bank_name)s</"
+"strong> op <strong class=\"text-gray-600\">%(bank_phone)s</strong>"
 
 #, python-format
 msgid ""
 "Pour toute assistance, contactez <strong class=\"text-"
 "gray-600\">%(bank_name)s</strong>"
 msgstr ""
-"Neem voor hulp contact op met <strong class=\"text-"
-"gray-600\">%(bank_name)s</strong>"
+"Neem voor hulp contact op met <strong class=\"text-gray-600\">%(bank_name)s</"
+"strong>"
 
 msgid "Connexion…"
 msgstr "Bezig met inloggen…"
@@ -1150,8 +1200,8 @@ msgid "Délai de traitement : 48h ouvrées"
 msgstr "Verwerkingstijd: 48 werkuren"
 
 msgid ""
-"Le montant est immédiatement réservé sur votre compte à l'initiation. En cas"
-" de rejet, il est intégralement recrédité."
+"Le montant est immédiatement réservé sur votre compte à l'initiation. En cas "
+"de rejet, il est intégralement recrédité."
 msgstr ""
 "Het bedrag wordt bij het starten direct gereserveerd op uw rekening. Bij "
 "afwijzing wordt het volledig teruggestort."
@@ -1172,8 +1222,8 @@ msgid "Ex : Remboursement, loyer, facture…"
 msgstr "Bijv.: Terugbetaling, huur, factuur…"
 
 msgid ""
-"Le montant est immédiatement <strong class=\"text-"
-"gray-700\">réservé</strong> sur votre compte à l'initiation."
+"Le montant est immédiatement <strong class=\"text-gray-700\">réservé</"
+"strong> sur votre compte à l'initiation."
 msgstr ""
 "Het bedrag wordt bij het starten direct <strong class=\"text-"
 "gray-700\">gereserveerd</strong> op uw rekening."
